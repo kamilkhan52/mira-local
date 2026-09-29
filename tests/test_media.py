@@ -1,4 +1,5 @@
 # tests/test_media.py
+from _paths import repoint
 import json
 import pytest
 from pathlib import Path
@@ -28,7 +29,7 @@ def test_normalize_articles_maps_fields():
 
 
 def test_run_crawler_returns_empty_on_subprocess_failure(tmp_path, monkeypatch):
-    monkeypatch.setattr("mira.media.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.media", tmp_path)
     with patch("mira.media.subprocess.run") as mock_run:
         mock_run.return_value = MagicMock(returncode=1, stderr="error")
         result = _run_crawler("ee-times-crawler.ts", {
@@ -39,7 +40,7 @@ def test_run_crawler_returns_empty_on_subprocess_failure(tmp_path, monkeypatch):
 
 
 def test_run_crawler_reads_output_file(tmp_path, monkeypatch):
-    monkeypatch.setattr("mira.media.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.media", tmp_path)
     (tmp_path / "scripts" / "temp").mkdir(parents=True)
     output_file = tmp_path / "scripts" / "temp" / "eetimes-latest.json"
     output_file.write_text(SAMPLE_CRAWLER_OUTPUT)

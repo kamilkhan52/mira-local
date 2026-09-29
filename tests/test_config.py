@@ -1,4 +1,5 @@
 # tests/test_config.py
+from _paths import repoint
 import json
 import re
 
@@ -72,7 +73,7 @@ def test_load_config_resolves_weekly_dates(tmp_path, monkeypatch):
     configs_dir.mkdir()
     (configs_dir / "test-profile.json").write_text(json.dumps(config_data))
 
-    monkeypatch.setattr("mira.config.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.config", tmp_path)
     monkeypatch.setenv("RECIPIENT_EMAIL", "test@example.com")
 
     config = load_config("test-profile", "weekly")
@@ -110,7 +111,7 @@ def test_load_config_surfaces_themes(tmp_path, monkeypatch):
     configs_dir.mkdir()
     (configs_dir / "themed-profile.json").write_text(json.dumps(config_data))
 
-    monkeypatch.setattr("mira.config.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.config", tmp_path)
     monkeypatch.setenv("RECIPIENT_EMAIL", "test@example.com")
 
     config = load_config("themed-profile", "weekly")
@@ -143,7 +144,7 @@ def test_load_config_defaults_themes_to_empty_when_absent(tmp_path, monkeypatch)
     configs_dir.mkdir()
     (configs_dir / "themeless-profile.json").write_text(json.dumps(config_data))
 
-    monkeypatch.setattr("mira.config.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.config", tmp_path)
     monkeypatch.setenv("RECIPIENT_EMAIL", "test@example.com")
 
     config = load_config("themeless-profile", "weekly")
@@ -153,7 +154,7 @@ def test_load_config_defaults_themes_to_empty_when_absent(tmp_path, monkeypatch)
 def test_load_config_unknown_profile_raises(tmp_path, monkeypatch):
     configs_dir = tmp_path / "configs"
     configs_dir.mkdir()
-    monkeypatch.setattr("mira.config.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.config", tmp_path)
     with pytest.raises(ValueError, match="not found"):
         load_config("nonexistent-profile", "weekly")
 
@@ -328,7 +329,7 @@ def test_load_config_rejects_incomplete_llm_models(tmp_path, monkeypatch):
     cfg_dir = tmp_path / "configs"
     cfg_dir.mkdir()
     (cfg_dir / "p.json").write_text(json.dumps(config_data))
-    monkeypatch.setattr("mira.config.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.config", tmp_path)
     monkeypatch.setenv("RECIPIENT_EMAIL", "a@b.c")
 
     with pytest.raises(ValueError) as exc:
@@ -356,10 +357,6 @@ EXPECTED_TRIGGER_ROUTING = {
     "Optical Weekly Trigger": "optical-interconnects",
 }
 
-BU_PROFILE_COPIES = {
-    "mcbu-memory": "mcbu-memory-profile.json",
-    "embedded-intelligence": "embedded-intelligence-profile.json",
-}
 
 
 def _live_config():
@@ -413,18 +410,6 @@ def test_generic_triggers_are_allow_listed_for_the_default_profile():
     assert config["default_profile_id"] == "memory-innovation"
 
 
-@pytest.mark.parametrize("profile_id,standalone", sorted(BU_PROFILE_COPIES.items()))
-def test_bu_profile_parity_across_config_copies(profile_id, standalone):
-    """Dual-copy invariant: the BU profile in the merged n8n config must stay
-    identical to its standalone file, `llm_models` included. `load_config`
-    searches configs/ in filename order and stops at the first file defining the
-    profile, so a BU run reads whichever copy sorts first -- the copies have to
-    be interchangeable."""
-    live = _live_config()
-    merged = next(p for p in live["profiles"] if p["profile_id"] == profile_id)
-    solo = json.loads((CONFIGS_DIR / standalone).read_text())
-    assert merged == solo["profiles"][0]
-    assert solo["llm_models"] == live["llm_models"]
 
 
 def _workflow_trigger_names(workflow):

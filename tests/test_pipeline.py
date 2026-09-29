@@ -1,4 +1,5 @@
 # tests/test_pipeline.py
+from _paths import repoint
 import json
 import os
 import time
@@ -10,12 +11,12 @@ from mira.pipeline import _load_cache, _save_cache, _classify_paper, _get_affili
 
 
 def test_load_cache_returns_empty_dict_when_missing(tmp_path, monkeypatch):
-    monkeypatch.setattr("mira.pipeline.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.pipeline", tmp_path)
     assert _load_cache("classifications") == {}
 
 
 def test_save_and_load_cache_roundtrip(tmp_path, monkeypatch):
-    monkeypatch.setattr("mira.pipeline.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.pipeline", tmp_path)
     # no manual mkdir — _save_cache must create the directory
     _save_cache("classifications", {"2605.11277": {"relevance_score": 8}})
     loaded = _load_cache("classifications")
@@ -44,7 +45,7 @@ def test_safe_id_matches_n8n_mapping():
 
 
 def test_shared_cache_roundtrip(tmp_path, monkeypatch):
-    monkeypatch.setattr("mira.pipeline.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.pipeline", tmp_path)
     config = _shared_cache_config()
     _shared_cache_write(config, "classification", "http://arxiv.org/abs/2608.11840v1",
                         "google/gemini-3.6-flash", {"relevance_score": 8})
@@ -54,7 +55,7 @@ def test_shared_cache_roundtrip(tmp_path, monkeypatch):
 
 
 def test_shared_cache_reads_n8n_written_entry(tmp_path, monkeypatch):
-    monkeypatch.setattr("mira.pipeline.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.pipeline", tmp_path)
     stage_dir = tmp_path / "report-files" / "cache" / "optical-interconnects" / "classification"
     stage_dir.mkdir(parents=True)
     # n8n's filename is <safe_id>__<its own djb2 fingerprint>.json — we match on the prefix
@@ -74,7 +75,7 @@ def test_shared_cache_reads_n8n_written_entry(tmp_path, monkeypatch):
 
 def test_shared_cache_matches_versioned_n8n_filename(tmp_path, monkeypatch):
     """fetch.py strips the version off ids; n8n's filenames keep it."""
-    monkeypatch.setattr("mira.pipeline.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.pipeline", tmp_path)
     stage_dir = tmp_path / "report-files" / "cache" / "optical-interconnects" / "classification"
     stage_dir.mkdir(parents=True)
     (stage_dir / "2608.11840v2__45980a4e.json").write_text(json.dumps({
@@ -89,7 +90,7 @@ def test_shared_cache_matches_versioned_n8n_filename(tmp_path, monkeypatch):
 
 
 def test_shared_cache_disabled_without_profile_id(tmp_path, monkeypatch):
-    monkeypatch.setattr("mira.pipeline.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.pipeline", tmp_path)
     config = {**_shared_cache_config()}
     del config["profile_id"]
     _shared_cache_write(config, "classification", "2608.11840v1", "m", {"relevance_score": 8})
@@ -98,7 +99,7 @@ def test_shared_cache_disabled_without_profile_id(tmp_path, monkeypatch):
 
 
 def test_shared_cache_bypass_env(tmp_path, monkeypatch):
-    monkeypatch.setattr("mira.pipeline.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.pipeline", tmp_path)
     monkeypatch.setenv("MIRA_LLM_CACHE_BYPASS", "1")
     config = _shared_cache_config()
     assert _shared_cache_read(config, "classification", "2608.11840v1",
@@ -142,7 +143,7 @@ def _n8n_entry(tmp_path, arxiv_id_url, model, result, written_by=None, fp=None):
 def test_fingerprint_interops_with_n8n_shaped_entry(tmp_path, monkeypatch):
     """A file written in n8n's exact on-disk shape must be readable, and the
     exact-path lookup must hit when the caller computes the fingerprint."""
-    monkeypatch.setattr("mira.pipeline.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.pipeline", tmp_path)
     model = "openai/gpt-5.6-terra"
     url = "https://arxiv.org/abs/2608.11840v1"
     # compute the fingerprint the way _classify_paper does
@@ -171,7 +172,7 @@ def test_fingerprint_interops_with_n8n_shaped_entry(tmp_path, monkeypatch):
 def test_cli_prefers_n8n_written_entry_on_fingerprint_collision(tmp_path, monkeypatch):
     """Without a known fingerprint, the scan prefers n8n-written entries even
     when the mira-cli entry is newer (round-1 P1-2)."""
-    monkeypatch.setattr("mira.pipeline.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.pipeline", tmp_path)
     config = _shared_cache_config()
     from mira.pipeline import _shared_cache_dir, _safe_id
     stage_dir = _shared_cache_dir(config, "classification")
@@ -198,7 +199,7 @@ def test_classify_write_uses_versioned_filename_from_bare_id_path(tmp_path, monk
     """Round-3 P1: production passes the BARE id in paper['id']; the shared
     write must still land on n8n's versioned filename form
     (safeId(normalizeId(data.id)) = 2608.11840v1__<fp>.json)."""
-    monkeypatch.setattr("mira.pipeline.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.pipeline", tmp_path)
     from mira.pipeline import _classify_paper
 
     class FakeClient:
@@ -224,7 +225,7 @@ def test_classify_write_uses_versioned_filename_from_bare_id_path(tmp_path, monk
 
 def test_affiliation_write_gated_on_first_page_text(tmp_path, monkeypatch):
     """Mirrors n8n's <50-char Distribute gate: short-text results are NOT shared."""
-    monkeypatch.setattr("mira.pipeline.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.pipeline", tmp_path)
     config = _shared_cache_config()
     from mira.pipeline import _get_affiliation
 
@@ -255,7 +256,7 @@ def test_affiliation_write_gated_on_first_page_text(tmp_path, monkeypatch):
 
 def test_classify_papers_survives_worker_exception(tmp_path, monkeypatch):
     """One failing paper must not abort the stage (round-1 P1-4)."""
-    monkeypatch.setattr("mira.pipeline.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.pipeline", tmp_path)
     from mira.pipeline import classify_papers
     calls = {"n": 0}
 
@@ -282,7 +283,7 @@ def test_classify_papers_survives_worker_exception(tmp_path, monkeypatch):
 
 def test_stage_index_avoids_refixting_every_lookup(tmp_path, monkeypatch):
     """The per-stage index is built once and reused (perf contract)."""
-    monkeypatch.setattr("mira.pipeline.ROOT", tmp_path)
+    repoint(monkeypatch, "mira.pipeline", tmp_path)
     from mira.pipeline import _stage_index
     config = _shared_cache_config()
     from mira.pipeline import _shared_cache_dir

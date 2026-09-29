@@ -108,7 +108,7 @@ def test_hypothesis_settings_defaults_from_clean_environment(monkeypatch):
 
     assert settings.hypothesis_token == ""
     assert settings.hypothesis_timeout_sec == 1200
-    assert settings.hypotheses_dir == Path("report-files/hypotheses")
+    assert settings.hypotheses_dir == Path("data/report-files/hypotheses")
 
 
 def test_hypothesis_token_defaults_and_fails_closed_when_unset():

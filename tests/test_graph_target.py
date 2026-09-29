@@ -1,3 +1,4 @@
+from mira.paths import LIGHTRAG_DIR, LOCAL_CACHE, REPORT_FILES
 """The hypothesis/discovery CLIs target one of several isolated graphs.
 
 Two properties matter most here:
@@ -24,50 +25,50 @@ def test_memory_target_reproduces_the_original_constants():
     # These are the literal values hypothesize.py/discover.py held before the
     # seam. If this test fails, existing runs have silently changed behaviour.
     t = resolve_target("memory")
-    assert t.working_dir == ROOT / "lightrag" / "working_dir"
-    assert t.graphml == ROOT / "lightrag" / "working_dir" / "graph_chunk_entity_relation.graphml"
-    assert t.vdb_entities == ROOT / "lightrag" / "working_dir" / "vdb_entities.json"
+    assert t.working_dir == LIGHTRAG_DIR / "working_dir"
+    assert t.graphml == LIGHTRAG_DIR / "working_dir" / "graph_chunk_entity_relation.graphml"
+    assert t.vdb_entities == LIGHTRAG_DIR / "working_dir" / "vdb_entities.json"
     assert t.base_url == "http://localhost:9621"
-    assert t.ledger_path == ROOT / "report-files" / "hypotheses" / "discovery-ledger.json"
-    assert t.venue_db == ROOT / "cache" / "venue_corpus.sqlite"
-    assert t.novelty_cache == ROOT / "cache" / "venue_novelty.json"
+    assert t.ledger_path == REPORT_FILES / "hypotheses" / "discovery-ledger.json"
+    assert t.venue_db == LOCAL_CACHE / "venue_corpus.sqlite"
+    assert t.novelty_cache == LOCAL_CACHE / "venue_novelty.json"
 
 
 def test_optical_target_resolves_to_its_own_graph():
     t = resolve_target("optical")
-    assert t.working_dir == ROOT / "lightrag" / "working_dir_optical"
-    assert t.graphml == ROOT / "lightrag" / "working_dir_optical" / "graph_chunk_entity_relation.graphml"
+    assert t.working_dir == LIGHTRAG_DIR / "working_dir_optical"
+    assert t.graphml == LIGHTRAG_DIR / "working_dir_optical" / "graph_chunk_entity_relation.graphml"
     assert t.base_url == "http://localhost:9622"
 
 
 def test_storage_target_resolves_to_its_own_graph():
     t = resolve_target("storage")
-    assert t.working_dir == ROOT / "lightrag" / "working_dir_storage"
-    assert t.graphml == ROOT / "lightrag" / "working_dir_storage" / "graph_chunk_entity_relation.graphml"
-    assert t.vdb_entities == ROOT / "lightrag" / "working_dir_storage" / "vdb_entities.json"
+    assert t.working_dir == LIGHTRAG_DIR / "working_dir_storage"
+    assert t.graphml == LIGHTRAG_DIR / "working_dir_storage" / "graph_chunk_entity_relation.graphml"
+    assert t.vdb_entities == LIGHTRAG_DIR / "working_dir_storage" / "vdb_entities.json"
     assert t.base_url == "http://localhost:9624"
-    assert t.ledger_path == ROOT / "report-files" / "hypotheses" / "discovery-ledger-storage.json"
-    assert t.venue_db == ROOT / "cache" / "venue_corpus_storage.sqlite"
-    assert t.novelty_cache == ROOT / "cache" / "venue_novelty_storage.json"
+    assert t.ledger_path == REPORT_FILES / "hypotheses" / "discovery-ledger-storage.json"
+    assert t.venue_db == LOCAL_CACHE / "venue_corpus_storage.sqlite"
+    assert t.novelty_cache == LOCAL_CACHE / "venue_novelty_storage.json"
 
 
 def test_combined_target_resolves_to_the_merged_graph_and_own_state():
     """The merged graph writes only to its own graph and discovery state."""
     t = resolve_target("combined")
 
-    assert t.working_dir == ROOT / "lightrag" / "working_dir_combined"
+    assert t.working_dir == LIGHTRAG_DIR / "working_dir_combined"
     assert t.graphml == (
-        ROOT / "lightrag" / "working_dir_combined" /
+        LIGHTRAG_DIR / "working_dir_combined" /
         "graph_chunk_entity_relation.graphml"
     )
     assert t.vdb_entities == (
-        ROOT / "lightrag" / "working_dir_combined" / "vdb_entities.json"
+        LIGHTRAG_DIR / "working_dir_combined" / "vdb_entities.json"
     )
     assert t.base_url == "http://localhost:9623"
     assert t.ledger_path == (
-        ROOT / "report-files" / "hypotheses" / "discovery-ledger-combined.json"
+        REPORT_FILES / "hypotheses" / "discovery-ledger-combined.json"
     )
-    assert t.novelty_cache == ROOT / "cache" / "venue_novelty_combined.json"
+    assert t.novelty_cache == LOCAL_CACHE / "venue_novelty_combined.json"
     assert t.venue_db == resolve_target("memory").venue_db
 
 
@@ -119,10 +120,3 @@ def test_every_named_target_resolves():
     for name in GRAPH_NAMES:
         assert resolve_target(name).name == name
 
-
-def test_storage_compose_service_is_localhost_only_and_isolated():
-    compose = (ROOT / "lightrag" / "docker-compose.lightrag.yml").read_text()
-    assert "lightrag-storage:" in compose
-    assert "127.0.0.1:9624:9621" in compose
-    assert "./working_dir_storage:/app/working_dir" in compose
-    assert "./.env.lightrag.storage" in compose

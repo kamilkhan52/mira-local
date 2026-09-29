@@ -106,9 +106,9 @@ def test_exhaustive_settings_defaults_are_fail_closed(monkeypatch):
 
     assert settings.exhaustive_enabled is False
     assert settings.research_token == ""
-    assert settings.exhaustive_memory_dir == Path("lightrag/working_dir")
-    assert settings.exhaustive_optical_dir == Path("lightrag/working_dir_optical")
-    assert settings.exhaustive_storage_dir == Path("lightrag/working_dir_storage")
+    assert settings.exhaustive_memory_dir == Path("data/lightrag/working_dir")
+    assert settings.exhaustive_optical_dir == Path("data/lightrag/working_dir_optical")
+    assert settings.exhaustive_storage_dir == Path("data/lightrag/working_dir_storage")
     assert settings.exhaustive_node_threshold == pytest.approx(0.42)
     assert settings.exhaustive_edge_threshold == pytest.approx(0.38)
     assert settings.exhaustive_batch_tokens == 80_000
