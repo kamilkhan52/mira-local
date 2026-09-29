@@ -25,6 +25,7 @@ Usage:
 
 from __future__ import annotations
 
+import os
 import argparse
 import json
 import re
@@ -44,7 +45,7 @@ _ARXIV_API = "https://export.arxiv.org/api/query"
 _FETCH_BATCH = 80
 _FETCH_DELAY = 3.0  # arXiv asks for >=3s between requests
 # arXiv asks API clients to identify themselves; anonymous clients get throttled.
-_UA = "mira-backfill/1.0 (memory-innovation research agent; mailto:oed8205@gmail.com)"
+_UA = "mira-backfill/1.0" + (f" (mailto:{os.environ['MIRA_CONTACT_EMAIL']})" if os.environ.get("MIRA_CONTACT_EMAIL") else "")
 
 
 # ─── Pure helpers (unit-tested) ───────────────────────────────────────────────

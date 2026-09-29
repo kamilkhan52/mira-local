@@ -1,6 +1,7 @@
 from __future__ import annotations
 from mira.paths import TEMP_DIR, SCRIPTS_DIR
 import asyncio
+import os
 import sys
 import time
 import xml.etree.ElementTree as ET
@@ -15,7 +16,8 @@ _NS = {
     "atom": "http://www.w3.org/2005/Atom",
     "arxiv": "http://arxiv.org/schemas/atom",
 }
-_HEADERS = {"User-Agent": "mira-local-script/1.0 (mailto:oed8205@gmail.com)"}
+# arXiv asks API clients to identify themselves; set MIRA_CONTACT_EMAIL.
+_HEADERS = {"User-Agent": "mira-local/1.0" + (f" (mailto:{os.environ['MIRA_CONTACT_EMAIL']})" if os.environ.get("MIRA_CONTACT_EMAIL") else "")}
 # Match the n8n "Extract PDFs (Batch)" node's --concurrency 32 flag. NOTE: n8n runs
 # scripts/extract_arxiv_first_page.py while the CLI imports extract_arxiv_pdf.py —
 # only the concurrency value is being matched, not the script. Also note the CLI's
