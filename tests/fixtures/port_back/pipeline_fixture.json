@@ -1,0 +1,684 @@
+{
+  "pipeline_result": {
+    "selected": [
+      {
+        "id": "2609.00001",
+        "raw_id": "http://arxiv.org/abs/2609.00001v1",
+        "title": "HBM4 stacking & thermal limits",
+        "summary": "Abstract of HBM4 stacking & thermal limits.",
+        "authors": [
+          "Author 1A",
+          "Autor 1B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "SK hynix"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 9,
+        "credibility_reasoning": "r",
+        "primary_topic": "HBM & Stacked DRAM",
+        "secondary_topics": [
+          "Packaging"
+        ],
+        "relevance_score": 9,
+        "key_findings": "finding 1",
+        "actionable": "Yes",
+        "potential_impact": "Breakthrough",
+        "large_summary": "Large A",
+        "short_summary": "Short A",
+        "pdf_analysis_performed": true,
+        "selection_reasoning": "top",
+        "priority_rank": 1
+      },
+      {
+        "id": "2609.00002",
+        "raw_id": "http://arxiv.org/abs/2609.00002v1",
+        "title": "CXL pooling at rack scale",
+        "summary": "Abstract of CXL pooling at rack scale.",
+        "authors": [
+          "Author 2A",
+          "Autor 2B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "Microsoft"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 6,
+        "credibility_reasoning": "r",
+        "primary_topic": "CXL & Memory Pooling",
+        "secondary_topics": [],
+        "relevance_score": 10,
+        "key_findings": "finding 2",
+        "actionable": "Yes",
+        "potential_impact": "High",
+        "large_summary": "Large B",
+        "short_summary": "Short B",
+        "pdf_analysis_performed": true,
+        "selection_reasoning": "p1",
+        "priority_rank": 3
+      },
+      {
+        "id": "2609.00003",
+        "raw_id": "http://arxiv.org/abs/2609.00003v1",
+        "title": "PIM for LLM decode",
+        "summary": "Abstract of PIM for LLM decode.",
+        "authors": [
+          "Author 3A",
+          "Autor 3B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "KAIST"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 8,
+        "credibility_reasoning": "r",
+        "primary_topic": "Processing-in-Memory",
+        "secondary_topics": [],
+        "relevance_score": 8,
+        "key_findings": [
+          "kf one",
+          "kf two"
+        ],
+        "actionable": "Yes",
+        "potential_impact": "Medium",
+        "large_summary": "",
+        "short_summary": "",
+        "pdf_analysis_performed": false,
+        "selection_reasoning": "c",
+        "priority_rank": 2
+      },
+      {
+        "id": "2609.00004",
+        "raw_id": "http://arxiv.org/abs/2609.00004v1",
+        "title": "Ferroelectric NAND",
+        "summary": "Abstract of Ferroelectric NAND.",
+        "authors": [
+          "Author 4A",
+          "Autor 4B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "IBM Research"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 10,
+        "credibility_reasoning": "r",
+        "primary_topic": "Emerging NVM",
+        "secondary_topics": [],
+        "relevance_score": 7,
+        "key_findings": "finding 4",
+        "actionable": "Yes",
+        "potential_impact": "Medium",
+        "large_summary": "Large D",
+        "short_summary": "",
+        "pdf_analysis_performed": true,
+        "selection_reasoning": "d",
+        "priority_rank": 4
+      },
+      {
+        "id": "2609.00005",
+        "raw_id": "http://arxiv.org/abs/2609.00005v1",
+        "title": "KV cache offload to CXL",
+        "summary": "Abstract of KV cache offload to CXL.",
+        "authors": [
+          "Author 5A",
+          "Autor 5B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "Alibaba"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 7,
+        "credibility_reasoning": "r",
+        "primary_topic": "CXL & Memory Pooling",
+        "secondary_topics": [],
+        "relevance_score": 8,
+        "key_findings": "finding 5",
+        "actionable": "Yes",
+        "potential_impact": "Low",
+        "large_summary": "",
+        "short_summary": "Short E",
+        "pdf_analysis_performed": false,
+        "selection_reasoning": "e",
+        "priority_rank": 5
+      },
+      {
+        "id": "2609.00006",
+        "raw_id": "http://arxiv.org/abs/2609.00006v1",
+        "title": "DRAM refresh scheduling",
+        "summary": "Abstract of DRAM refresh scheduling.",
+        "authors": [
+          "Author 6A",
+          "Autor 6B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "ETH Zürich"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 7,
+        "credibility_reasoning": "r",
+        "primary_topic": "DRAM Reliability",
+        "secondary_topics": [],
+        "relevance_score": 7,
+        "key_findings": "finding 6",
+        "actionable": "Yes",
+        "potential_impact": "Medium",
+        "large_summary": "Large F",
+        "short_summary": "Short F",
+        "pdf_analysis_performed": false,
+        "selection_reasoning": "f",
+        "priority_rank": 6
+      }
+    ],
+    "remaining": [
+      {
+        "id": "2609.00007",
+        "raw_id": "http://arxiv.org/abs/2609.00007v1",
+        "title": "Optical memory fabric",
+        "summary": "Abstract of Optical memory fabric.",
+        "authors": [
+          "Author 7A",
+          "Autor 7B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "Ayar Labs"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 9,
+        "credibility_reasoning": "r",
+        "primary_topic": "Memory Interconnects",
+        "secondary_topics": [],
+        "relevance_score": 7,
+        "key_findings": "finding 7",
+        "actionable": "Yes",
+        "potential_impact": "High",
+        "exclusion_reasoning": "off-focus"
+      },
+      {
+        "id": "2609.00008",
+        "raw_id": "http://arxiv.org/abs/2609.00008v1",
+        "title": "3D DRAM cell",
+        "summary": "Abstract of 3D DRAM cell.",
+        "authors": [
+          "Author 8A",
+          "Autor 8B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "Samsung"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 10,
+        "credibility_reasoning": "r",
+        "primary_topic": "HBM & Stacked DRAM",
+        "secondary_topics": [],
+        "relevance_score": 6,
+        "key_findings": "finding 8",
+        "actionable": "Yes",
+        "potential_impact": "High",
+        "exclusion_reasoning": ""
+      },
+      {
+        "id": "2609.00009",
+        "raw_id": "http://arxiv.org/abs/2609.00009v1",
+        "title": "Row hammer survey",
+        "summary": "Abstract of Row hammer survey.",
+        "authors": [
+          "Author 9A",
+          "Autor 9B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "Uni X"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 6,
+        "credibility_reasoning": "r",
+        "primary_topic": "DRAM Reliability",
+        "secondary_topics": [],
+        "relevance_score": 7,
+        "key_findings": "finding 9",
+        "actionable": "Yes",
+        "potential_impact": "Low",
+        "exclusion_reasoning": "survey"
+      }
+    ],
+    "total_scanned": 57,
+    "all_classified": [
+      {
+        "id": "2609.00001",
+        "raw_id": "http://arxiv.org/abs/2609.00001v1",
+        "title": "HBM4 stacking & thermal limits",
+        "summary": "Abstract of HBM4 stacking & thermal limits.",
+        "authors": [
+          "Author 1A",
+          "Autor 1B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "SK hynix"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 9,
+        "credibility_reasoning": "r",
+        "primary_topic": "HBM & Stacked DRAM",
+        "secondary_topics": [
+          "Packaging"
+        ],
+        "relevance_score": 9,
+        "key_findings": "finding 1",
+        "actionable": "Yes",
+        "potential_impact": "Breakthrough",
+        "large_summary": "Large A",
+        "short_summary": "Short A",
+        "pdf_analysis_performed": true,
+        "selection_reasoning": "top",
+        "priority_rank": 1
+      },
+      {
+        "id": "2609.00010",
+        "raw_id": "http://arxiv.org/abs/2609.00010v1",
+        "title": "Graph neural nets for proteins",
+        "summary": "Abstract of Graph neural nets for proteins.",
+        "authors": [
+          "Author 10A",
+          "Autor 10B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "Uni Y"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 3,
+        "credibility_reasoning": "r",
+        "primary_topic": "Not related to memory",
+        "secondary_topics": [],
+        "relevance_score": 2,
+        "key_findings": "finding 10",
+        "actionable": "Yes",
+        "potential_impact": "Low"
+      },
+      {
+        "id": "2609.00002",
+        "raw_id": "http://arxiv.org/abs/2609.00002v1",
+        "title": "CXL pooling at rack scale",
+        "summary": "Abstract of CXL pooling at rack scale.",
+        "authors": [
+          "Author 2A",
+          "Autor 2B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "Microsoft"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 6,
+        "credibility_reasoning": "r",
+        "primary_topic": "CXL & Memory Pooling",
+        "secondary_topics": [],
+        "relevance_score": 10,
+        "key_findings": "finding 2",
+        "actionable": "Yes",
+        "potential_impact": "High",
+        "large_summary": "Large B",
+        "short_summary": "Short B",
+        "pdf_analysis_performed": true,
+        "selection_reasoning": "p1",
+        "priority_rank": 3
+      },
+      {
+        "id": "2609.00003",
+        "raw_id": "http://arxiv.org/abs/2609.00003v1",
+        "title": "PIM for LLM decode",
+        "summary": "Abstract of PIM for LLM decode.",
+        "authors": [
+          "Author 3A",
+          "Autor 3B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "KAIST"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 8,
+        "credibility_reasoning": "r",
+        "primary_topic": "Processing-in-Memory",
+        "secondary_topics": [],
+        "relevance_score": 8,
+        "key_findings": [
+          "kf one",
+          "kf two"
+        ],
+        "actionable": "Yes",
+        "potential_impact": "Medium",
+        "large_summary": "",
+        "short_summary": "",
+        "pdf_analysis_performed": false,
+        "selection_reasoning": "c",
+        "priority_rank": 2
+      },
+      {
+        "id": "2609.00011",
+        "raw_id": "http://arxiv.org/abs/2609.00011v1",
+        "title": "Untitled topicless",
+        "summary": "Abstract of Untitled topicless.",
+        "authors": [
+          "Author 11A",
+          "Autor 11B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "Lab 11"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 0,
+        "credibility_reasoning": "r",
+        "primary_topic": "",
+        "secondary_topics": [],
+        "relevance_score": 0,
+        "key_findings": "finding 11",
+        "actionable": "Yes",
+        "potential_impact": ""
+      },
+      {
+        "id": "2609.00004",
+        "raw_id": "http://arxiv.org/abs/2609.00004v1",
+        "title": "Ferroelectric NAND",
+        "summary": "Abstract of Ferroelectric NAND.",
+        "authors": [
+          "Author 4A",
+          "Autor 4B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "IBM Research"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 10,
+        "credibility_reasoning": "r",
+        "primary_topic": "Emerging NVM",
+        "secondary_topics": [],
+        "relevance_score": 7,
+        "key_findings": "finding 4",
+        "actionable": "Yes",
+        "potential_impact": "Medium",
+        "large_summary": "Large D",
+        "short_summary": "",
+        "pdf_analysis_performed": true,
+        "selection_reasoning": "d",
+        "priority_rank": 4
+      },
+      {
+        "id": "2609.00005",
+        "raw_id": "http://arxiv.org/abs/2609.00005v1",
+        "title": "KV cache offload to CXL",
+        "summary": "Abstract of KV cache offload to CXL.",
+        "authors": [
+          "Author 5A",
+          "Autor 5B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "Alibaba"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 7,
+        "credibility_reasoning": "r",
+        "primary_topic": "CXL & Memory Pooling",
+        "secondary_topics": [],
+        "relevance_score": 8,
+        "key_findings": "finding 5",
+        "actionable": "Yes",
+        "potential_impact": "Low",
+        "large_summary": "",
+        "short_summary": "Short E",
+        "pdf_analysis_performed": false,
+        "selection_reasoning": "e",
+        "priority_rank": 5
+      },
+      {
+        "id": "2609.00012",
+        "raw_id": "http://arxiv.org/abs/2609.00012v1",
+        "title": "Quantum RAM",
+        "summary": "Abstract of Quantum RAM.",
+        "authors": [
+          "Author 12A",
+          "Autor 12B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "Uni Z"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 8,
+        "credibility_reasoning": "r",
+        "primary_topic": "Emerging NVM",
+        "secondary_topics": [],
+        "relevance_score": "5",
+        "key_findings": "finding 12",
+        "actionable": "Yes",
+        "potential_impact": "Breakthrough"
+      },
+      {
+        "id": "2609.00006",
+        "raw_id": "http://arxiv.org/abs/2609.00006v1",
+        "title": "DRAM refresh scheduling",
+        "summary": "Abstract of DRAM refresh scheduling.",
+        "authors": [
+          "Author 6A",
+          "Autor 6B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "ETH Zürich"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 7,
+        "credibility_reasoning": "r",
+        "primary_topic": "DRAM Reliability",
+        "secondary_topics": [],
+        "relevance_score": 7,
+        "key_findings": "finding 6",
+        "actionable": "Yes",
+        "potential_impact": "Medium",
+        "large_summary": "Large F",
+        "short_summary": "Short F",
+        "pdf_analysis_performed": false,
+        "selection_reasoning": "f",
+        "priority_rank": 6
+      },
+      {
+        "id": "2609.00007",
+        "raw_id": "http://arxiv.org/abs/2609.00007v1",
+        "title": "Optical memory fabric",
+        "summary": "Abstract of Optical memory fabric.",
+        "authors": [
+          "Author 7A",
+          "Autor 7B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "Ayar Labs"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 9,
+        "credibility_reasoning": "r",
+        "primary_topic": "Memory Interconnects",
+        "secondary_topics": [],
+        "relevance_score": 7,
+        "key_findings": "finding 7",
+        "actionable": "Yes",
+        "potential_impact": "High",
+        "exclusion_reasoning": "off-focus"
+      },
+      {
+        "id": "2609.00013",
+        "raw_id": "http://arxiv.org/abs/2609.00013v1",
+        "title": "Another unrelated",
+        "summary": "Abstract of Another unrelated.",
+        "authors": [
+          "Author 13A",
+          "Autor 13B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "Uni W"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 5,
+        "credibility_reasoning": "r",
+        "primary_topic": "Not related to memory",
+        "secondary_topics": [],
+        "relevance_score": 1,
+        "key_findings": "finding 13",
+        "actionable": "Yes",
+        "potential_impact": "None"
+      },
+      {
+        "id": "2609.00008",
+        "raw_id": "http://arxiv.org/abs/2609.00008v1",
+        "title": "3D DRAM cell",
+        "summary": "Abstract of 3D DRAM cell.",
+        "authors": [
+          "Author 8A",
+          "Autor 8B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "Samsung"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 10,
+        "credibility_reasoning": "r",
+        "primary_topic": "HBM & Stacked DRAM",
+        "secondary_topics": [],
+        "relevance_score": 6,
+        "key_findings": "finding 8",
+        "actionable": "Yes",
+        "potential_impact": "High",
+        "exclusion_reasoning": ""
+      },
+      {
+        "id": "2609.00009",
+        "raw_id": "http://arxiv.org/abs/2609.00009v1",
+        "title": "Row hammer survey",
+        "summary": "Abstract of Row hammer survey.",
+        "authors": [
+          "Author 9A",
+          "Autor 9B – Zürich"
+        ],
+        "published": "2026-09-20T00:00:00Z",
+        "affiliations": [
+          "Uni X"
+        ],
+        "author_affiliations": {},
+        "credibility_tier": 6,
+        "credibility_reasoning": "r",
+        "primary_topic": "DRAM Reliability",
+        "secondary_topics": [],
+        "relevance_score": 7,
+        "key_findings": "finding 9",
+        "actionable": "Yes",
+        "potential_impact": "Low",
+        "exclusion_reasoning": "survey"
+      }
+    ]
+  },
+  "media": [
+    {
+      "source": "eetimes",
+      "title": "Micron HBM4 ramps",
+      "url": "https://www.eetimes.com/a",
+      "date": "2026-09-22",
+      "short_summary": "HBM4 volume."
+    },
+    {
+      "source": "trendforce",
+      "title": "DRAM prices",
+      "url": "https://www.trendforce.com/b",
+      "date": "2026-09-23",
+      "short_summary": "Prices up."
+    },
+    {
+      "source": "eetimes",
+      "title": "CXL 3.1",
+      "url": "https://www.eetimes.com/c",
+      "short_summary": "Spec."
+    }
+  ],
+  "config": {
+    "profile_id": "memory-innovation",
+    "mode": "weekly",
+    "topic": {
+      "name": "Memory Technology Research",
+      "focus": "memory technology",
+      "assistant_signature": "Memory Innovation Research Assistant",
+      "short_label": "Memory"
+    },
+    "prompts": {
+      "report": {
+        "user": "You are synthesizing this {{period_label}}'s {{topic_focus}} research with deep analysis of top papers.\n\n## STATISTICS OVERVIEW\n```json\n{{stats_json}}\n\n## ANALYZED PAPERS with full-text analysis)\n```json\n{{analyzed_papers_json}}\n```\n## ADDITIONAL RELEVANT PAPERS ({{remaining_count}} papers - no full-text analysis)\n\n## PRIORITIZED REMAINING PAPERS CONTEXT (capped)\nSelection policy used upstream: {{remaining_selection_policy}}\n```json\n{{remaining_papers_json}}\n```\n\n\n## YOUR TASK\n\nWrite a professional {{period_label}} research digest email with this structure:\n\n### Email Body Structure:\n\n**Opening**: \"Hey there, Here's your {{period_label}} roundup of {{topic_focus}} research from arXiv.\n\n**## Executive Summary**\n\n\nExecutive-summary linking requirements:\n- Include exactly one top-paper recommendation sentence in Executive Summary as a Markdown hyperlink in this exact format: [Paper Title](arxiv_id).\n- The hyperlink URL must exactly match the selected paper's arxiv_id from ANALYZED PAPERS JSON (no fabricated or random links).\n- The linked paper must be the same paper you name as the top recommendation.\n\nWrite 3-4 sentences highlighting the most significant developments during {{period_label}}. What are the key themes? \nWhat is the one paper from the most influential research lab/company/university about memory architecture (HBM or other high-performance memory) in the context of AI that you would recommend and why?\n\n**## Deep Dive: Top Research**\n\nGroup the analyzed papers by research theme if such themese are present.\n\nFor each theme:\n- Write 2-4 sentences of context\n- Write a thematic introduction (3-5 sentences) explaining why this area is active and what trends you observe\n- Use the short_summary verbatim for each paper (DO NOT modify or paraphrase)\n- NEVER use LaTeX, MathJax, or dollar-sign math notation. Write equations in plain text.\n- Start each paper with a title+affiliation line as its own line (hyperlinked): [Name or title of paper or affiliation if important](arxiv_id)\n- Then insert a blank line and place the short_summary on the next line\n- If pdf_analysis_performed is false for a paper, note: \"(Note: Full-text analysis unavailable)\" on its own line after the short_summary\n\n**## Media Intelligence**\n\nAdd this section after \"Deep Dive: Top Research\" only when such sources are available in the provided MEDIA INTELLIGENCE data.\nDo not fabricate announcements, blog posts, analyst takes, or expert commentary.\n\nDo NOT include a separate section titled \"Additional Relevant Papers\".\nIf there are remaining papers, summarize them only through the \"Also Worth Noting\" section using the provided prioritized context.\n\n**## Also Worth Noting**\n\nList 5-10 papers from the prioritized remaining context, prioritizing analyzed-but-not-selected papers when available.\n\nFormatting and content rules:\n- Do NOT use bullets, numbered lists, or list markers for this section.\n- Write each entry as a standalone short paragraph in the same visual style as other paper cards.\n- Each entry must be exactly one sentence.\n- Use this format: [Paper Title](arxiv_id) — Institution(s): one objective, evidence-grounded reason it is interesting.\n- Use ONLY papers present in the PRIORITIZED REMAINING PAPERS CONTEXT JSON above. Prioritize entries sourced from analyzed-but-not-selected papers before non-analyzed fallback entries.\n- Prioritize first papers where relevance_score or credibility_tier is 10, then by relevance_score + credibility_tier.\n- Do not invent papers, links, institutions, or scores not present in the provided context.\n- Keep statements strictly factual and verifiable from the provided data; avoid projections, speculation, or forward-looking claims.\n\nWhen rendering **This Last Week in Numbers**:\n- Use the provided {{this_period_numbers}} content exactly as the source of truth.\n- Do not paraphrase or rewrite the numeric lines; preserve metric labels and values so downstream formatting can parse them reliably.\n- Keep these phrases intact when present: \"paper abstracts analyzed\", \"deemed relevant\", \"papers received full-text deep analysis\", \"Top research themes\", \"Quality metrics\", \"high-credibility institutions\".\n\n**## This Last Week in Numbers**\nUse this data coming in from the analysis:\n{{this_period_numbers}}\n\n**Closing**: \"Until next time,\n\n{{assistant_signature}}\"\n\n## OUTPUT FORMAT\n\nReturn pure JSON (no code fences):\n{\n\"subject\": \"MIRA {{mode_label}} Digest - Top {{topic_short_label}} Papers Published on Arxiv and Notable News Articles - {{current_date}} - [X scanned, Y analyzed]\",\n\"body\": \"[Full email in Markdown format]\"\n}\n\nCRITICAL: \n- Use short_summary text EXACTLY as provided - do not rephrase or modify.\n- Prioritize industry insights over purely research insights in the way you order your report.",
+        "system": "You are a research analyst writing periodic digests. Key rules:\n\n- Use short_summary verbatim (no modifications)\n- Group papers by theme logically\n- Identify period trends and patterns\n- Professional, technical tone\n- Inline citations with institutions\n- Note when full-text analysis wasn't performed\n- Keep remaining papers section brief (max 1 sentence per paper)"
+      }
+    },
+    "themes": [],
+    "email_cfg": {
+      "header_label": "Memory Technology Research Digest",
+      "title": "Memory Technology Research",
+      "footer_subtitle": "Digest of memory technology research from arXiv",
+      "colors": {
+        "primary": "#667eea",
+        "primaryDark": "#5a67d8",
+        "secondary": "#764ba2",
+        "text": "#2d3748",
+        "textLight": "#4a5568",
+        "textMuted": "#718096",
+        "border": "#e2e8f0",
+        "borderLight": "#edf2f7",
+        "background": "#f7fafc",
+        "backgroundAlt": "#edf2f7",
+        "white": "#ffffff",
+        "accent": "#48bb78",
+        "warning": "#ed8936",
+        "pageBackground": "#ede9fe"
+      }
+    },
+    "llm_models": {
+      "affiliation": "openai/gpt-5.6-terra",
+      "classification": "openai/gpt-5.6-terra",
+      "selection": "anthropic/claude-opus-5",
+      "analysis": "anthropic/claude-opus-5",
+      "trend": "anthropic/claude-opus-5",
+      "report": "anthropic/claude-opus-5",
+      "media_selection": "anthropic/claude-sonnet-5",
+      "media_summary": "anthropic/claude-sonnet-5",
+      "exhaustive_map": "google/gemini-2.5-flash",
+      "exhaustive_synthesis": "anthropic/claude-sonnet-5"
+    },
+    "mode_cfg": {
+      "lookback_days": 8,
+      "digest_label": "Memory Technology Research Digest",
+      "selection_min": 15,
+      "selection_max": 20,
+      "selection_range_label": "15-20",
+      "max_selection": 20,
+      "report_selection_min": 7,
+      "report_selection_max": 10,
+      "report_selection_range_label": "7-10",
+      "report_max_selection": 4,
+      "trend_enabled": true,
+      "trend_window_days": 60
+    },
+    "summary_mode": "short",
+    "start_date_iso": "2026-09-21",
+    "end_date_iso": "2026-09-28",
+    "current_date": "2026-09-28",
+    "recipient_email": "digest@example.com"
+  }
+}

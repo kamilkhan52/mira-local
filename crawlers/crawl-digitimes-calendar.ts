@@ -15,7 +15,8 @@
  *   DATE_FROM       Start of date range (YYYY-MM-DD). Only crawl articles on or after this date.
  *   DATE_TO         End of date range (YYYY-MM-DD). Only crawl articles on or before this date.
  *   OUTPUT_PATH     If set, also write n8n JSON to this path (e.g. /configs/digitimes-latest.json).
- *   N8N_WEBHOOK_URL n8n webhook URL (default: http://localhost:5678/webhook/digitimes-crawl).
+ *   OUTPUT_DIR      Directory for timestamped snapshots (default: ./output).
+ *   CRAWLER_WEBHOOK_URL If set, POST the results here (N8N_WEBHOOK_URL: deprecated alias). No POST by default.
  */
 
 import { existsSync } from 'fs';
@@ -29,10 +30,12 @@ import dayjs from 'dayjs';
 import { JSDOM } from 'jsdom';
 import puppeteer from 'puppeteer-core';
 
+import { installEsbuildNameShim, resolveOutputDir, resolveWebhookUrl } from './shared/util-functions.js';
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CALENDAR_URL = 'https://www.digitimes.com/calendar.php?d=7d&dt_ref=tabs';
 const BASE_URL = 'https://www.digitimes.com';
-const OUTPUT_DIR = join(__dirname, 'output');
+const OUTPUT_DIR = resolveOutputDir(join(__dirname, 'output'));
 const DELAY_PAGE_MS = 5000;
 const DELAY_ARTICLE_MS = 2000;
 const DELAY_BETWEEN_ARTICLES_MS = 3500; // Longer delay when using fresh context
@@ -414,6 +417,8 @@ async function main(): Promise<void> {
 
   try {
     const page = await browser.newPage();
+    // Must run before the first navigation: see installEsbuildNameShim.
+    await installEsbuildNameShim(page);
     await page.setViewport({ width: 1920, height: 1080 });
     await page.setExtraHTTPHeaders({
       'Accept-Language': 'en-US,en;q=0.9',
@@ -605,7 +610,7 @@ async function main(): Promise<void> {
       console.log(`   Also written to OUTPUT_PATH: ${outputPath}`);
     }
 
-    const webhookUrl = process.env.N8N_WEBHOOK_URL || 'http://localhost:5678/webhook/digitimes-crawl';
+    const webhookUrl = resolveWebhookUrl();
     if (webhookUrl) {
       try {
         const response = await fetch(webhookUrl, {

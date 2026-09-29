@@ -1,0 +1,16 @@
+# systemd unit: serves MIRA deployments and executes scheduled/manual runs.
+[Unit]
+Description=MIRA flows (Prefect serve)
+After=mira-prefect-server.service
+Requires=mira-prefect-server.service
+
+[Service]
+User=mira
+WorkingDirectory=/opt/mira-local
+ExecStartPre=/bin/sleep 10
+ExecStart=/opt/mira-local/bin/mira-env python serve.py
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,17 @@
+[
+  {
+    "report_id": "report-g",
+    "profile_id": "memory-innovation",
+    "topic_name": "Memory Technology Research",
+    "topic_focus": "memory technology",
+    "period_label": "last 8 days",
+    "period_title": "Last 8 Days",
+    "period_range": "x",
+    "is_test": false,
+    "run_date": "2026-10-05",
+    "created_at": "2026-10-05T05:00:00.000Z",
+    "subject": "Future",
+    "body_markdown": "## X\nfuture",
+    "report_file": "/report-files/prod/memory-innovation/report-g.json"
+  }
+]

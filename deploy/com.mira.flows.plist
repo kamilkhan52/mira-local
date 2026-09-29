@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- macOS launchd agent. Install (edit paths if the repo is elsewhere):
+       cp deploy/com.mira.flows.plist ~/Library/LaunchAgents/
+       launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.mira.flows.plist
+     Keep MIRA_DATA_DIR on the internal disk: launchd jobs cannot write to
+     external volumes without Full Disk Access. -->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.mira.flows</string>
+  <key>ProgramArguments</key>
+  <array><string>/Users/kamil/mira-local/bin/mira-env</string><string>python</string><string>serve.py</string></array>
+  <key>WorkingDirectory</key><string>/Users/kamil/mira-local</string>
+  <key>EnvironmentVariables</key><dict><key>PATH</key><string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string></dict>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>StandardOutPath</key><string>/Users/kamil/mira-local/data/logs/flows.log</string>
+  <key>StandardErrorPath</key><string>/Users/kamil/mira-local/data/logs/flows.log</string>
+</dict>
+</plist>

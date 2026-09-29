@@ -1,0 +1,17 @@
+[
+  {
+    "report_id": "report-e",
+    "profile_id": "memory-innovation",
+    "topic_name": "Memory Technology Research",
+    "topic_focus": "memory technology",
+    "period_label": "last 8 days",
+    "period_title": "Last 8 Days",
+    "period_range": "x",
+    "is_test": false,
+    "run_date": "2026-09-07",
+    "created_at": "2026-09-07T05:00:00.000Z",
+    "subject": "MIRA  Digest - Sept 7",
+    "body_markdown": "## X\nA stress test of HBM.",
+    "report_file": "/report-files/prod/memory-innovation/report-e.json"
+  }
+]

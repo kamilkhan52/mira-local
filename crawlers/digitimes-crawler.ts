@@ -15,7 +15,8 @@
  *   DATE_FROM       Start of date range (YYYY-MM-DD). Only crawl articles on or after this date.
  *   DATE_TO         End of date range (YYYY-MM-DD). Only crawl articles on or before this date.
  *   OUTPUT_PATH     If set, also write n8n JSON to this path (e.g. /configs/digitimes-latest.json).
- *   N8N_WEBHOOK_URL n8n webhook URL (default: http://localhost:5678/webhook/digitimes-crawl).
+ *   OUTPUT_DIR      Directory for timestamped snapshots (default: ./output).
+ *   CRAWLER_WEBHOOK_URL If set, POST the results here (N8N_WEBHOOK_URL: deprecated alias). No POST by default.
  */
 
 import { dirname, join } from 'path';
@@ -34,6 +35,8 @@ import {
   isInDateRange,
   isEarlierThanDateFrom,
   parseCrawlerConfig,
+  installEsbuildNameShim,
+  resolveOutputDir,
   DEFAULT_DELAYS,
   DEFAULT_TIMEOUTS,
   CONTENT_THRESHOLDS,
@@ -45,7 +48,7 @@ import {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CALENDAR_URL = process.env.LIST_URL || 'https://www.digitimes.com/calendar.php?d=14d';
 const BASE_URL = 'https://www.digitimes.com';
-const OUTPUT_DIR = join(__dirname, 'output');
+const OUTPUT_DIR = resolveOutputDir(join(__dirname, 'output'));
 const SOURCE_LABEL = 'digitimes';
 
 const DIGITIMES_DELAYS = {
@@ -262,6 +265,8 @@ function extractArticleContent(html: string, url: string): ExtractedContent {
  * @returns Promise that resolves when configuration is complete
  */
 async function configurePage(page: Page, referer?: string): Promise<void> {
+  // Must run before the first navigation: see installEsbuildNameShim.
+  await installEsbuildNameShim(page);
   await page.setViewport({ width: 1920, height: 1080 });
   const headers: Record<string, string> = {
     'Accept-Language': 'en-US,en;q=0.9',

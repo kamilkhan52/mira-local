@@ -1,52 +1,28 @@
-# Micron – EE Times Crawler
+# News crawlers
 
-Crawls [EE Times Memory Designline](https://www.eetimes.com/category/news-analysis/designline/memory-designline/) and can POST results to an n8n webhook via Node’s native `fetch()`.
+TypeScript crawlers for EE Times (Memory Designline), SemiAnalysis, TrendForce
+and Digitimes. The Python pipeline (`mira/media.py`, `mira/realtime.py`) runs
+them with `npx tsx <crawler>.ts` and reads the JSON they write.
 
-## Sending to n8n (webhook)
+Setup (once): `npm ci --ignore-scripts` in this directory (`make setup` does it).
+They drive a locally installed Chrome/Chromium through `puppeteer-core`; set
+`PUPPETEER_EXECUTABLE_PATH` or `CHROME_PATH` if Chrome is not in a standard location.
 
-The crawler **defaults to the production webhook** (`http://localhost:5678/webhook/eetimes-crawl`). Ensure the workflow **"EE Times Crawl 2026-01-01 to 01-29"** is **Active** in n8n (toggle on, top right, then save).
+Environment (set by the Python caller):
 
-- **Production** (default): No env var needed. Uses `/webhook/eetimes-crawl`; workflow must be Active.
-- **Test URL**: Set `N8N_WEBHOOK_URL="http://localhost:5678/webhook-test/eetimes-crawl"` for quick test (no activation; expires when you leave the workflow).
-- **Other host**: Set `N8N_WEBHOOK_URL` to the Production URL from the Webhook node in n8n.
+| Variable | Meaning |
+|---|---|
+| `DATE_FROM`, `DATE_TO` | Inclusive article date window (YYYY-MM-DD) |
+| `MAX_ARTICLES` | Cap on articles (0 = no cap) |
+| `OUTPUT_PATH` | Where to write the JSON result |
+| `OUTPUT_DIR` | Directory for timestamped copies (defaults under the data dir) |
+| `LIST_URL` | EE Times list page override |
+| `CRAWLER_WEBHOOK_URL` | Optional: also POST results to this URL. Off by default. (`N8N_WEBHOOK_URL` is accepted as a deprecated alias.) |
 
-### Run (production by default)
-
-```bash
-node crawl-eetimes-list.js
-# or with pnpm
-pnpm exec node crawl-eetimes-list.js
-```
-
-### Option 2: HTTPS with self-signed certificate
-
-If n8n runs on HTTPS locally, tell Node to allow the certificate:
-
-```bash
-export NODE_TLS_REJECT_UNAUTHORIZED='0'
-N8N_WEBHOOK_URL="https://localhost:5678/webhook/ee-times-crawl-2026" node crawl-eetimes-list.js
-```
-
-## Test the webhook with curl
-
-**HTTP (localhost):** Use the same URL as `N8N_WEBHOOK_URL` (copy from Webhook node in n8n).
+Manual run:
 
 ```bash
-curl -X POST http://localhost:5678/webhook/eetimes-crawl \
-  -H "Content-Type: application/json" \
-  -d '[{"url": "https://test.com", "listTitle": "Manual Test", "content": "Test content"}]'
+DATE_FROM=2026-09-20 DATE_TO=2026-09-28 MAX_ARTICLES=3 OUTPUT_PATH=/tmp/ee.json npx tsx ee-times-crawler.ts
 ```
 
-**HTTPS with self-signed cert:** add `-k` (insecure):
-
-```bash
-curl -k -X POST https://localhost:5678/webhook/ee-times-crawl-2026 \
-  -H "Content-Type: application/json" \
-  -d '[{"url": "https://test.com", "listTitle": "Manual Test", "content": "Test content"}]'
-```
-
-## Other env vars
-
-- `OUTPUT_PATH` – Also write JSON to this path (e.g. `../configs/eetimes-latest.json`).
-- `MAX_ARTICLES` – Limit number of articles to crawl.
-- `DATE_FROM` / `DATE_TO` – Filter list by date (if supported by the crawler).
+`generate-pdf.ts` renders the report HTML to PDF with the same local Chrome.

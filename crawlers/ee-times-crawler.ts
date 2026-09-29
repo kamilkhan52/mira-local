@@ -16,8 +16,9 @@
  *   HEADLESS        Set to "false" to show browser (recommended; headless may be blocked).
  *   DATE_FROM       Start of date range (YYYY-MM-DD). Only scrape articles on or after this date.
  *   DATE_TO         End of date range (YYYY-MM-DD). Only scrape articles on or before this date.
- *   OUTPUT_PATH     If set, also write JSON to this path (e.g. /configs/eetimes-latest.json for n8n).
- *   N8N_WEBHOOK_URL n8n webhook URL (default: http://localhost:5678/webhook/eetimes-crawl).
+ *   OUTPUT_PATH     If set, also write JSON to this path (the Python pipeline passes <data>/temp/eetimes-latest.json).
+ *   OUTPUT_DIR      Directory for timestamped snapshots (default: ./output).
+ *   CRAWLER_WEBHOOK_URL If set, POST the results here (N8N_WEBHOOK_URL: deprecated alias). No POST by default.
  */
 
 import { dirname, join } from 'path';
@@ -36,6 +37,8 @@ import {
   isInDateRange,
   isEarlierThanDateFrom,
   parseCrawlerConfig,
+  installEsbuildNameShim,
+  resolveOutputDir,
   DEFAULT_DELAYS,
   DEFAULT_TIMEOUTS,
   CONTENT_THRESHOLDS,
@@ -47,7 +50,7 @@ import {
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const LIST_URL = process.env.LIST_URL || 'https://www.eetimes.com/category/news-analysis/designline/memory-designline/';
-const OUTPUT_DIR = join(__dirname, 'output');
+const OUTPUT_DIR = resolveOutputDir(join(__dirname, 'output'));
 const SOURCE_LABEL = 'eetimes';
 
 const EETIMES_SELECTORS = {
@@ -116,6 +119,8 @@ interface ExtractedContent {
   articleContent: string;
   articleTitle: string;
   siteName: string;
+  /** YYYY-MM-DD from the article page's publish metadata ('' if absent). */
+  publishedDate?: string;
 }
 
 // ─── Date Parsing ─────────────────────────────────────────────────────────
@@ -303,6 +308,34 @@ function getNextPageLink(currentListUrl: string): string | null {
 // ─── Content Extraction ───────────────────────────────────────────────────
 
 /**
+ * Publish date (YYYY-MM-DD) from an article page's metadata.
+ *
+ * The designline's featured/headline blocks carry no date on the list page,
+ * so those articles used to come back with an empty listDate: the DATE_FROM /
+ * DATE_TO filter let them through regardless of age, and downstream window
+ * filters (which need a date) dropped them. The article page itself carries
+ * `article:published_time` / JSON-LD `datePublished`.
+ *
+ * @param html - Full HTML of the article page
+ * @returns Date string or '' when no usable metadata is present
+ */
+function extractPublishedDate(html: string): string {
+  try {
+    const $ = cheerio.load(html);
+    const meta =
+      $('meta[property="article:published_time"]').attr('content') ||
+      $('meta[itemprop="datePublished"]').attr('content') ||
+      '';
+    const jsonLd = html.match(/"datePublished"\s*:\s*"([^"]+)"/);
+    const raw = (meta || (jsonLd ? jsonLd[1] : '')).trim();
+    const match = raw.match(/^\d{4}-\d{2}-\d{2}/);
+    return match ? match[0] : '';
+  } catch {
+    return '';
+  }
+}
+
+/**
  * Extract article content using Readability with fallback selectors.
  *
  * @param html - Full HTML content of article page
@@ -388,6 +421,8 @@ function extractArticleContent(html: string, url: string): ExtractedContent {
  * @returns Promise that resolves when configuration is complete
  */
 async function configurePage(page: Page): Promise<void> {
+  // Must run before the first navigation: see installEsbuildNameShim.
+  await installEsbuildNameShim(page);
   await page.setViewport({ width: 1920, height: 1080 });
   await page.setExtraHTTPHeaders({
     'Accept-Language': 'en-US,en;q=0.9',
@@ -442,7 +477,7 @@ async function crawlArticle(page: Page, articleUrl: string): Promise<ExtractedCo
     await sleep(DEFAULT_DELAYS.ARTICLE_LOAD_MS);
 
     const html = await page.content();
-    return extractArticleContent(html, articleUrl);
+    return { ...extractArticleContent(html, articleUrl), publishedDate: extractPublishedDate(html) };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error(`Failed to crawl article ${articleUrl}:`, errorMessage);
@@ -501,12 +536,24 @@ async function processListArticles(
 
     const extractedContent = await crawlArticle(page, article.url);
 
+    // Undated list entries: fall back to the article page's publish date and
+    // apply the date window now that it is known.
+    let effectiveListDate = listDate;
+    if (extractedContent && !effectiveListDate && extractedContent.publishedDate) {
+      effectiveListDate = extractedContent.publishedDate;
+      if (!isInDateRange(parseListDateToDate(`${effectiveListDate}T12:00:00`), config.dateFrom, config.dateTo)) {
+        console.log(`   ⏭️ skipped (article published ${effectiveListDate}, outside date range)`);
+        await sleep(DEFAULT_DELAYS.ARTICLE_LOAD_MS);
+        continue;
+      }
+    }
+
     if (extractedContent) {
       results.push({
         url: article.url,
         listTitle: article.title,
         listAuthor,
-        listDate,
+        listDate: effectiveListDate,
         title: extractedContent.articleTitle || article.title,
         siteName: extractedContent.siteName,
         content: extractedContent.articleContent,

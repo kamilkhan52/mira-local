@@ -2,9 +2,11 @@ from __future__ import annotations
 from mira.paths import TEMP_DIR, SCRIPTS_DIR
 import asyncio
 import sys
+import time
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from urllib.parse import quote
 
 import requests
 
@@ -21,16 +23,46 @@ _HEADERS = {"User-Agent": "mira-local-script/1.0 (mailto:oed8205@gmail.com)"}
 # (2608.11840v1) — pipeline.py's cache lookups account for both forms.
 PDF_CONCURRENCY = 32
 
+# n8n's Query arXiv node has no retry; a transient arXiv 503 used to kill the
+# run. Four attempts, 5 s doubling backoff (5, 10, 20 s).
+FETCH_ATTEMPTS = 4
+FETCH_BACKOFF_SECONDS = 5.0
+_RETRY_STATUSES = {408, 429, 500, 502, 503, 504}
+# Characters encodeURIComponent leaves unescaped.
+_URI_COMPONENT_SAFE = "-_.!~*'()"
+
+
+def _keyword_query(keywords: list[str]) -> str:
+    """Query arXiv's keyword clause: ti:/abs: terms, multi-word keywords in
+    double quotes, each term encodeURIComponent-escaped, all OR-joined."""
+    def wrap(k: str) -> str:
+        return f'"{k}"' if " " in k else k
+    ti = [f"ti:{quote(wrap(k), safe=_URI_COMPONENT_SAFE)}" for k in keywords]
+    ab = [f"abs:{quote(wrap(k), safe=_URI_COMPONENT_SAFE)}" for k in keywords]
+    return "+OR+".join(ti + ab)
+
 
 def _build_url(config: dict) -> str:
-    cats = config["arxiv"]["categories"]
+    """Port of the n8n "Query arXiv" URL expression. Category clause, optional
+    keyword clause (arxiv.keywords), submittedDate window, and max_results =
+    max_limit override ?? arxiv.max_results ?? 2000."""
+    arxiv = config.get("arxiv") or {}
+    cats = arxiv.get("categories") or []
+    keywords = arxiv.get("keywords") or []
     cat_query = "+OR+".join(f"cat:{c}" for c in cats)
+    # n8n quirk (reproduced): with no categories the query starts with
+    # "+AND+..."; every shipped profile has categories.
+    topic_query = f"({cat_query})" if cat_query else ""
+    keyword_part = f"+AND+({_keyword_query(keywords)})" if keywords else ""
     start = config["start_date"]
     end = config["end_date"]
-    max_results = config["arxiv"].get("max_results", 2000)
+    max_limit = config.get("max_limit")
+    max_results = max_limit if max_limit is not None else arxiv.get("max_results", 2000)
+    if max_results is None:
+        max_results = 2000
     return (
         f"https://export.arxiv.org/api/query"
-        f"?search_query=({cat_query})"
+        f"?search_query={topic_query}{keyword_part}"
         f"+AND+submittedDate:[{start}0000+TO+{end}2359]"
         f"&start=0&max_results={max_results}"
     )
@@ -79,10 +111,36 @@ def _deduplicate(papers: list[dict]) -> list[dict]:
     return result
 
 
+def _get_with_retries(url: str, *, attempts: int = FETCH_ATTEMPTS,
+                      backoff: float = FETCH_BACKOFF_SECONDS, timeout: float = 300) -> requests.Response:
+    """GET with exponential backoff on timeouts, connection errors, 5xx, 408
+    and 429 (arXiv throttles with 503/429). Other 4xx fail immediately."""
+    last_err: Exception | None = None
+    for attempt in range(attempts):
+        try:
+            resp = requests.get(url, headers=_HEADERS, timeout=timeout)
+            if resp.status_code in _RETRY_STATUSES:
+                raise requests.HTTPError(f"HTTP {resp.status_code} from arXiv", response=resp)
+            resp.raise_for_status()
+            return resp
+        except requests.HTTPError as e:
+            status = e.response.status_code if e.response is not None else None
+            if status is not None and status not in _RETRY_STATUSES:
+                raise
+            last_err = e
+        except (requests.Timeout, requests.ConnectionError) as e:
+            last_err = e
+        if attempt < attempts - 1:
+            wait = backoff * (2 ** attempt)
+            print(f"  WARNING: arXiv request failed ({last_err}); retrying in {wait:.0f}s "
+                  f"[{attempt + 1}/{attempts}]")
+            time.sleep(wait)
+    raise RuntimeError(f"arXiv query failed after {attempts} attempts: {last_err}")
+
+
 def fetch_papers(config: dict) -> list[dict]:
     url = _build_url(config)
-    resp = requests.get(url, headers=_HEADERS, timeout=300)
-    resp.raise_for_status()
+    resp = _get_with_retries(url)
     papers = _parse_xml(resp.text)
     return _deduplicate(papers)
 

@@ -1,0 +1,24 @@
+{
+  "_note": "Scheduled deployments served by `serve.py`. `enabled` is the source of truth: flip it here and restart the serve process (or `make restart`). Everything starts disabled so this project can run side by side with the n8n deployment without sending duplicate emails; enable at cutover. Crons are evaluated in `timezone`. n8n's weekly triggers were 'every 7 days at 06:00' (floating weekday); they are pinned to Monday here.",
+  "timezone": "America/Los_Angeles",
+  "deployments": [
+    {"name": "cxl-research-monthly", "flow": "digest", "cron": "0 6 1 * *",
+     "parameters": {"profile": "cxl-research", "mode": "monthly"}, "enabled": false,
+     "description": "Port of the live n8n 'CXL Monthly Trigger' (1st of the month, 06:00)."},
+    {"name": "memory-innovation-weekly", "flow": "digest", "cron": "0 6 * * 1",
+     "parameters": {"profile": "memory-innovation", "mode": "weekly"}, "enabled": false},
+    {"name": "memory-innovation-daily", "flow": "digest", "cron": "0 6 * * *",
+     "parameters": {"profile": "memory-innovation", "mode": "daily"}, "enabled": false},
+    {"name": "storage-innovation-weekly", "flow": "digest", "cron": "0 6 * * 1",
+     "parameters": {"profile": "storage-innovation", "mode": "weekly"}, "enabled": false},
+    {"name": "optical-interconnects-weekly", "flow": "digest", "cron": "0 6 * * 1",
+     "parameters": {"profile": "optical-interconnects", "mode": "weekly"}, "enabled": false},
+    {"name": "mcbu-memory-weekly", "flow": "digest", "cron": "0 6 * * 1",
+     "parameters": {"profile": "mcbu-memory", "mode": "weekly"}, "enabled": false},
+    {"name": "embedded-intelligence-weekly", "flow": "digest", "cron": "0 6 * * 1",
+     "parameters": {"profile": "embedded-intelligence", "mode": "weekly"}, "enabled": false},
+    {"name": "realtime-hourly", "flow": "realtime", "cron": "0 * * * *",
+     "parameters": {}, "enabled": false,
+     "description": "MIRA Live: Jev-triaged new papers/news emailed to configs/realtime.json subscribers."}
+  ]
+}

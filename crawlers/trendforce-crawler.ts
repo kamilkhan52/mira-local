@@ -15,7 +15,8 @@
  *   DATE_TO             End of date range (YYYY-MM-DD). Only include articles on or before this date.
  *   MAX_ARTICLES        Max articles to crawl (default 5). Use 0 to crawl all in range.
  *   OUTPUT_PATH         If set, also write n8n JSON to this path (e.g. /configs/trendforce-latest.json).
- *   N8N_WEBHOOK_URL     If set, POST the n8n JSON array to this webhook URL.
+ *   OUTPUT_DIR          Directory for timestamped snapshots (default: ./output).
+ *   CRAWLER_WEBHOOK_URL If set, POST the JSON array here (N8N_WEBHOOK_URL: deprecated alias). No POST by default.
  *   PAGE_START          First list page number (default 1).
  *   PAGE_END            Last list page number (default: crawl until no articles or non-200).
  *   FETCH_ARTICLE_BODY  Set to "false" to skip fetching article body (list-only; content will be empty).
@@ -36,6 +37,8 @@ import {
   isInDateRange,
   isEarlierThanDateFrom,
   CONTENT_THRESHOLDS,
+  resolveOutputDir,
+  resolveWebhookUrl,
 } from './shared/util-functions.js';
 
 // ─── Constants ─────────────────────────────────────────────────────────────
@@ -43,7 +46,7 @@ import {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const BASE_URL = 'https://www.trendforce.com';
 const LIST_URL_TEMPLATE = process.env.LIST_URL_TEMPLATE || `${BASE_URL}/news/page/{}/`;
-const OUTPUT_DIR = join(__dirname, 'output');
+const OUTPUT_DIR = resolveOutputDir(join(__dirname, 'output'));
 const SOURCE_LABEL = 'trendforce';
 
 const USER_AGENT =
@@ -138,7 +141,7 @@ function parseCrawlerConfig(): TrendForceConfig {
     maxArticles:
       process.env.MAX_ARTICLES !== undefined ? Number(process.env.MAX_ARTICLES) : 5,
     outputPath: process.env.OUTPUT_PATH || null,
-    webhookUrl: process.env.N8N_WEBHOOK_URL || null,
+    webhookUrl: resolveWebhookUrl(),
     pageStart:
       process.env.PAGE_START !== undefined ? Number(process.env.PAGE_START) : 1,
     pageEnd: pageEndEnv !== undefined && pageEndEnv !== '' ? Number(pageEndEnv) : null,

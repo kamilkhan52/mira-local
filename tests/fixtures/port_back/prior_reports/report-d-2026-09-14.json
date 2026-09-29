@@ -1,0 +1,17 @@
+[
+  {
+    "report_id": "report-d",
+    "profile_id": "memory-innovation",
+    "topic_name": "Memory Technology Research",
+    "topic_focus": "memory technology",
+    "period_label": "last 8 days",
+    "period_title": "Last 8 Days",
+    "period_range": "x",
+    "is_test": true,
+    "run_date": "2026-09-14",
+    "created_at": "2026-09-14T05:00:00.000Z",
+    "subject": "MIRA  Digest - Sept 14",
+    "body_markdown": "## X\nflagged",
+    "report_file": "/report-files/prod/memory-innovation/report-d.json"
+  }
+]

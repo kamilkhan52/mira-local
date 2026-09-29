@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Run a command with MIRA's local, telemetry-free Prefect settings applied.
+#   bin/mira-env prefect server start
+#   bin/mira-env python serve.py
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+set -a
+# shellcheck disable=SC1091
+source "$ROOT/deploy/prefect.env"
+set +a
+export MIRA_DATA_DIR="${MIRA_DATA_DIR:-$ROOT/data}"
+export PREFECT_HOME="${PREFECT_HOME:-$MIRA_DATA_DIR/prefect}"
+mkdir -p "$PREFECT_HOME" "$MIRA_DATA_DIR/logs"
+cd "$ROOT"
+if [[ "${1:-}" == "prefect" || "${1:-}" == "python" ]]; then
+  cmd="$1"; shift
+  exec "$ROOT/.venv/bin/$cmd" "$@"
+fi
+exec "$@"

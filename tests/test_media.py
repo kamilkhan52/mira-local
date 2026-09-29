@@ -43,10 +43,15 @@ def test_run_crawler_reads_output_file(tmp_path, monkeypatch):
     repoint(monkeypatch, "mira.media", tmp_path)
     (tmp_path / "scripts" / "temp").mkdir(parents=True)
     output_file = tmp_path / "scripts" / "temp" / "eetimes-latest.json"
-    output_file.write_text(SAMPLE_CRAWLER_OUTPUT)
+    # _run_crawler deletes a stale output file before crawling, so the fake
+    # crawler has to write it (as the real one does).
+    output_file.write_text("[]")
 
-    with patch("mira.media.subprocess.run") as mock_run:
-        mock_run.return_value = MagicMock(returncode=0, stderr="")
+    def fake_crawl(*args, **kwargs):
+        output_file.write_text(SAMPLE_CRAWLER_OUTPUT)
+        return MagicMock(returncode=0, stderr="")
+
+    with patch("mira.media.subprocess.run", side_effect=fake_crawl):
         result = _run_crawler("ee-times-crawler.ts", {
             "start_date_iso": "2026-05-11",
             "end_date_iso": "2026-05-18",

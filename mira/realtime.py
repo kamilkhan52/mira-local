@@ -27,8 +27,8 @@ from pathlib import Path
 from mira import jev
 
 ROOT = Path(__file__).parent.parent
-# On the internal disk: report-files/ is a symlink to an external volume, which
-# macOS blocks background (launchd) jobs from writing to.
+# Keep MIRA_DATA_DIR on a disk background jobs can write to (macOS blocks
+# launchd jobs from external volumes without Full Disk Access).
 STATE_DIR = REALTIME_DIR
 
 # Jev relevance-level cutoffs per profile, calibrated against the cached LLM
@@ -322,7 +322,7 @@ def run_profile(profile_id: str, settings: dict, news_pool: list[dict] | None,
     from mira.config import load_config, shared_llm_model
     from mira.report import send_email, to_html
 
-    config = load_config(profile_id, "daily")
+    config = load_config(profile_id)  # profile default mode; realtime only needs topic/prompts/email
     ledger = Ledger(profile_id)
     t0 = time.perf_counter()
 

@@ -6,6 +6,7 @@ pypdf (BSD-3) is the fallback. PyMuPDF is deliberately NOT used: it is AGPL-3.0
 """
 from __future__ import annotations
 
+import threading
 from io import BytesIO
 
 try:
@@ -15,6 +16,10 @@ except ImportError:  # pragma: no cover - exercised only without pypdfium2
 
 from pypdf import PdfReader
 
+# PDFium is not thread-safe (concurrent use segfaults the process); the
+# extractors download in parallel threads, so parsing is serialized here.
+_PDFIUM_LOCK = threading.Lock()
+
 
 def page_texts(src, max_pages: int | None = None) -> tuple[list[str], int]:
     """(text of the first max_pages pages, total page count). src is a path,
@@ -23,21 +28,26 @@ def page_texts(src, max_pages: int | None = None) -> tuple[list[str], int]:
         src = src.getvalue()
     if pdfium is not None:
         try:
-            pdf = pdfium.PdfDocument(src)
-            try:
-                n = len(pdf)
-                texts = []
-                for i in range(n if max_pages is None else min(n, max_pages)):
-                    page = pdf[i]
-                    tp = page.get_textpage()
-                    texts.append(tp.get_text_range())
-                    tp.close()
-                    page.close()
-                return texts, n
-            finally:
-                pdf.close()
+            with _PDFIUM_LOCK:
+                return _pdfium_texts(src, max_pages)
         except Exception:  # noqa: BLE001 — fall back to pypdf on any PDFium failure
             pass
     reader = PdfReader(BytesIO(src) if isinstance(src, (bytes, bytearray)) else src)
     pages = reader.pages if max_pages is None else reader.pages[:max_pages]
     return [(p.extract_text() or "") for p in pages], len(reader.pages)
+
+
+def _pdfium_texts(src, max_pages: int | None) -> tuple[list[str], int]:
+    pdf = pdfium.PdfDocument(src)
+    try:
+        n = len(pdf)
+        texts = []
+        for i in range(n if max_pages is None else min(n, max_pages)):
+            page = pdf[i]
+            tp = page.get_textpage()
+            texts.append(tp.get_text_range())
+            tp.close()
+            page.close()
+        return texts, n
+    finally:
+        pdf.close()

@@ -179,6 +179,58 @@ export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// ─── Output / Webhook / Browser Shims ─────────────────────────────────────
+
+/**
+ * Resolves the optional webhook the crawler POSTs its results to.
+ *
+ * Crawlers no longer POST anywhere by default (they used to target a local
+ * n8n webhook, which failed the whole crawl with exit 1 when n8n was not
+ * running). Set CRAWLER_WEBHOOK_URL to opt in. N8N_WEBHOOK_URL is accepted as
+ * a deprecated alias; an empty value disables the POST either way.
+ *
+ * @returns Webhook URL or null when no POST should happen
+ */
+export function resolveWebhookUrl(): string | null {
+  const explicit = (process.env.CRAWLER_WEBHOOK_URL || '').trim();
+  if (explicit) return explicit;
+  const legacy = (process.env.N8N_WEBHOOK_URL || '').trim();
+  if (legacy) {
+    console.warn('N8N_WEBHOOK_URL is deprecated; set CRAWLER_WEBHOOK_URL instead.');
+    return legacy;
+  }
+  return null;
+}
+
+/**
+ * Directory for timestamped crawl snapshots. OUTPUT_DIR (set by the Python
+ * pipeline to its data temp dir) wins; otherwise the crawler-local fallback.
+ *
+ * @param fallback - Default directory (usually <crawlers>/output)
+ * @returns Directory path
+ */
+export function resolveOutputDir(fallback: string): string {
+  const dir = (process.env.OUTPUT_DIR || '').trim();
+  return dir || fallback;
+}
+
+/**
+ * tsx/esbuild compiles with keepNames, which wraps named inner functions in
+ * `__name(fn, "name")`. Functions passed to page.evaluate are serialized and
+ * run in the browser, where that helper does not exist, so evaluate throws
+ * `ReferenceError: __name is not defined`. Defining a no-op `__name` in every
+ * document before any page script runs makes the serialized code valid.
+ * Must be called before the first navigation.
+ */
+export const ESBUILD_NAME_SHIM =
+  'globalThis.__name = globalThis.__name || ((target) => target);';
+
+export async function installEsbuildNameShim(page: {
+  evaluateOnNewDocument: (source: string) => Promise<unknown>;
+}): Promise<void> {
+  await page.evaluateOnNewDocument(ESBUILD_NAME_SHIM);
+}
+
 // ─── Configuration Parsing ────────────────────────────────────────────────
 
 /**
@@ -196,9 +248,6 @@ export function parseCrawlerConfig(): CrawlerConfig {
     dateFrom: process.env.DATE_FROM || null,
     dateTo: process.env.DATE_TO || null,
     outputPath: process.env.OUTPUT_PATH || null,
-    webhookUrl:
-      process.env.N8N_WEBHOOK_URL === ''
-        ? null
-        : (process.env.N8N_WEBHOOK_URL || 'http://localhost:5678/webhook/eetimes-crawl'),
+    webhookUrl: resolveWebhookUrl(),
   };
 }

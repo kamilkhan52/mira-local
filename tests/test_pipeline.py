@@ -257,6 +257,9 @@ def test_affiliation_write_gated_on_first_page_text(tmp_path, monkeypatch):
 def test_classify_papers_survives_worker_exception(tmp_path, monkeypatch):
     """One failing paper must not abort the stage (round-1 P1-4)."""
     repoint(monkeypatch, "mira.pipeline", tmp_path)
+    # affiliation and classification now fail independently (n8n branches), so
+    # the failing paper retries twice as many calls — skip the 10 s waits
+    monkeypatch.setattr("mira.config.time.sleep", lambda _: None)
     from mira.pipeline import classify_papers
     calls = {"n": 0}
 
@@ -385,7 +388,9 @@ def test_select_papers_splits_selected_and_remaining():
     }
     mock_client = MagicMock()
     mock_client.chat.completions.create.return_value.choices[0].message.content = json.dumps({
-        "selected_papers": [{"arxiv_id": "2605.001", "reasoning": "top paper"}],
+        # n8n's selection schema names the field selection_reasoning (the old
+        # CLI read "reasoning"); Validate Selection Output only keeps that key.
+        "selected_papers": [{"arxiv_id": "2605.001", "selection_reasoning": "top paper"}],
         "remaining_papers": [{"arxiv_id": "2605.002"}],
     })
     selected, remaining = select_papers(papers, config, mock_client)
@@ -432,6 +437,7 @@ def test_analyze_paper_handles_llm_failure(monkeypatch):
 
     mock_client = MagicMock()
     mock_client.chat.completions.create.side_effect = RuntimeError("network error")
+    monkeypatch.setattr("mira.pipeline.time.sleep", lambda _: None)  # 3 tries, 10 s apart
 
     paper = {"id": "2605.001", "title": "P", "authors": [],
              "primary_topic": "HBM", "selection_reasoning": ""}

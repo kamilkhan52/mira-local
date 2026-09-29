@@ -1,0 +1,17 @@
+# systemd unit (Linux server/VM). Install:
+#   sudo cp deploy/mira-*.service /etc/systemd/system/ && sudo systemctl daemon-reload
+#   sudo systemctl enable --now mira-prefect-server mira-flows
+# Adjust User= and the /opt/mira-local path to your install.
+[Unit]
+Description=MIRA local Prefect server (UI + API on 127.0.0.1:4200)
+After=network-online.target
+
+[Service]
+User=mira
+WorkingDirectory=/opt/mira-local
+ExecStart=/opt/mira-local/bin/mira-env prefect server start
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

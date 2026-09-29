@@ -14,7 +14,8 @@
  *   DATE_TO        End of date range (YYYY-MM-DD). Only include articles on or before this date.
  *   MAX_ARTICLES   Max articles to crawl (default 5). Use 0 to crawl all in range.
  *   OUTPUT_PATH    If set, also write n8n JSON array to this path (e.g. /configs/semianalysis-latest.json).
- *   N8N_WEBHOOK_URL If set, POST the n8n JSON array to this webhook URL (e.g. http://localhost:5678/webhook/semianalysis-crawl).
+ *   OUTPUT_DIR      Directory for timestamped snapshots (default: ./output).
+ *   CRAWLER_WEBHOOK_URL If set, POST the JSON array here (N8N_WEBHOOK_URL: deprecated alias). No POST by default.
  */
 
 import { dirname, join } from 'path';
@@ -29,6 +30,8 @@ import {
   parseDate,
   isInDateRange,
   isEarlierThanDateFrom,
+  resolveOutputDir,
+  resolveWebhookUrl,
   type CrawlerConfig,
 } from './shared/util-functions.js';
 
@@ -36,7 +39,7 @@ import {
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const BASE_URL = 'https://newsletter.semianalysis.com';
-const OUTPUT_DIR = join(__dirname, 'output');
+const OUTPUT_DIR = resolveOutputDir(join(__dirname, 'output'));
 const API_ARCHIVE = `${BASE_URL}/api/v1/archive`;
 const API_POSTS_BASE = `${BASE_URL}/api/v1/posts`;
 
@@ -174,7 +177,7 @@ function parseCrawlerConfig(): SemiAnalysisConfig {
     maxArticles:
       process.env.MAX_ARTICLES !== undefined ? Number(process.env.MAX_ARTICLES) : 5,
     outputPath: process.env.OUTPUT_PATH || null,
-    webhookUrl: process.env.N8N_WEBHOOK_URL || null,
+    webhookUrl: resolveWebhookUrl(),
   };
 }
 
