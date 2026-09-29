@@ -15,6 +15,9 @@ n8n deployment: no n8n, no Docker, no cloud accounts.
   (TypeSafe), with the top items summarized for each profile's preferences
   and emailed to the subscribers in `configs/realtime.json`.
 
+The Jev evaluation (what was tested, results, recommendations, setup) is in
+[`docs/jev-report.html`](docs/jev-report.html); open it in a browser.
+
 ## Why this stack
 
 | Requirement | How it is met |
