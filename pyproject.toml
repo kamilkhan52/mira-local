@@ -1,0 +1,31 @@
+[project]
+name = "mira-local"
+version = "1.0.0"
+description = "MIRA research digests and realtime alerts — local, self-hosted, no n8n"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "prefect==3.8.6",
+    "openai>=1.0.0",
+    "httpx>=0.24.0",
+    "python-dotenv>=1.0.0",
+    "markdown>=3.5.0",
+    "requests>=2.31.0",
+    "networkx>=3.0",
+    "numpy>=1.26",
+    "fastapi>=0.115.0",
+    "uvicorn>=0.30.0",
+    "python-multipart>=0.0.9",
+    "pydantic>=2.7",
+    "pypdf>=4.0.0",
+    "pypdfium2>=4.30",
+    "typesafe-sdk>=0.7.2",
+]
+
+[dependency-groups]
+dev = ["pytest>=7.4.0"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

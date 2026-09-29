@@ -1,0 +1,15 @@
+{
+  "years_back": 3,
+  "venues": [
+    {"name": "OFC", "dblp_stream": "conf/ofc"},
+    {"name": "SC", "dblp_stream": "conf/sc"},
+    {"name": "HOTI", "dblp_stream": "conf/hoti"},
+    {
+      "name": "ECTC",
+      "crossref_containers": [
+        "{year} IEEE {ordinal} Electronic Components and Technology Conference (ECTC)"
+      ],
+      "ordinal_base": 1950
+    }
+  ]
+}

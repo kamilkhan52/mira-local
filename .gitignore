@@ -1,0 +1,16 @@
+# Secrets and local settings
+.env
+*.env
+!deploy/*.env.example
+# Runtime data (reports, caches, PDFs, ledgers) — see mira/paths.py
+data/
+# Python / Node
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+crawlers/node_modules/
+crawlers/output/
+# Editors / OS
+.vscode/
+.DS_Store

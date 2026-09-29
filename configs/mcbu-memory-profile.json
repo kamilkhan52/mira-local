@@ -1,0 +1,162 @@
+{
+  "default_profile_id": "mcbu-memory",
+  "llm_models": {
+    "affiliation": "google/gemini-3.6-flash",
+    "classification": "google/gemini-3.6-flash",
+    "selection": "anthropic/claude-sonnet-5",
+    "analysis": "anthropic/claude-opus-4.8",
+    "trend": "anthropic/claude-sonnet-5",
+    "report": "anthropic/claude-opus-4.8",
+    "media_selection": "anthropic/claude-sonnet-5",
+    "media_summary": "anthropic/claude-sonnet-5",
+    "exhaustive_map": "google/gemini-2.5-flash",
+    "exhaustive_synthesis": "anthropic/claude-sonnet-5"
+  },
+  "_llm_models_note": [
+    "exhaustive_map and exhaustive_synthesis are optional keys read by the",
+    "standalone exhaustive-research path (mira/exhaustive), not by the n8n",
+    "pipeline stages in STAGE_KEYS. Both fall back to the pinned defaults in",
+    "mira/exhaustive/compiler.py when absent.",
+    "exhaustive_map stays on google/gemini-2.5-flash deliberately: the map",
+    "stage is bulk extraction over every selected chunk, where a cheap",
+    "long-context tier is the point. Only the synthesis/critic tier needs",
+    "frontier reasoning.",
+    "exhaustive_synthesis moved from anthropic/claude-sonnet-4.6 to",
+    "anthropic/claude-sonnet-5 to match the merged per-stage model policy",
+    "(newer and cheaper at $2/$10 vs $3/$15).",
+    "PLACEHOLDER PRICES: the static fallback table in mira/exhaustive/costs.py",
+    "carries $3/$15 for anthropic/claude-sonnet-5 and $0.30/$2.50 for",
+    "openai/gpt-5.6-terra. Those are conservative placeholders, not confirmed",
+    "list prices -- live runs fetch the real numbers from the OpenRouter",
+    "catalog at startup and only fall back to the table (with a WARNING log)",
+    "when that fetch fails."
+  ],
+  "profiles": [
+    {
+      "profile_id": "mcbu-memory",
+      "trigger_match": [
+        "mcbu"
+      ],
+      "topic": {
+        "name": "Mobile & Client Memory Research",
+        "focus": "mobile and client-PC memory technology (LPDDR, client DDR5, 3D DRAM, edge PIM)",
+        "assistant_signature": "Memory Innovation Research Assistant",
+        "short_label": "MCBU Memory"
+      },
+      "media": {
+        "eetimes": {
+          "list_url": "https://www.eetimes.com/category/news-analysis/designline/memory-designline/"
+        },
+        "source_caps": {
+          "trendforce": 10,
+          "digitimes": 15,
+          "eetimes": 10,
+          "semianalysis": 10
+        },
+        "selection_guidance": "Prioritize articles about LPDDR (LPDDR5/5X/6), client/PC DDR5, 3D DRAM, on-device/edge AI memory, PIM, LPCAMM/SOCAMM, and analog compute-in-memory. Treat HBF and XL-Flash as in-scope only when framed as a memory tier. Deprioritize datacenter-only HBM and NAND-as-storage (SSD/NVMe) articles, and articles where memory is only briefly mentioned as context."
+      },
+      "arxiv": {
+        "categories": [
+          "cs.AR",
+          "cs.ET",
+          "cs.DC",
+          "cs.OS",
+          "cs.PF",
+          "cs.LG",
+          "cs.NE",
+          "eess.SP",
+          "physics.app-ph",
+          "cond-mat.mes-hall",
+          "cond-mat.mtrl-sci",
+          "cs.CR"
+        ],
+        "keywords": [],
+        "max_results": 2000
+      },
+      "s2_venues": {
+        "enabled": true,
+        "venues": [
+          "International Symposium on Computer Architecture",
+          "International Symposium on High-Performance Computer Architecture",
+          "International Symposium on Memory Systems",
+          "International Symposium on Microarchitecture",
+          "International Conference on Architectural Support for Programming Languages and Operating Systems",
+          "USENIX Annual Technical Conference",
+          "International Solid-State Circuits Conference",
+          "Symposium on VLSI Technology and Circuits",
+          "International Electron Devices Meeting",
+          "International Memory Workshop",
+          "IEEE Journal of Solid-State Circuits",
+          "JEDEC",
+          "China Flash Market Summit"
+        ],
+        "year_window": "current_and_previous",
+        "max_results": 1000
+      },
+      "thresholds": {
+        "relevance_score_min": 6,
+        "credibility_tier_min": 6
+      },
+      "summary_mode": "short",
+      "default_mode": "weekly",
+      "modes": {
+        "weekly": {
+          "lookback_days": 7,
+          "digest_label": "Mobile & Client Memory Research Digest",
+          "selection_min": 5,
+          "selection_max": 10,
+          "selection_range_label": "5-10",
+          "max_selection": 20,
+          "trend_enabled": true,
+          "trend_window_days": 90
+        }
+      },
+      "email": {
+        "weekly": {
+          "header_label": "Mobile & Client Memory Research Digest",
+          "title": "Mobile & Client Memory Research",
+          "footer_subtitle": "Digest of mobile and client-PC memory research from arXiv",
+          "colors": {
+            "primary": "#2563eb",
+            "primaryDark": "#1d4ed8",
+            "primaryLight": "#3b82f6",
+            "secondary": "#0ea5e9",
+            "text": "#1f2937",
+            "textLight": "#4b5563",
+            "textMuted": "#6b7280",
+            "border": "#e5e7eb",
+            "borderLight": "#f3f4f6",
+            "background": "#f8fafc",
+            "backgroundAlt": "#eff6ff",
+            "white": "#ffffff",
+            "accent": "#06b6d4",
+            "warning": "#f59e0b",
+            "pageBackground": "#eff6ff"
+          }
+        }
+      },
+      "prompts": {
+        "affiliation": {
+          "user": "Extract author affiliations and assess academic institutional or industry research lab credibility from this academic paper's first page. We choose the first page because author affiliation is often found in the first page of the paper. It is either alongside the author names, or using what is called superscripted author\u2013affiliation markers or superscript footnote-style markers for affiliations.\n\nPaper metadata:\narxiv_id: {{arxiv_id}}\ntitle: {{title}}\nabstract/summary: {{summary}}\nauthors: {{authors}}\ncategory: {{category}}\n\nFirst page text:\n{{first_page_text}}\n\nTASK 1: Extract Affiliations\n- Identify all unique institutions/organizations/labs\n- Map each author to their institution(s) if possible\n- Handle superscript numbers linking authors to institutions\n\nTASK 2: Assess Credibility Score (out of 10)\nEvaluate institutional reputation specifically for {{topic_focus}} research. This profile tracks the mobile and client-PC memory ecosystem, so industry peers, enablers, and customers are elevated. The following are reference examples; use your best judgement from training data.\n\nTIER 1 use scores 8-10 (industry peers, enablers, and customers \u2014 cutting-edge silicon and roadmap-driving work):\n- Memory peers: Micron, Samsung, SK Hynix, CXMT\n- Mobile/client SoC and platform players (enablers and customers): Qualcomm, MediaTek, Apple, Google, Microsoft, Intel, AMD, Arm, NVIDIA\n- These companies set the mobile/client memory agenda; treat their work as high credibility even when somewhat adjacent.\n\nTIER 2 use scores 4-7 (established institutions with research capability):\n- Universities with strong CS/EE programs (now Tier 2 for this profile): MIT, Stanford, CMU, UC Berkeley, ETH Zurich, KAIST, Tsinghua, NUS, Georgia Tech, UIUC, Princeton, Harvard\n- Other tech companies with R&D divisions, government research labs (Sandia, Lawrence Livermore, etc.), semiconductor research centers (imec, TSMC Research, Fraunhofer), and established startups in memory/PIM/CIM.\n\nTIER 3 use scores 1-3 (limited track record or unknown):\n- Unknown or obscure institutions\n- No clear institutional affiliation\n- Individual researchers without institutional backing\n- New/unproven research groups\n\nSPECIAL RULE: If the paper is about 3D DRAM (e.g. VS-CAT, 4F2, IGZO/oxide-channel, vertical channel transistor, OCTRAM, CBA / wafer bonding) AND at least one author is affiliated with a Tier 1 player above, set credibility_tier to 10. 3D DRAM architecture choices are still open, so leading-player device work is maximally strategic for this profile.\n\nImportant: DO NOT use Markdown Code Fences in the output. For example, never output \"```json\". Return ONLY valid JSON in this exact format:\n{\n  \"arxiv_id\" : \"{{arxiv_id}}\"\n  \"affiliations\": [\"Institution A\", \"Institution B\"],\n  \"author_affiliations\": {\n    \"Author Name 1\": [\"Institution A\"],\n    \"Author Name 2\": [\"Institution B\", \"Institution C\"]\n  },\n\"credibility_reasoning\": \"Brief 1-2 sentence explanation of tier assignment based on institutional reputation\",\n\"credibility_tier\": 9\n}\n\nNote that this example above has the exact arxiv_id value you should use. It is an Arxiv link, but for this project we are using these links as ids.\n\nAgain, your output should be json, but never using Markdown Code Fences such as starting with \"```json\". Never start with \"```json\".\n\nIf the information is not available, use the exact same format and use the \"Unknown\" keyword for values not known.",
+          "system": ""
+        },
+        "classification": {
+          "user": "Classify the following arXiv paper:\n\nPaper metadata:\narxiv_id: {{arxiv_id}}\nTitle: {{title}}\nAbstract: {{summary}}\n\nIMPORTANT: Return ONLY valid JSON. Do not include markdown, code fences, commentary, or extra keys.\n\nUse this exact JSON structure:\n{\n  \"arxiv_id\": \"{{arxiv_id}}\",\n  \"primary_topic\": \"...\",\n  \"secondary_topics\": [\"...\"],\n  \"potential_impact\": \"...\",\n  \"relevance_score\": 7,\n  \"key_findings\": \"...\",\n  \"actionable\": \"Yes\"\n}\n\nRules:\n- arxiv_id must exactly match the input arxiv_id value\n- relevance_score must be a number from 1 to 10 (not a string)\n- secondary_topics must be an array of strings\n- Include exactly these keys and no others",
+          "system": "You are analyzing research papers for relevance to {{topic_focus}} innovation.\n\nIMPORTANT OUTPUT RULES:\n- Return ONLY valid JSON.\n- Do NOT include markdown, code fences, commentary, or any text outside the JSON object.\n- Output must include exactly these keys and no others: arxiv_id, primary_topic, secondary_topics, potential_impact, relevance_score, key_findings, actionable.\n- arxiv_id must exactly match the input arxiv_id value.\n- secondary_topics must be an array of strings.\n- relevance_score must be a number from 1 to 10.\n\nYour task is to evaluate this paper's significance for the Mobile & Client Business Unit (MCBU): memory for mobile phones and client PCs. The priority technologies are LPDDR (LPDDR5/LPDDR5X/LPDDR6), client DDR5, 3D DRAM, edge/on-device processing-in-memory (PIM), high-bandwidth flash used as a MEMORY TIER (HBF, XL-Flash), and analog compute-in-memory (CIM).\n\nSCOPE GUIDANCE:\n- IN SCOPE: LPDDR and client/PC DDR5; 3D DRAM device, materials, and architecture (VS-CAT, 4F2, IGZO/oxide-channel, vertical channel transistor, OCTRAM, CBA/wafer bonding); PIM and near-memory computing for edge/on-device AI; analog CIM; LPCAMM/SOCAMM modules; on-device LLM memory footprint; mobile/client memory power, thermal, reliability (including RowHammer on LPDDR/DDR5).\n- MEMORY-TIER NAND IN SCOPE: HBF and XL-Flash when treated as a memory tier (capacity/bandwidth tier behind DRAM).\n- OUT OF SCOPE: NAND-as-storage (SSD, NVMe, flash controllers, endurance for storage), datacenter-only HBM, CXL pooling, and pure-storage systems. Score these low unless there is a direct mobile/client memory implication.\n\nField guidance:\n- primary_topic: Identify the main memory technology or concept. Choose the most relevant category below, or a specific variant (e.g. \"LPDDR5X PHY\", \"3D DRAM IGZO Channel\").\n\nPriority Memory Technology Categories:\n- 3D DRAM (specify aspect: VS-CAT, 4F2, IGZO channel, vertical channel transistor, OCTRAM, CBA/wafer bonding) (Highest priority)\n- LPDDR (LPDDR5, LPDDR5X, LPDDR6)\n- Client/PC DDR5\n- LPCAMM / SOCAMM modules\n- High-Bandwidth Flash as memory tier (HBF, XL-Flash)\n- Analog Compute-in-Memory (CIM) (Horizon watch)\n- Other Mobile/Client Memory (specify which)\n\nApplication Domain Categories:\n- Mobile/Smartphone Memory\n- Client/PC Memory\n- Edge / On-device AI Memory\n- On-device LLM / Generative AI Memory\n\nEmerging Concepts:\n- Processing-in-Memory (PIM) / Near-Memory Computing (edge)\n- Analog / Mixed-signal Compute-in-Memory\n- 3D-stacked / wafer-bonded DRAM\n\nTechnical Focus Categories:\n- Power Efficiency (critical for mobile/client)\n- Performance (bandwidth, latency)\n- Thermal Management\n- Reliability & Error Correction (including RowHammer/RowPress on LPDDR/DDR5)\n- Manufacturing & Materials (3D DRAM)\n\n- secondary_topics: List 2-4 related categories or concepts as an array.\n- potential_impact: Use one of Low, Medium, High, or Breakthrough, followed by a concise explanation. Industry work from mobile/client peers, enablers, or customers carries an implicit priority boost (treat borderline industry papers as one level higher impact).\n- relevance_score: 1-10 where 10 means highly relevant to mobile/client memory development and 1 means tangentially related. Prioritize 3D DRAM, LPDDR, client DDR5, edge PIM, and analog CIM. Datacenter-only or storage-only work should score low.\n- Consider the memory-system implications of algorithmic / on-device AI proposals (effects on memory capacity, bandwidth, data movement, power) when assigning relevance.\n- Lack of explicit hardware experiments should reduce confidence but not automatically disqualify a paper if mobile/client memory implications are clear.\n- key_findings: Summarize the main technical contribution in 2-3 sentences.\n- actionable: Indicate Yes, No, or Maybe, with one-sentence rationale.\n\nBe technical but concise. Focus on practical implications for mobile and client-PC memory development."
+        },
+        "selection": {
+          "user": "You are selecting the top papers from this {{period_label}}'s {{topic_focus}} research for deep full-text analysis.\n\nYou have {{paper_count}} papers to consider:\n\n```json\n{{all_papers_json}}\n```\n\nYour task: Select {{selection_range_label}} papers that deserve full PDF analysis.\n\nSelection Criteria:\n1. Credibility and relevance scores. These are defined by earlier analysis according to the user's preferences. Key factors for this Mobile & Client (MCBU) profile:\na: 3D DRAM IS THE HIGHEST PRIORITY. Select up to 3 3D DRAM papers per week, and ALWAYS select a 3D DRAM paper when at least one author is from a Tier 1 player (Micron, Samsung, SK Hynix, CXMT, Qualcomm, MediaTek, Apple, Google, Microsoft, Intel, AMD, Arm, NVIDIA). This is an explicit exception to any \"no lab-stage technology\" rule, because 3D DRAM architecture choices are still open and strategically important.\nb: LPDDR (LPDDR5/5X/6), client DDR5, LPCAMM/SOCAMM, and edge/on-device PIM are core and should be well represented.\nc: Analog Compute-in-Memory (CIM) is a HORIZON WATCH: select at most 1-2 analog CIM papers per week, apply a higher credibility bar (require credibility_tier >= 7), and prefer papers with real silicon results and industry authorship.\nd: Apply an industry priority boost of +2 for mobile/client peers, enablers, and customers.\ne: HBF / XL-Flash count only when framed as a MEMORY TIER, not as storage. Deprioritize NAND-as-storage, datacenter-only HBM, and CXL pooling.\nf: Do not exclude a paper only because it lacks direct hardware experiments if mobile/client memory implications are clearly justified.\n2. Potential impact\n3. Technical depth (papers with novel architectures/methodologies over incremental improvements)\n\nIMPORTANT: Use chain-of-thought reasoning. For each paper you consider, explain your reasoning BEFORE deciding.\n\nIMPORTANT: For `arxiv_id` use the full URL (\"arxiv_id\": \"http://arxiv.org/abs/...\")\n\nOutput format (pure JSON, no code fences):\n{\n  \"reasoning\": \"Explain your overall selection strategy and tradeoffs you made.\",\n  \"selected_papers\": [\n    {\n      \"selection_reasoning\": \"Why this specific paper deserves full-text analysis.\",\n      \"arxiv_id\": \"http://arxiv.org/abs/...\",\n      \"priority_rank\": 1\n    }\n  ],\n  \"remaining_papers\": [\n    {\n      \"exclusion_reasoning\": \"Why this paper wasn't selected for deep analysis.\",\n      \"arxiv_id\": \"http://arxiv.org/abs/...\",\n    }\n  ]\n}",
+          "system": "You are a research analyst selecting papers for deep analysis. Always reason before deciding.\n\nYour selection should:\n1. Credibility and relevance.\n2. Potential impact\n3. Technical depth (papers with novel architectures/methodologies over incremental improvements)\n4. Select a maximum of {{max_selection}} papers\n5. Apply an industry priority boost of +2 for work from mobile/client memory peers, enablers, and customers (Micron, Samsung, SK Hynix, CXMT, Qualcomm, MediaTek, Apple, Google, Microsoft, Intel, AMD, Arm, NVIDIA).\n6. Consider algorithmic / on-device AI papers as potentially relevant when they have clear implications for mobile/client memory behavior, even if hardware validation is limited.\nReasoning format: For each candidate, state: institution reputation \u2192 impact assessment \u2192 topic fit \u2192 decision.\n\nIMPORTANT: For `arxiv_id` use the full URL (\"arxiv_id\": \"http://arxiv.org/abs/...\")"
+        },
+        "analysis": {
+          "user": "You are analyzing a research paper with full-text access.\n\nPaper details:\n- ArXiv ID: {{arxiv_id}}\n- Title: {{title}}\n- Authors: {{authors}}\n- Primary Topic: {{primary_topic}}\n- Selection Reasoning: {{selection_reasoning}}\n- Full Text: {{full_text}}\n\nProvide:\n1. A LARGE SUMMARY (300-500 words)\n2. A SHORT SUMMARY (50-80 words)\n\n## LARGE SUMMARY INSTRUCTIONS\n\nWrite as a research academic reading the paper thoroughly. Your summary must include:\n\n**Problem Definition & Motivation**: What problem does this paper address? Why is it important? What are the limitations of existing approaches?\n\n**Solution & Contributions**: What is the novel solution or contribution? What makes this approach different from prior work? Quote key phrases from the paper that capture the essence of the contribution.\n\n**Methodology**: Describe the technical approach in detail. What architecture, algorithm, or technique is used? How does it work at a high level? Reference specific figures when discussing technical details (e.g., \"As shown in Figure 3...\").\n\n**Experimental Setup**: What workloads, benchmarks, or datasets were used? What hardware/simulation setup? What metrics were measured?\n\n**Evaluation & Results**: What were the key quantitative results? Quote specific numbers and comparisons. What do the results demonstrate?\n\n**Critical Analysis**: State assumptions made by the authors. Note limitations or potential concerns. What questions remain unanswered? Are there areas where the claims might not hold?\n\n**Implications for Mobile/Client Memory**: How does this work impact mobile-phone and client-PC memory design? Consider power, thermal, capacity, bandwidth, and cost. Only reference specific memory technologies (LPDDR, client DDR5, 3D DRAM, PIM, HBF, analog CIM, etc.) if the paper itself discusses or evaluates them. Do not speculate about technologies not addressed by the authors.\n\nIMPORTANT FORMATTING RULES:\n- Use descriptive paragraphs, NOT bullet points\n- Quote liberally from the paper using quotation marks\n- Reference figures explicitly (\"Figure 2 shows...\")\n- Reason first, then conclude (think through implications before stating them)\n- Be thorough and specific with technical details\n- NEVER use LaTeX, MathJax, or dollar-sign math notation ($...$, $$...$$). Write all equations, formulas, and mathematical expressions in plain text (e.g., \"E = mc^2\", \"O(n log n)\", \"2x + 3\"). Use words where possible (e.g., \"alpha\", \"sum of\", \"approximately\").\n- Length: 300-500 words per paper\n\n## SHORT SUMMARY INSTRUCTIONS\n\nWrite a concise 50-80 word summary (2-3 sentences) suitable for direct insertion into a professional email. Should capture:\n- The core technical contribution\n- Why it matters for mobile/client memory\n- Key quantitative result if applicable\n- Do NOT reference technologies unless the paper explicitly discusses them\n\nTone: Professional, technical, direct.\n\n## OUTPUT FORMAT\n\nOutput format (pure JSON, no code fences):\n{\n  \"arxiv_id\": \"{{arxiv_id}}\",\n  \"large_summary\": \"...\",\n  \"short_summary\": \"...\",\n  \"pdf_analysis_performed\": {{pdf_analysis_performed}}\n}\n\n\nIMPORTANT: Note that the `arxiv_id` in your output should be a full link. For example: `\"arxiv_id\": \"http://arxiv.org/abs/2512.00862v2\",`\n\nIf a paper's full_text is empty or pdf_success is false, set pdf_analysis_performed to false and provide analysis based only on the abstract.",
+          "system": "You are a research analyst with expertise in computer architecture and memory systems, focused on mobile and client-PC memory. You read papers thoroughly, quote extensively, think critically, and explain technical details precisely.\n\nKey principles:\n- Paragraphs over bullet points\n- Quote to preserve author's intent\n- Reference figures explicitly\n- Reason before concluding\n- Be specific with technical details\n- Note assumptions and limitations\n- Emphasize mobile/client implications: power, thermal, capacity, bandwidth, cost"
+        },
+        "report": {
+          "user": "You are synthesizing this {{period_label}}'s {{topic_focus}} research with deep analysis of top papers.\n\n## STATISTICS OVERVIEW\n```json\n{{stats_json}}\n\n## ANALYZED PAPERS with full-text analysis)\n```json\n{{analyzed_papers_json}}\n```\n## ADDITIONAL RELEVANT PAPERS ({{remaining_count}} papers - no full-text analysis)\n\n## PRIORITIZED REMAINING PAPERS CONTEXT (capped)\nSelection policy used upstream: {{remaining_selection_policy}}\n```json\n{{remaining_papers_json}}\n```\n\n\n## YOUR TASK\n\nWrite a professional {{period_label}} research digest email with this structure:\n\n### Email Body Structure:\n\n**Opening**: \"Hey there, Here's your {{period_label}} roundup of {{topic_focus}} research from arXiv.\n\n**## Executive Summary**\n\n\nExecutive-summary linking requirements:\n- Include exactly one top-paper recommendation sentence in Executive Summary as a Markdown hyperlink in this exact format: [Paper Title](arxiv_id).\n- The hyperlink URL must exactly match the selected paper's arxiv_id from ANALYZED PAPERS JSON (no fabricated or random links).\n- The linked paper must be the same paper you name as the top recommendation.\n\nWrite 3-4 sentences highlighting the most significant developments during {{period_label}}. What are the key themes for mobile and client-PC memory?\nWhat is the one paper from the most influential peer, enabler, or customer about mobile/client memory (LPDDR, client DDR5, 3D DRAM, edge PIM) that you would recommend and why?\n\n**## 3D DRAM Watch**\n\nThis is a STANDING section (always include it). Summarize this period's 3D DRAM developments (VS-CAT, 4F2, IGZO/oxide-channel, vertical channel transistor, OCTRAM, CBA/wafer bonding). Highlight Tier 1 player activity (Micron, Samsung, SK Hynix, CXMT and key SoC/platform partners). If no 3D DRAM papers appeared this period, say so explicitly in one sentence. Use short_summary verbatim for any analyzed 3D DRAM paper and hyperlink its title.\n\n**## Deep Dive: Top Research**\n\nGroup the analyzed papers by research theme if such themes are present (e.g. LPDDR, Client DDR5, Edge PIM, Modules).\n\nFor each theme:\n- Write 2-4 sentences of context\n- Write a thematic introduction (3-5 sentences) explaining why this area is active and what trends you observe\n- Use the short_summary verbatim for each paper (DO NOT modify or paraphrase)\n- NEVER use LaTeX, MathJax, or dollar-sign math notation. Write equations in plain text.\n- Start each paper with a title+affiliation line as its own line (hyperlinked): [Name or title of paper or affiliation if important](arxiv_id)\n- Then insert a blank line and place the short_summary on the next line\n- If pdf_analysis_performed is false for a paper, note: \"(Note: Full-text analysis unavailable)\" on its own line after the short_summary\n\n**## Horizon Watch: Analog CIM**\n\nThis is a BOUNDED section: cover at most 1-2 analog compute-in-memory papers, preferring silicon results and industry authorship. If none qualified this period, say so in one sentence. Use short_summary verbatim and hyperlink titles.\n\nDo NOT include a separate section titled \"Additional Relevant Papers\".\nIf there are remaining papers, summarize them only through the \"Also Worth Noting\" section using the provided prioritized context.\n\n**## Also Worth Noting**\n\nList 5-10 papers from the prioritized remaining context, prioritizing analyzed-but-not-selected papers when available.\n\nFormatting and content rules:\n- Do NOT use bullets, numbered lists, or list markers for this section.\n- Write each entry as a standalone short paragraph in the same visual style as other paper cards.\n- Each entry must be exactly one sentence.\n- Use this format: [Paper Title](arxiv_id) \u2014 Institution(s): one objective, evidence-grounded reason it is interesting.\n- Use ONLY papers present in the PRIORITIZED REMAINING PAPERS CONTEXT JSON above. Prioritize entries sourced from analyzed-but-not-selected papers before non-analyzed fallback entries.\n- Prioritize first papers where relevance_score or credibility_tier is 10, then by relevance_score + credibility_tier.\n- Do not invent papers, links, institutions, or scores not present in the provided context.\n- Keep statements strictly factual and verifiable from the provided data; avoid projections, speculation, or forward-looking claims.\n\nWhen rendering **This {{period_title}} in Numbers**:\n- Use the provided {{this_period_numbers}} content exactly as the source of truth.\n- Do not paraphrase or rewrite the numeric lines; preserve metric labels and values so downstream formatting can parse them reliably.\n- Keep these phrases intact when present: \"paper abstracts analyzed\", \"deemed relevant\", \"papers received full-text deep analysis\", \"Top research themes\", \"Quality metrics\", \"high-credibility institutions\".\n\n**## This {{period_title}} in Numbers**\nUse this data coming in from the analysis:\n{{this_period_numbers}}\n\n**Closing**: \"Until next time,\n\n{{assistant_signature}}\"\n\n## OUTPUT FORMAT\n\nReturn pure JSON (no code fences):\n{\n\"subject\": \"MIRA {{mode_label}} Digest - Top {{topic_short_label}} Papers Published on Arxiv and Notable News Articles - {{current_date}} - [X scanned, Y analyzed]\",\n\"body\": \"[Full email in Markdown format]\"\n}\n\nCRITICAL:\n- Use short_summary text EXACTLY as provided - do not rephrase or modify.\n- Prioritize industry insights over purely research insights in the way you order your report.\n- Keep mobile and client-PC memory as the primary lens; treat 3D DRAM as the lead priority.",
+          "system": "You are a research analyst writing periodic digests for the Mobile & Client Business Unit (MCBU). Key rules:\n\n- Use short_summary verbatim (no modifications)\n- Group papers by theme logically\n- Identify period trends and patterns\n- Professional, technical tone\n- Inline citations with institutions\n- Note when full-text analysis wasn't performed\n- Keep remaining papers section brief (max 1 sentence per paper)\n- Always include the standing 3D DRAM Watch section, and the bounded Horizon Watch: Analog CIM section, when relevant papers exist"
+        }
+      }
+    }
+  ]
+}

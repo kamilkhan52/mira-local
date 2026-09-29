@@ -1,0 +1,26 @@
+{
+  "years_back": 3,
+  "venues": [
+    {"name": "ISCA", "dblp_stream": "conf/isca"},
+    {"name": "MICRO", "dblp_stream": "conf/micro"},
+    {"name": "HPCA", "dblp_stream": "conf/hpca"},
+    {"name": "ASPLOS", "dblp_stream": "conf/asplos"},
+    {"name": "MEMSYS", "dblp_stream": "conf/memsys"},
+    {"name": "FAST", "dblp_stream": "conf/fast"},
+    {"name": "HotStorage", "dblp_stream": "conf/hotstorage"},
+    {"name": "DATE", "dblp_stream": "conf/date"},
+    {"name": "DAC", "dblp_stream": "conf/dac"},
+    {"name": "ISSCC",
+     "crossref_containers": [
+       "{year} IEEE International Solid- State Circuits Conference (ISSCC)",
+       "{year} IEEE International Solid-State Circuits Conference (ISSCC)"]},
+    {"name": "VLSI",
+     "crossref_containers": [
+       "{year} IEEE Symposium on VLSI Technology and Circuits (VLSI Technology and Circuits)",
+       "{year} Symposium on VLSI Technology and Circuits (VLSI Technology and Circuits)"]},
+    {"name": "IEDM",
+     "crossref_containers": [
+       "{year} International Electron Devices Meeting (IEDM)",
+       "{year} IEEE International Electron Devices Meeting (IEDM)"]}
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "default_profile_id": "embedded-intelligence",
+  "llm_models": {
+    "affiliation": "google/gemini-3.6-flash",
+    "classification": "google/gemini-3.6-flash",
+    "selection": "anthropic/claude-sonnet-5",
+    "analysis": "anthropic/claude-opus-4.8",
+    "trend": "anthropic/claude-sonnet-5",
+    "report": "anthropic/claude-opus-4.8",
+    "media_selection": "anthropic/claude-sonnet-5",
+    "media_summary": "anthropic/claude-sonnet-5",
+    "exhaustive_map": "google/gemini-2.5-flash",
+    "exhaustive_synthesis": "anthropic/claude-sonnet-5"
+  },
+  "_llm_models_note": [
+    "exhaustive_map and exhaustive_synthesis are optional keys read by the",
+    "standalone exhaustive-research path (mira/exhaustive), not by the n8n",
+    "pipeline stages in STAGE_KEYS. Both fall back to the pinned defaults in",
+    "mira/exhaustive/compiler.py when absent.",
+    "exhaustive_map stays on google/gemini-2.5-flash deliberately: the map",
+    "stage is bulk extraction over every selected chunk, where a cheap",
+    "long-context tier is the point. Only the synthesis/critic tier needs",
+    "frontier reasoning.",
+    "exhaustive_synthesis moved from anthropic/claude-sonnet-4.6 to",
+    "anthropic/claude-sonnet-5 to match the merged per-stage model policy",
+    "(newer and cheaper at $2/$10 vs $3/$15).",
+    "PLACEHOLDER PRICES: the static fallback table in mira/exhaustive/costs.py",
+    "carries $3/$15 for anthropic/claude-sonnet-5 and $0.30/$2.50 for",
+    "openai/gpt-5.6-terra. Those are conservative placeholders, not confirmed",
+    "list prices -- live runs fetch the real numbers from the OpenRouter",
+    "catalog at startup and only fall back to the table (with a WARNING log)",
+    "when that fetch fails."
+  ],
+  "profiles": [
+    {
+      "profile_id": "embedded-intelligence",
+      "trigger_match": [
+        "embedded",
+        "physical-ai",
+        "aebu"
+      ],
+      "topic": {
+        "name": "Embedded Intelligence Weekly",
+        "focus": "memory, storage, compute, and AI architectures for Physical AI, robotics, automotive, aerospace & defense, XR, and edge AI systems",
+        "assistant_signature": "MIRA (Memory Innovation Research Assistant)",
+        "short_label": "Embedded Intelligence"
+      },
+      "media": {
+        "eetimes": {
+          "list_urls": [
+            "https://www.eetimes.com/category/news-analysis/designline/memory-designline/",
+            "https://www.eetimes.com/designline/automotive-designline/",
+            "https://www.eetimes.com/designline/military-aerospace-designline/"
+          ]
+        },
+        "source_caps": {
+          "trendforce": 10,
+          "digitimes": 15,
+          "eetimes": 10,
+          "semianalysis": 10
+        },
+        "selection_guidance": "Prioritize articles about DRAM, HBM, 3D Memory, PIM, LPDDR, DDR, MRAM, SOCAMM, and memory chip supply, pricing, and architecture. Deprioritize articles where memory is only briefly mentioned as context (e.g. 'memory shortage affects smartphone panels'). Prioritize NAND flash, SSD, storage controllers (Phison, Silicon Motion), flash storage manufacturers (YMTC, Kioxia), NVMe, and edge AI storage articles. Explicitly exclude articles about energy storage, EV batteries, or power storage \u2014 these are unrelated to semiconductor storage. Beyond product technologies, prioritize DRAM memory and flash storage in the domains of humanoid robotics, robotics systems, automotive compute and safety, connected and automated vehicles (Physical AI), and aerospace and defense, as well as articles on AR/VR/XR computing and edge/embedded applications that require advancements in memory and storage."
+      },
+      "arxiv": {
+        "categories": [
+          "cs.AR",
+          "cs.RO",
+          "cs.LG",
+          "cs.AI",
+          "cs.CV",
+          "cs.ET",
+          "cs.CR",
+          "cs.SY",
+          "eess.SY",
+          "eess.SP",
+          "cs.DC",
+          "cs.OS",
+          "cs.PF",
+          "cs.NI",
+          "cs.HC",
+          "cs.GR",
+          "eess.IV",
+          "stat.ML",
+          "cond-mat.mtrl-sci",
+          "cond-mat.mes-hall",
+          "physics.app-ph"
+        ],
+        "keywords": [],
+        "max_results": 3000
+      },
+      "s2_venues": {
+        "enabled": true,
+        "venues": [
+          "International Symposium on Computer Architecture",
+          "International Symposium on High-Performance Computer Architecture",
+          "International Symposium on Memory Systems",
+          "International Symposium on Microarchitecture",
+          "International Conference on Architectural Support for Programming Languages and Operating Systems",
+          "USENIX Annual Technical Conference",
+          "International Solid-State Circuits Conference",
+          "Symposium on VLSI Technology and Circuits",
+          "International Electron Devices Meeting",
+          "IEEE International Conference on Robotics and Automation",
+          "IEEE/RSJ International Conference on Intelligent Robots and Systems",
+          "Robotics: Science and Systems",
+          "Conference on Robot Learning",
+          "Computer Vision and Pattern Recognition",
+          "Neural Information Processing Systems",
+          "Design Automation Conference"
+        ],
+        "year_window": "current_and_previous",
+        "max_results": 1000
+      },
+      "thresholds": {
+        "relevance_score_min": 8,
+        "credibility_tier_min": 6
+      },
+      "summary_mode": "short",
+      "default_mode": "weekly",
+      "modes": {
+        "weekly": {
+          "lookback_days": 7,
+          "digest_label": "Embedded Intelligence Weekly Digest",
+          "selection_min": 5,
+          "selection_max": 10,
+          "selection_range_label": "5-10",
+          "max_selection": 20,
+          "trend_enabled": true,
+          "trend_window_days": 90
+        }
+      },
+      "email": {
+        "weekly": {
+          "header_label": "Embedded Intelligence Weekly Digest",
+          "title": "Embedded Intelligence Weekly",
+          "footer_subtitle": "Digest of memory, storage, and Physical AI systems research from arXiv",
+          "colors": {
+            "primary": "#059669",
+            "primaryDark": "#047857",
+            "primaryLight": "#10b981",
+            "secondary": "#0d9488",
+            "text": "#1f2937",
+            "textLight": "#4b5563",
+            "textMuted": "#6b7280",
+            "border": "#e5e7eb",
+            "borderLight": "#f3f4f6",
+            "background": "#f8fafc",
+            "backgroundAlt": "#ecfdf5",
+            "white": "#ffffff",
+            "accent": "#8b5cf6",
+            "warning": "#f59e0b",
+            "pageBackground": "#ecfdf5"
+          }
+        }
+      },
+      "prompts": {
+        "affiliation": {
+          "user": "Extract author affiliations and assess academic institutional or industry research lab credibility from this academic paper's first page. We choose the first page because author affiliation is often found in the first page of the paper. It is either alongside the author names, or using what is called superscripted author\u2013affiliation markers or superscript footnote-style markers for affiliations.\n\nPaper metadata:\narxiv_id: {{arxiv_id}}\ntitle: {{title}}\nabstract/summary: {{summary}}\nauthors: {{authors}}\ncategory: {{category}}\n\nFirst page text:\n{{first_page_text}}\n\nTASK 1: Extract Affiliations\n- Identify all unique institutions/organizations/labs\n- Map each author to their institution(s) if possible\n- Handle superscript numbers linking authors to institutions\n\nTASK 2: Assess Credibility Score (out of 10)\nEvaluate institutional reputation specifically for {{topic_focus}} research. This profile tracks memory, storage, and compute for Physical AI (robotics, humanoids, ADAS, autonomous vehicles), aerospace & defense, XR, and edge AI, so robotics ecosystem enablers and memory/semiconductor leaders are elevated. The following are reference examples; use your best judgement from training data.\n\nHIGH Tier use scores 8-10 (expect cutting-edge research, significant resources):\n- Robotics/Physical AI ecosystem enablers: NVIDIA, Google (including Google Research and Google DeepMind), ARM, Qualcomm\n- Memory and semiconductor leaders: Micron, Samsung, SK Hynix, Intel, AMD, Western Digital, Kioxia\n- Major universities: US Ivy League universities, MIT, Stanford, CMU, UC Berkeley, ETH Zurich, KAIST, Tsinghua, Georgia Tech, UIUC\n- Research from Onur Mutlu or his co-authors (SAFARI group and collaborators)\n- Fraunhofer Institute\n- Robotics, autonomous vehicle, ADAS, and robotaxi startups with credible funding or deployments (e.g., Figure, 1X, Boston Dynamics, Agility Robotics, Waymo, Wayve, Zoox, Nuro)\n\nSPECIAL RULE: Papers from major memory vendors (Micron, Samsung, SK Hynix, Kioxia, Western Digital/SanDisk) should ALWAYS be treated as high credibility even if the topic is somewhat adjacent.\n\nMEDIUM Tier use scores 4-7 (established institutions with research capability):\n- Universities such as University of Michigan, Colorado State University, CU Boulder, UC Irvine, and other known universities with CS/EE/robotics programs\n- Tech companies with R&D divisions\n- Government research labs (Sandia, Lawrence Livermore, NASA JPL, etc.)\n- Established startups in memory, storage, robotics, or automotive compute\n\nLOW Tier use scores 1-3 (limited track record or unknown):\n- Unknown or obscure institutions\n- No clear institutional affiliation\n- Individual researchers without institutional backing\n- New/unproven research groups\n\nImportant: DO NOT use Markdown Code Fences in the output. For example, never output \"```json\". Return ONLY valid JSON in this exact format:\n{\n  \"arxiv_id\" : \"{{arxiv_id}}\"\n  \"affiliations\": [\"Institution A\", \"Institution B\"],\n  \"author_affiliations\": {\n    \"Author Name 1\": [\"Institution A\"],\n    \"Author Name 2\": [\"Institution B\", \"Institution C\"]\n  },\n\"credibility_reasoning\": \"Brief 1-2 sentence explanation of tier assignment based on institutional reputation\",\n\"credibility_tier\": 9\n}\n\nNote that this example above has the exact arxiv_id value you should use. It is an Arxiv link, but for this project we are using these links as ids.\n\nAgain, your output should be json, but never using Markdown Code Fences such as starting with \"```json\". Never start with \"```json\".\n\nIf the information is not available, use the exact same format and use the \"Unknown\" keyword for values not known.",
+          "system": ""
+        },
+        "classification": {
+          "user": "Classify the following arXiv paper:\n\nPaper metadata:\narxiv_id: {{arxiv_id}}\nTitle: {{title}}\nAbstract: {{summary}}\n\nIMPORTANT: Return ONLY valid JSON. Do not include markdown, code fences, commentary, or extra keys.\n\nUse this exact JSON structure:\n{\n  \"arxiv_id\": \"{{arxiv_id}}\",\n  \"primary_topic\": \"...\",\n  \"secondary_topics\": [\"...\"],\n  \"potential_impact\": \"...\",\n  \"relevance_score\": 7,\n  \"key_findings\": \"...\",\n  \"actionable\": \"Yes\"\n}\n\nRules:\n- arxiv_id must exactly match the input arxiv_id value\n- relevance_score must be a number from 1 to 10 (not a string)\n- secondary_topics must be an array of strings\n- Include exactly these keys and no others",
+          "system": "You are analyzing research papers for relevance to {{topic_focus}}.\n\nIMPORTANT OUTPUT RULES:\n- Return ONLY valid JSON.\n- Do NOT include markdown, code fences, commentary, or any text outside the JSON object.\n- Output must include exactly these keys and no others: arxiv_id, primary_topic, secondary_topics, potential_impact, relevance_score, key_findings, actionable.\n- arxiv_id must exactly match the input arxiv_id value.\n- secondary_topics must be an array of strings.\n- relevance_score must be a number from 1 to 10.\n\nYour task is to evaluate this paper's significance for a team tracking advances in memory, storage, compute architectures, and AI algorithms that could influence next-generation Physical AI and XR systems, with emphasis on DRAM, HBM, LPDDR, PIM, NAND/SSD technologies, robotics, autonomous vehicles, aerospace and defense, functional safety, cybersecurity, and emerging AI models. Monitor how new workloads, system architectures, benchmarks, and standards drive future memory and storage requirements, performance, power efficiency, reliability, and product opportunities.\n\nSCOPE GUIDANCE:\n- IN SCOPE (memory/storage technologies): DRAM, HBM, LPDDR, DDR, 3D Memory, Processing-in-Memory (PIM), MRAM and emerging memory, memory architecture and packaging, memory pooling and CXL, NAND flash, SSD and NVMe storage, storage controllers, computational storage.\n- IN SCOPE (Physical AI domains): DRAM memory and flash storage in humanoid robotics, robotics systems, automotive compute systems and safety, connected and automated vehicles, and aerospace and defense; other edge and embedded applications that require advancements in memory and storage.\n- IN SCOPE (AI models and algorithms): new AI models/framework research for Physical AI topics such as humanoid robotics and ADAS, embodied AI and world models, especially from robotics ecosystem enablers like NVIDIA, Google, academic research, and robotics/ADAS/robotaxi startups; computing and algorithmic advancements (including AI) that enable Augmented Reality (AR), Virtual Reality (VR), and eXtended Reality (XR).\n- IN SCOPE (safety, security, standards): safety (RAS, FuSa) and security from a memory, storage, and compute perspective, including standards such as ISO 26262, IEC 61508, ISO 21434, IEC TR 62380, and related functional-safety standards; humanoid robotics standards and benchmarks; automotive safety and standards.\n- OUT OF SCOPE: energy storage, EV batteries, or power storage \u2014 these are unrelated to semiconductor storage. Score them low. Also score low papers where memory or storage is only briefly mentioned as context rather than a substantive topic, unless the paper qualifies through the Physical AI, XR, or safety/security scope above.\n\nField guidance:\n- primary_topic: Identify the main technology or concept discussed. Choose the most relevant category from the list below, or use a specific variant (e.g., \"LPDDR5X for Automotive\" or \"Humanoid VLA Model\").\n\nPrimary Topic Categories:\n- DRAM\n- HBM\n- LPDDR\n- DDR\n- 3D Memory\n- Processing-in-Memory (PIM)\n- MRAM and Emerging Memory\n- Memory Architecture and Packaging\n- Memory Pooling and CXL\n- NAND Flash\n- SSD and NVMe Storage\n- Storage Controllers\n- Computational Storage\n- AI Accelerators and Compute Architecture\n- Robotics and Physical AI\n- Humanoid Robotics\n- Autonomous Vehicles and ADAS\n- Aerospace and Defense Systems\n- AR/VR/XR Computing\n- Edge AI Systems\n- AI Models and Foundation Models\n- Embodied AI and World Models\n- Functional Safety (FuSa)\n- Cybersecurity and Hardware Security\n- Reliability, Availability, and Safety (RAS)\n- Robotics Standards and Benchmarks\n- Automotive Safety and Standards\n- System Performance, Power, and Efficiency\n- Emerging Semiconductor Technologies\n\n- secondary_topics: List 2-4 related categories or concepts from the above list, or specify related technologies and application areas as an array.\n- potential_impact: Use one of Low, Medium, High, or Breakthrough, followed by a concise explanation. A paper is highly impactful if it has: real hardware validation, major bandwidth or latency improvements, or findings likely to influence product roadmaps; reduces product costs; requires considerable change to current compute architectures (alternative compute architectures and products); represents a breakthrough in Physical AI algorithms; or is a key enabler for aerospace and defense (e.g., AI servers in space).\n- relevance_score: 1-10. A paper should receive a high relevance score if it provides actionable insights into memory, storage, compute, or AI architectures that could influence future products, system design, or technology roadmaps for Physical AI, XR, automotive, aerospace, and edge AI systems. High-scoring papers should demonstrate one or more of the following:\n  - Novel DRAM, HBM, LPDDR, NAND, SSD, PIM, CXL, memory pooling, or storage architectures.\n  - Quantified improvements in performance, bandwidth, latency, power efficiency, capacity scaling, reliability, safety, or security.\n  - New AI models, frameworks, or workloads that significantly impact memory or storage requirements.\n  - System-level innovations for robotics, humanoids, ADAS, autonomous vehicles, XR/AR/VR, aerospace, defense, or edge AI.\n  - Advances in functional safety, RAS, cybersecurity, or standards relevant to memory, storage, and compute systems.\n  - Industry-impacting research from leading ecosystem contributors (e.g., NVIDIA, Google, major universities, robotics and autonomous vehicle startups).\n  - Benchmarks, deployment studies, or real-world evaluations demonstrating practical applicability and scalability.\n  - Emerging technologies with a credible path to commercial adoption or influence on future semiconductor and system architectures.\n- Consider the memory- and storage-system implications of algorithmic and AI-model proposals (effects on memory capacity, bandwidth, data movement, power, or storage footprint) when assigning relevance.\n- Lack of explicit hardware experiments should reduce confidence but not automatically disqualify a paper if memory, storage, or Physical AI system implications are clearly described.\n- key_findings: Summarize the main technical contribution in 2-3 sentences.\n- actionable: Indicate Yes, No, or Maybe, with one-sentence rationale.\n\nBe technical but concise. Focus on practical implications for memory and storage requirements of Physical AI, XR, automotive, aerospace, and edge AI systems."
+        },
+        "selection": {
+          "user": "You are selecting the top papers from this {{period_label}}'s {{topic_focus}} research for deep full-text analysis.\n\nYou have {{paper_count}} papers to consider:\n\n```json\n{{all_papers_json}}\n```\n\nYour task: Select {{selection_range_label}} papers that deserve full PDF analysis.\n\nSelection Criteria:\n1. Credibility and relevance scores. These are defined by earlier analysis according to the user's preferences. Key factors for this Embedded Intelligence profile:\na: Strongly prefer real hardware results, top-tier institutions, strong product relevance, novel architecture, and production-adjacent implications.\nb: ALWAYS highlight papers from NVIDIA, Samsung, Google Research, ARM, Qualcomm, or leading universities with direct practical implications.\nc: Papers from major memory vendors (Micron, Samsung, SK Hynix, Kioxia, Western Digital/SanDisk) should always be treated as high credibility even if the topic is somewhat adjacent.\nd: Maintain a balanced mix across the profile's two pillars: (1) memory/storage technology (DRAM, HBM, LPDDR, 3D Memory, PIM, MRAM, NAND/SSD, storage controllers, CXL) and (2) Physical AI and XR systems (humanoid robotics, robotics, ADAS/autonomous vehicles, aerospace and defense, AR/VR/XR, edge AI) \u2014 especially papers connecting the two, i.e., new workloads, models, or system architectures that drive future memory and storage requirements.\ne: Prioritize new AI models/framework research for Physical AI (humanoid robotics, ADAS) from robotics ecosystem enablers like NVIDIA and Google, academic research, and robotics/ADAS/robotaxi startups, as well as embodied AI and world models.\nf: Include advances in functional safety (FuSa, ISO 26262, IEC 61508, ISO 21434), RAS, cybersecurity/hardware security, and robotics or automotive standards and benchmarks when they have memory, storage, or compute implications.\ng: Exclude energy storage, EV battery, or power storage work \u2014 it is unrelated to semiconductor storage.\nh: Do not exclude a paper only because it lacks direct hardware experiments if memory, storage, or Physical AI system implications are clearly justified.\n2. Potential impact (real hardware validation, major bandwidth or latency improvements, product-roadmap influence, cost reduction, alternative compute architectures, breakthroughs in Physical AI algorithms, key enablers for aerospace and defense such as AI servers in space)\n3. Technical depth (papers with novel architectures/methodologies over incremental improvements)\n\nIMPORTANT: Use chain-of-thought reasoning. For each paper you consider, explain your reasoning BEFORE deciding.\n\nIMPORTANT: For `arxiv_id` use the full URL (\"arxiv_id\": \"http://arxiv.org/abs/...\")\n\nOutput format (pure JSON, no code fences):\n{\n  \"reasoning\": \"Explain your overall selection strategy and tradeoffs you made.\",\n  \"selected_papers\": [\n    {\n      \"selection_reasoning\": \"Why this specific paper deserves full-text analysis.\",\n      \"arxiv_id\": \"http://arxiv.org/abs/...\",\n      \"priority_rank\": 1\n    }\n  ],\n  \"remaining_papers\": [\n    {\n      \"exclusion_reasoning\": \"Why this paper wasn't selected for deep analysis.\",\n      \"arxiv_id\": \"http://arxiv.org/abs/...\",\n    }\n  ]\n}",
+          "system": "You are a research analyst selecting papers for deep analysis. Always reason before deciding.\n\nYour selection should:\n1. Credibility and relevance.\n2. Potential impact\n3. Technical depth (papers with novel architectures/methodologies over incremental improvements)\n4. Select a maximum of {{max_selection}} papers\n5. Strongly prefer real hardware results, top-tier institutions, strong product relevance, novel architecture, and production-adjacent implications. Always highlight NVIDIA, Samsung, Google Research, ARM, Qualcomm, or leading universities with direct practical implications. Treat papers from major memory vendors as high credibility even if the topic is somewhat adjacent.\n6. Consider AI-model and algorithmic papers as potentially relevant when they have clear implications for memory or storage requirements of Physical AI, XR, automotive, aerospace, or edge AI systems, even if hardware validation is limited.\nReasoning format: For each candidate, state: institution reputation \u2192 impact assessment \u2192 topic fit \u2192 decision.\n\nIMPORTANT: For `arxiv_id` use the full URL (\"arxiv_id\": \"http://arxiv.org/abs/...\")"
+        },
+        "analysis": {
+          "user": "You are analyzing a research paper with full-text access.\n\nPaper details:\n- ArXiv ID: {{arxiv_id}}\n- Title: {{title}}\n- Authors: {{authors}}\n- Primary Topic: {{primary_topic}}\n- Selection Reasoning: {{selection_reasoning}}\n- Full Text: {{full_text}}\n\nProvide:\n1. A LARGE SUMMARY (300-500 words)\n2. A SHORT SUMMARY (50-80 words)\n\n## LARGE SUMMARY INSTRUCTIONS\n\nWrite as a research academic reading the paper thoroughly. Your summary must include:\n\n**Problem Definition & Motivation**: What problem does this paper address? Why is it important? What are the limitations of existing approaches?\n\n**Solution & Contributions**: What is the novel solution or contribution? What makes this approach different from prior work? Quote key phrases from the paper that capture the essence of the contribution.\n\n**Methodology**: Describe the technical approach in detail. What architecture, algorithm, or technique is used? How does it work at a high level? Reference specific figures when discussing technical details (e.g., \"As shown in Figure 3...\").\n\n**Experimental Setup**: What workloads, benchmarks, robots, vehicles, or datasets were used? What hardware (memory devices, SSDs, SoCs, GPUs, embedded platforms) or simulation setup? What metrics were measured?\n\n**Evaluation & Results**: What were the key quantitative results? Quote specific numbers and comparisons. What do the results demonstrate?\n\n**Critical Analysis**: State assumptions made by the authors. Note limitations or potential concerns. What questions remain unanswered? Are there areas where the claims might not hold?\n\n**Implications for Embedded Memory, Storage, and Physical AI Systems**: How does this work impact memory and storage requirements, compute architecture, or system design for Physical AI, XR, automotive, aerospace, or edge AI systems? Emphasize product impact, deployment tradeoffs, architecture decisions, manufacturing implications, or competitive positioning. Only reference specific technologies (DRAM, HBM, LPDDR, PIM, NAND/SSD, CXL, specific AI models, safety standards, etc.) if the paper itself discusses or evaluates them. Do not speculate about technologies not addressed by the authors.\n\nIMPORTANT FORMATTING RULES:\n- Use descriptive paragraphs, NOT bullet points\n- Quote liberally from the paper using quotation marks\n- Reference figures explicitly (\"Figure 2 shows...\")\n- Reason first, then conclude (think through implications before stating them)\n- Be thorough and specific with technical details\n- NEVER use LaTeX, MathJax, or dollar-sign math notation ($...$, $$...$$). Write all equations, formulas, and mathematical expressions in plain text (e.g., \"E = mc^2\", \"O(n log n)\", \"2x + 3\"). Use words where possible (e.g., \"alpha\", \"sum of\", \"approximately\").\n- Length: 300-500 words per paper\n\n## SHORT SUMMARY INSTRUCTIONS\n\nWrite a concise 50-80 word summary (2-3 sentences) suitable for direct insertion into a professional email. Should capture:\n- The core technical contribution\n- Why it matters for memory, storage, or Physical AI/XR/edge systems\n- Key quantitative result if applicable\n- Do NOT reference technologies unless the paper explicitly discusses them\n\nTone: Professional, technical, direct.\n\n## OUTPUT FORMAT\n\nOutput format (pure JSON, no code fences):\n{\n  \"arxiv_id\": \"{{arxiv_id}}\",\n  \"large_summary\": \"...\",\n  \"short_summary\": \"...\",\n  \"pdf_analysis_performed\": {{pdf_analysis_performed}}\n}\n\n\nIMPORTANT: Note that the `arxiv_id` in your output should be a full link. For example: `\"arxiv_id\": \"http://arxiv.org/abs/2512.00862v2\",`\n\nIf a paper's full_text is empty or pdf_success is false, set pdf_analysis_performed to false and provide analysis based only on the abstract.",
+          "system": "You are a research analyst with expertise in computer architecture, memory and storage systems, robotics, and embedded AI. You read papers thoroughly, quote extensively, think critically, and explain technical details precisely.\n\nKey principles:\n- Paragraphs over bullet points\n- Quote to preserve author's intent\n- Reference figures explicitly\n- Reason before concluding\n- Be specific with technical details\n- Note assumptions and limitations\n- Emphasize product impact, deployment tradeoffs, architecture decisions, manufacturing implications, and competitive positioning"
+        },
+        "report": {
+          "user": "You are synthesizing this {{period_label}}'s {{topic_focus}} research with deep analysis of top papers.\n\n## STATISTICS OVERVIEW\n```json\n{{stats_json}}\n\n## ANALYZED PAPERS with full-text analysis)\n```json\n{{analyzed_papers_json}}\n```\n## ADDITIONAL RELEVANT PAPERS ({{remaining_count}} papers - no full-text analysis)\n\n## PRIORITIZED REMAINING PAPERS CONTEXT (capped)\nSelection policy used upstream: {{remaining_selection_policy}}\n```json\n{{remaining_papers_json}}\n```\n\n\n## YOUR TASK\n\nWrite a professional {{period_label}} research digest email with this structure:\n\n### Email Body Structure:\n\n**Opening**: \"Hey there, Here's your {{period_label}} roundup of {{topic_focus}} research from arXiv.\n\n**## Executive Summary**\n\n\nExecutive-summary linking requirements:\n- Include exactly one top-paper recommendation sentence in Executive Summary as a Markdown hyperlink in this exact format: [Paper Title](arxiv_id).\n- The hyperlink URL must exactly match the selected paper's arxiv_id from ANALYZED PAPERS JSON (no fabricated or random links).\n- The linked paper must be the same paper you name as the top recommendation.\n\nWrite 3-4 sentences highlighting the most significant developments during {{period_label}}. Emphasize key technical shifts and patterns, repeated institutional patterns, commercialization signals, and near-term product impact.\nRecommend the one paper most likely to affect architecture strategy, roadmap planning, or competitive analysis \u2014 and explain why.\n\n**## Physical AI Watch**\n\nThis is a STANDING section (always include it). Summarize this period's developments in humanoid robotics, robotics systems, automotive compute and safety, connected and automated vehicles, and aerospace and defense \u2014 especially new AI models, frameworks, benchmarks, or standards that drive memory and storage requirements. Highlight activity from robotics ecosystem enablers (NVIDIA, Google, academic research, robotics/ADAS/robotaxi startups). If no Physical AI papers appeared this period, say so explicitly in one sentence. Use short_summary verbatim for any analyzed Physical AI paper and hyperlink its title.\n\n**## Deep Dive: Top Research**\n\nGroup the analyzed papers by research theme if such themes are present (e.g. Memory Technology, Storage and NAND/SSD, Physical AI and Robotics, Autonomous Vehicles and ADAS, AR/VR/XR, Safety and Security, Edge AI).\n\nFor each theme:\n- Write 2-4 sentences of context\n- Write a thematic introduction (3-5 sentences) explaining why this area is active and what trends you observe\n- Use the short_summary verbatim for each paper (DO NOT modify or paraphrase)\n- NEVER use LaTeX, MathJax, or dollar-sign math notation. Write equations in plain text.\n- Start each paper with a title+affiliation line as its own line (hyperlinked): [Name or title of paper or affiliation if important](arxiv_id)\n- Then insert a blank line and place the short_summary on the next line\n- If pdf_analysis_performed is false for a paper, note: \"(Note: Full-text analysis unavailable)\" on its own line after the short_summary\n\n**## Media Intelligence**\n\nAdd this section after \"Deep Dive: Top Research\" only when such sources are available in the provided MEDIA INTELLIGENCE data.\nDo not fabricate announcements, blog posts, analyst takes, or expert commentary.\n\nDo NOT include a separate section titled \"Additional Relevant Papers\".\nIf there are remaining papers, summarize them only through the \"Also Worth Noting\" section using the provided prioritized context.\n\n**## Also Worth Noting**\n\nList 5-10 papers from the prioritized remaining context, prioritizing analyzed-but-not-selected papers when available.\n\nFormatting and content rules:\n- Do NOT use bullets, numbered lists, or list markers for this section.\n- Write each entry as a standalone short paragraph in the same visual style as other paper cards.\n- Each entry must be exactly one sentence.\n- Use this format: [Paper Title](arxiv_id) \u2014 Institution(s): one objective, evidence-grounded reason it is interesting.\n- Use ONLY papers present in the PRIORITIZED REMAINING PAPERS CONTEXT JSON above. Prioritize entries sourced from analyzed-but-not-selected papers before non-analyzed fallback entries.\n- Prioritize first papers where relevance_score or credibility_tier is 10, then by relevance_score + credibility_tier.\n- Do not invent papers, links, institutions, or scores not present in the provided context.\n- Keep statements strictly factual and verifiable from the provided data; avoid projections, speculation, or forward-looking claims.\n\nWhen rendering **This {{period_title}} in Numbers**:\n- Use the provided {{this_period_numbers}} content exactly as the source of truth.\n- Do not paraphrase or rewrite the numeric lines; preserve metric labels and values so downstream formatting can parse them reliably.\n- Keep these phrases intact when present: \"paper abstracts analyzed\", \"deemed relevant\", \"papers received full-text deep analysis\", \"Top research themes\", \"Quality metrics\", \"high-credibility institutions\".\n\n**## This {{period_title}} in Numbers**\nUse this data coming in from the analysis:\n{{this_period_numbers}}\n\n**Closing**: \"Until next time,\n\n{{assistant_signature}}\"\n\n## OUTPUT FORMAT\n\nReturn pure JSON (no code fences):\n{\n\"subject\": \"MIRA {{mode_label}} Digest - Top {{topic_short_label}} Papers Published on Arxiv and Notable News Articles - {{current_date}} - [X scanned, Y analyzed]\",\n\"body\": \"[Full email in Markdown format]\"\n}\n\nCRITICAL:\n- Use short_summary text EXACTLY as provided - do not rephrase or modify.\n- Prioritize industry insights over purely research insights in the way you order your report.\n- Emphasize product impact, deployment tradeoffs, architecture decisions, manufacturing implications, and competitive positioning.\n- Keep memory and storage for Physical AI, XR, automotive, aerospace, and edge AI as the primary lens for this profile.",
+          "system": "You are a research analyst writing periodic digests on memory, storage, and compute for Physical AI, XR, and edge systems. Key rules:\n\n- Use short_summary verbatim (no modifications)\n- Group papers by theme logically\n- Identify period trends and patterns\n- Professional, technical tone\n- Inline citations with institutions\n- Note when full-text analysis wasn't performed\n- Keep remaining papers section brief (max 1 sentence per paper)\n- Always include the standing Physical AI Watch section\n- Emphasize key technical shifts, repeated institutional patterns, commercialization signals, and near-term product impact"
+        }
+      }
+    }
+  ]
+}

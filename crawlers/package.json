@@ -1,0 +1,26 @@
+{
+  "name": "micron-eetimes",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "eetimes": "tsx ee-times-crawler.js",
+    "eetimes:ts": "tsx ee-times-crawler.ts",
+    "digitimes": "tsx digitimes-crawler.ts",
+    "semianalysis": "tsx semianalysis-crawler.ts",
+    "trendforce": "tsx trendforce-crawler.ts"
+  },
+  "dependencies": {
+    "@mozilla/readability": "^0.6.0",
+    "axios": "^1.7.7",
+    "bottleneck": "^2.19.5",
+    "cheerio": "^1.0.0",
+    "dayjs": "^1.11.0",
+    "jsdom": "^25.0.0",
+    "puppeteer-core": "^23.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0"
+  }
+}

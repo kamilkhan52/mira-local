@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MIRA RAG - Combined Knowledge Graph Chatbot</title>
+
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/vendor/prism-tomorrow.min.css">
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">MIRA RAG</div>
+      <button class="btn-new-chat" id="btn-new-chat">
+        <span>+</span> New Chat
+      </button>
+    </div>
+    <div class="history-list" id="history-list">
+      <!-- Injected from localStorage -->
+    </div>
+  </aside>
+
+  <!-- Main Chat Window -->
+  <main class="chat-container">
+    <header class="chat-header">
+      <div class="chat-header-left">
+        <span class="health-dot" id="health-dot" title="Checking service status…"></span>
+        <div class="chat-header-title">Combined Memory, Optical &amp; Storage Knowledge Graph</div>
+      </div>
+      <div class="config-controls">
+        <div class="control-group">
+          <button type="button" class="btn-action-outline" id="btn-hypotheses" title="Generate hypothesis dossiers over the combined graph">Hypotheses</button>
+          <button type="button" class="btn-action-outline" id="btn-export-md" title="Export Chat to Markdown">Export MD</button>
+          <button type="button" class="btn-action-outline" id="btn-export-json" title="Export Chat to JSON">Export JSON</button>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="query-mode">Mode:</label>
+          <select class="select-input" id="query-mode">
+            <option value="mix" selected>Mix (Default)</option>
+            <option value="hybrid">Hybrid</option>
+            <option value="global">Global</option>
+            <option value="local">Local</option>
+            <option value="naive">Naive</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <!-- Messages Container -->
+    <div class="messages-window" id="messages-window">
+      <div class="welcome-screen" id="welcome-screen">
+        <div class="welcome-header">
+          <div class="welcome-logo">MIRA RAG</div>
+          <p class="welcome-subtitle">The Next-Gen Knowledge Graph Intelligence for Memory, Optical &amp; Storage Systems</p>
+        </div>
+        
+        <div class="suggestion-grid">
+          <div class="suggestion-card" data-query="What is the memory wall and how do high-bandwidth memory (HBM) modules attempt to solve it?">
+            <div class="suggestion-card-header">
+              <span class="suggestion-icon">📊</span>
+              <span class="suggestion-tag">Memory</span>
+            </div>
+            <div class="suggestion-card-title">Explore Memory Wall</div>
+            <div class="suggestion-card-desc">Analyze HBM &amp; bandwidth bottlenecks</div>
+          </div>
+          
+          <div class="suggestion-card" data-query="How does co-packaged optics (CPO) relate to HBM memory-wall pressure in AI workloads?">
+            <div class="suggestion-card-header">
+              <span class="suggestion-icon">⚡</span>
+              <span class="suggestion-tag">Bridge</span>
+            </div>
+            <div class="suggestion-card-title">Bridge Memory &amp; Optics</div>
+            <div class="suggestion-card-desc">Examine intersections between CPO &amp; HBM</div>
+          </div>
+          
+          <div class="suggestion-card" data-query="Explain CXL protocols and memory pooling architectures.">
+            <div class="suggestion-card-header">
+              <span class="suggestion-icon">📝</span>
+              <span class="suggestion-tag">CXL</span>
+            </div>
+            <div class="suggestion-card-title">Draft CXL Reports</div>
+            <div class="suggestion-card-desc">Outline fabric pooling, tiering &amp; latency</div>
+          </div>
+          
+          <div class="suggestion-card" data-query="What are the differences between ZNS (Zoned Namespaces) and Open-Channel SSDs?">
+            <div class="suggestion-card-header">
+              <span class="suggestion-icon">💾</span>
+              <span class="suggestion-tag">Storage</span>
+            </div>
+            <div class="suggestion-card-title">Flash Storage Systems</div>
+            <div class="suggestion-card-desc">Query ZNS, open SSD stacks &amp; file systems</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="research-progress hidden" id="research-progress"
+             aria-live="polite" aria-label="Exhaustive research progress">
+      <div class="research-progress-head">
+        <div>
+          <div class="research-progress-title">Exhaustive graph research</div>
+          <div class="research-progress-status" id="research-status">
+            Preparing immutable graph snapshots…
+          </div>
+        </div>
+        <button type="button" class="research-cancel" id="research-cancel">
+          Cancel
+        </button>
+      </div>
+      <div class="research-coverage-grid">
+        <div class="research-domain" id="research-memory-coverage">
+          <span>Memory</span><strong>Waiting…</strong>
+        </div>
+        <div class="research-domain" id="research-optical-coverage">
+          <span>Optical</span><strong>Waiting…</strong>
+        </div>
+        <div class="research-domain" id="research-storage-coverage">
+          <span>Storage</span><strong>Waiting…</strong>
+        </div>
+      </div>
+      <div class="research-metrics">
+        <span id="research-evidence">Evidence: waiting…</span>
+        <span id="research-estimated-cost">Estimated cost: waiting…</span>
+        <span id="research-actual-cost">Actual cost: pending</span>
+      </div>
+    </section>
+
+    <!-- Input Form Area -->
+    <div class="input-container">
+      <form class="input-form" id="input-form">
+        <label class="btn-upload" for="file-upload" title="Upload a document (PDF, TXT, MD)">
+          <svg class="svg-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+          </svg>
+          <input type="file" id="file-upload" accept=".pdf,.txt,.md" style="display: none;">
+        </label>
+        <div class="input-field-wrapper">
+          <textarea class="text-input" id="text-input" placeholder="Ask MIRA anything... (Enter to send, Shift+Enter for a new line)" autocomplete="off" maxlength="4000" rows="1"></textarea>
+          <span class="char-counter" id="char-counter">0/4000</span>
+        </div>
+        <button type="submit" class="btn-send" id="btn-send">Send</button>
+        <button type="button" class="btn-stop hidden" id="btn-stop">Stop</button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Hypothesis panel: an async job surface, deliberately not a chat turn.
+       Runs take minutes (one LLM call per surviving candidate), so it streams
+       stage progress instead of tokens. -->
+  <aside class="hyp-panel hidden" id="hyp-panel" aria-label="Hypothesis generation">
+    <header class="hyp-header">
+      <div>
+        <div class="hyp-title">Hypothesis Dossiers</div>
+        <div class="hyp-subtitle">Cross-domain gap mining over the combined graph</div>
+      </div>
+      <button type="button" class="hyp-close" id="hyp-close" title="Close panel" aria-label="Close panel">&times;</button>
+    </header>
+
+    <div class="hyp-body">
+      <form class="hyp-form" id="hyp-form">
+        <div class="hyp-label">
+          Topics
+          <span class="hyp-hint">pick one or more — two domains aims at a cross-domain pair</span>
+        </div>
+        <div class="hyp-chips" id="hyp-chips"></div>
+        <input class="hyp-input" id="hyp-topic-filter" type="text"
+               placeholder="Type to filter topics…" autocomplete="off">
+        <div class="hyp-topic-list" id="hyp-topic-list">
+          <span class="hyp-hint">Loading topics…</span>
+        </div>
+
+        <div class="hyp-label">
+          Profiles
+          <span class="hyp-hint">select several for cross-domain pairs</span>
+        </div>
+        <div class="hyp-profiles" id="hyp-profiles">
+          <span class="hyp-hint">Loading profiles…</span>
+        </div>
+
+        <div class="hyp-row">
+          <div class="hyp-col">
+            <label class="hyp-label" for="hyp-max-hypotheses">Max hypotheses</label>
+            <input class="hyp-input" id="hyp-max-hypotheses" type="number" min="1" max="10" value="5">
+          </div>
+          <div class="hyp-col">
+            <label class="hyp-label" for="hyp-max-candidates">Max candidates</label>
+            <input class="hyp-input" id="hyp-max-candidates" type="number" min="1" max="30" value="12">
+          </div>
+        </div>
+
+        <label class="hyp-check">
+          <input type="checkbox" id="hyp-critic">
+          <span>Critic pass <span class="hyp-hint">≈doubles LLM spend</span></span>
+        </label>
+        <label class="hyp-check">
+          <input type="checkbox" id="hyp-no-external">
+          <span>Skip novelty check <span class="hyp-hint">everything marked unverified</span></span>
+        </label>
+
+        <button type="submit" class="hyp-run" id="hyp-run">Run hypothesis generation</button>
+        <p class="hyp-note">
+          Runs take minutes and spend LLM budget. One run at a time, gateway-wide.
+          Closing this panel does not stop a run.
+        </p>
+      </form>
+
+      <section class="hyp-section hidden" id="hyp-progress">
+        <div class="hyp-label">Progress</div>
+        <ol class="hyp-stages" id="hyp-stages"></ol>
+        <ul class="hyp-checks" id="hyp-checks"></ul>
+      </section>
+
+      <section class="hyp-section hidden" id="hyp-warnings">
+        <div class="hyp-label">Warnings</div>
+        <ul class="hyp-warning-list" id="hyp-warning-list"></ul>
+      </section>
+
+      <section class="hyp-section hidden" id="hyp-error">
+        <div class="hyp-label">Run failed</div>
+        <!-- Rendered as preformatted text: the CLI returns nearest topic names
+             and available profiles here, and those must survive verbatim. -->
+        <pre class="hyp-error-body" id="hyp-error-body"></pre>
+      </section>
+
+      <section class="hyp-section hidden" id="hyp-result">
+        <div class="hyp-label">Dossier</div>
+        <div class="hyp-dossier markdown-body" id="hyp-dossier"></div>
+      </section>
+
+      <section class="hyp-section">
+        <div class="hyp-label">Recent dossiers</div>
+        <div class="hyp-recent" id="hyp-recent"></div>
+      </section>
+    </div>
+  </aside>
+
+  <script src="/static/vendor/marked.min.js"></script>
+  <script src="/static/vendor/purify.min.js"></script>
+  <script src="/static/vendor/prism.min.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
