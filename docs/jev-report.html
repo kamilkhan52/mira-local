@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jev Evaluation Report</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f5f2; --surface: #fcfcfb; --surface-2: #f0efeb; --border: #dddcd6;
+  --text: #1b1b1a; --text-2: #52514e; --muted: #75746f; --link: #1f63b8;
+  --accent: #2a78d6; --good: #1b7a3f; --warn: #a15c00; --bad: #b3261e;
+  --good-bg: #e7f4ec; --warn-bg: #fdf1dc; --bad-bg: #fbe9e7; --note-bg: #eaf1fb;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --grid: #e3e2dc; --hl: #fff6d6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #121211; --surface: #1a1a19; --surface-2: #232321; --border: #34342f;
+    --text: #f2f1ec; --text-2: #c3c2b7; --muted: #9a998f; --link: #7fb2f0;
+    --accent: #3987e5; --good: #6fcf97; --warn: #f2b54a; --bad: #f28b82;
+    --good-bg: #16291e; --warn-bg: #2e2412; --bad-bg: #321a18; --note-bg: #17222f;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --grid: #2c2c29; --hl: #2f2a14;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121211; --surface: #1a1a19; --surface-2: #232321; --border: #34342f;
+  --text: #f2f1ec; --text-2: #c3c2b7; --muted: #9a998f; --link: #7fb2f0;
+  --accent: #3987e5; --good: #6fcf97; --warn: #f2b54a; --bad: #f28b82;
+  --good-bg: #16291e; --warn-bg: #2e2412; --bad-bg: #321a18; --note-bg: #17222f;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --grid: #2c2c29; --hl: #2f2a14;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+main { max-width: 920px; margin: 0 auto; padding: 32px 16px 80px; }
+h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 6px; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; margin: 48px 0 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+h3 { font-size: 1.1rem; margin: 28px 0 8px; }
+p, li { color: var(--text); }
+.sub { color: var(--text-2); margin: 0 0 24px; }
+a { color: var(--link); }
+code { font: 0.88em/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: var(--surface-2); padding: 1px 5px; border-radius: 4px; word-break: break-word; }
+pre { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; overflow-x: auto; font: 0.85rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+pre code { background: none; padding: 0; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin: 16px 0; }
+.tldr { border-left: 4px solid var(--accent); }
+.tldr h2 { border: 0; margin: 0 0 8px; padding: 0; font-size: 1.15rem; }
+.tldr ol { margin: 0; padding-left: 20px; }
+.tldr li { margin: 6px 0; }
+.callout { border-radius: 10px; padding: 12px 16px; margin: 16px 0; }
+.callout.good { background: var(--good-bg); }
+.callout.warn { background: var(--warn-bg); }
+.callout.note { background: var(--note-bg); }
+.callout strong:first-child { display: block; margin-bottom: 2px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 16px 0; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+.stat .v { font-size: 1.6rem; font-weight: 650; line-height: 1.2; }
+.stat .l { color: var(--text-2); font-size: 0.85rem; }
+.tw { overflow-x: auto; margin: 12px 0; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { background: var(--surface-2); font-weight: 600; color: var(--text-2); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.hl td { background: var(--hl); font-weight: 600; }
+.tag { display: inline-block; font-size: 0.78rem; font-weight: 600; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.tag.good { background: var(--good-bg); color: var(--good); }
+.tag.warn { background: var(--warn-bg); color: var(--warn); }
+.tag.bad { background: var(--bad-bg); color: var(--bad); }
+.charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin: 12px 0; }
+figure.viz { position: relative; margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 10px 4px; }
+figure.viz figcaption { font-weight: 600; font-size: 0.95rem; margin: 2px 4px 4px; }
+svg.chart { width: 100%; height: auto; display: block; overflow: visible; }
+.grid { stroke: var(--grid); stroke-width: 1; }
+.tick { fill: var(--muted); font-size: 10px; }
+.axis { fill: var(--text-2); font-size: 10.5px; }
+.dlabel { fill: var(--text-2); font-size: 10px; }
+.chosen { stroke: var(--text-2); stroke-width: 1; stroke-dasharray: 3 3; }
+.chosen-lbl { fill: var(--text-2); font-size: 10px; }
+.xhair { stroke: var(--muted); stroke-width: 1; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.88rem; color: var(--text-2); margin: 8px 0 4px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { display: inline-block; width: 18px; height: 0; border-top: 2px solid; }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 10px; font-size: 0.8rem; line-height: 1.45; box-shadow: 0 4px 14px rgba(0,0,0,.15);
+  min-width: 190px; z-index: 5; color: var(--text); }
+.tip b { font-weight: 600; }
+.tip .row { display: flex; justify-content: space-between; gap: 10px; }
+.tip .sw { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.toc { columns: 2; column-gap: 24px; padding-left: 20px; margin: 8px 0 0; }
+@media (max-width: 560px) { .toc { columns: 1; } h1 { font-size: 1.6rem; } }
+details summary { cursor: pointer; font-weight: 600; margin: 8px 0; }
+.quote { border-left: 3px solid var(--border); padding: 4px 0 4px 14px; color: var(--text-2); margin: 12px 0; }
+dl.gloss dt { font-weight: 600; margin-top: 10px; }
+dl.gloss dd { margin: 2px 0 0 0; color: var(--text-2); }
+footer { color: var(--muted); font-size: 0.85rem; margin-top: 56px; }
+</style>
+</head>
+<body>
+<main>
+<h1>Jev evaluation report</h1>
+<p class="sub">MIRA research triage · tests run 28–29 September 2026 · Jev model <code>jev-latest</code> (TypeSafe System One)</p>
+
+<section class="card tldr">
+<h2>The short version</h2>
+<ol>
+<li><strong>Jev is fast and ranks papers much like our LLMs do, but it is stricter.</strong> About 0.12 s per paper, and its relevance ranking correlates 0.78–0.92 with the LLM's. It gives lower scores to loosely related papers, so it cannot simply replace the LLM's relevance score one-for-one.</li>
+<li><strong>Best use in the weekly digests: a pre-screen.</strong> Jev drops papers that are clearly irrelevant before the expensive LLM steps. On two independent samples this skips <strong>46–75%</strong> of LLM work for the memory, CXL and storage profiles, while keeping at least 99% of the papers the LLM would pass and <strong>every paper that has appeared in a real report</strong>. For optical it doesn't save enough to be worth it.</li>
+<li><strong>Best use for the new realtime agent: the main filter.</strong> Jev scores every new paper and news article. The LLM only writes short summaries of the few items that make the email. This is built, tested and emailing hourly.</li>
+<li><strong>Don't use Jev for topic labels, "actionable" flags, affiliation extraction, summaries, or picking the final papers.</strong> It agreed with the LLM on topic labels only 2–43% of the time, and it cannot write text.</li>
+<li><strong>Two things are still unmeasured:</strong> Jev vs the LLM on picking news articles, and how long the LLM steps take for comparison. Both were blocked because the OpenRouter account ran low on credit.</li>
+</ol>
+</section>
+
+<ul class="toc">
+<li><a href="#what">What Jev is</a></li>
+<li><a href="#where">Where Jev fits (and doesn't)</a></li>
+<li><a href="#method">How we tested</a></li>
+<li><a href="#results">Results: paper judgments</a></li>
+<li><a href="#prescreen">Weekly pre-screen</a></li>
+<li><a href="#realtime">Realtime agent (MIRA Live)</a></li>
+<li><a href="#gaps">What is not yet known</a></li>
+<li><a href="#recs">Recommendations</a></li>
+<li><a href="#setup">Setup and how to run</a></li>
+<li><a href="#gloss">Glossary</a></li>
+</ul>
+
+<h2 id="what">What Jev is</h2>
+<p>Jev is TypeSafe's "System One" model. Unlike an LLM, it does not write text. You give it some content (the <em>state</em>) and a set of typed questions, and it returns an answer with probabilities for each one:</p>
+<div class="tw"><table>
+<tr><th>Question type</th><th>Returns</th><th>What we used it for</th></tr>
+<tr><td><strong>Score</strong></td><td>A position on levels you describe (e.g. 0–4), with probabilities</td><td>Paper relevance (5 levels), institution credibility (4 levels), news-article relevance (4 levels)</td></tr>
+<tr><td><strong>Choice</strong></td><td>One option from a list, with probabilities</td><td>Primary topic (the profile's own topic list), potential impact, actionable; picking the most relevant sentence of an abstract</td></tr>
+<tr><td><strong>Noul</strong></td><td>Probability that a yes/no statement is true</td><td>Only in early smoke tests</td></tr>
+</table></div>
+<p>Several questions about the same content go in one request and are answered in parallel. That is why one Jev call can judge relevance, topic, impact and actionable together in about 0.12 seconds. TypeSafe's own docs list where Jev is weak: generating text, arithmetic, dates, multi-step reasoning, and long inputs full of irrelevant detail. We designed around those.</p>
+
+<h2 id="where">Where Jev fits in our workflows (and where it doesn't)</h2>
+<p>We went through every place the workflows call an LLM and asked one question: is this step a <em>judgment</em> with a fixed set of answers, or does it <em>produce text</em>? Only judgments went to Jev. The workflow's logic stays the same everywhere.</p>
+<div class="tw"><table>
+<tr><th>Workflow step</th><th>Jev?</th><th>Why</th></tr>
+<tr><td>Paper relevance score and keep/drop gate</td><td><span class="tag good">Yes, as a pre-screen</span></td><td>A graded judgment. Strong agreement with the LLM's ranking (see results).</td></tr>
+<tr><td>Institution credibility</td><td><span class="tag warn">Partly</span></td><td>Good agreement when given the affiliation list. The list itself has to come from the LLM, because extracting it is text generation.</td></tr>
+<tr><td>Author/affiliation extraction</td><td><span class="tag bad">No</span></td><td>Pulling names and institutions out of a PDF is extraction, which Jev isn't built for. The knowledge graph's author links depend on it.</td></tr>
+<tr><td>Primary topic, actionable, impact labels</td><td><span class="tag bad">No</span></td><td>Low agreement, partly because the LLM invents labels outside the topic list.</td></tr>
+<tr><td>Key findings, summaries, deep analysis, report, trend section</td><td><span class="tag bad">No</span></td><td>These produce text.</td></tr>
+<tr><td>Final "top papers" selection</td><td><span class="tag bad">No</span></td><td>The LLM's written reason for each pick feeds the deep analysis. Replacing it would change the workflow's logic.</td></tr>
+<tr><td>Picking news articles</td><td><span class="tag warn">Built, not yet compared</span></td><td>Per-article relevance scores plus "top N" in code is a natural fit. The LLM side of the comparison is still to run.</td></tr>
+<tr><td>Research-feasibility tier (T1–T4)</td><td><span class="tag warn">Candidate</span></td><td>A four-option choice, which suits Jev well. Not built or tested yet.</td></tr>
+<tr><td>Realtime agent triage</td><td><span class="tag good">Yes, main filter</span></td><td>Needs a decision in well under a second per item, around the clock. The LLM only summarizes the few items that pass.</td></tr>
+</table></div>
+
+<h2 id="method">How we tested</h2>
+<p><strong>The baseline is our own LLM results.</strong> The weekly workflows cache every LLM judgment. That gave us <strong>121,494</strong> relevance/topic results and <strong>114,069</strong> credibility/affiliation results across four profiles (memory, CXL, storage, optical). Most came from Gemini 3.1 Pro; the memory profile also includes some from Gemini 3 Flash and the current production model, GPT-5.6 Terra. We also collected about 1,600 papers that appeared in past production reports, which we call <em>featured</em> papers.</p>
+<ul>
+<li><strong>Two independent samples</strong> of about 1,100–1,200 papers each, with no paper in both. Each profile's sample combined 150 random papers, extra papers the LLM passed, and extra featured papers. We tuned cutoffs on the first sample and checked them on the second.</li>
+<li><strong>Same inputs as the LLM.</strong> Titles and abstracts were re-fetched from arXiv, and first-page text was extracted for 200 papers (about 50 per profile).</li>
+<li><strong>Same preferences as the LLM.</strong> Jev's questions are built automatically from each profile's own prompt: its team description, relevance guidance and topic list. The parts meant only for the LLM, such as JSON formatting rules and the 1–10 numeric scale, are removed.</li>
+<li>In total, about <strong>4,950 Jev calls</strong> over the two samples, plus live runs on real weekly data.</li>
+</ul>
+<div class="callout note"><strong>How to read the agreement numbers</strong>
+<em>Rank correlation</em> (0 to 1): do both put papers in the same order? <em>Agreement</em>: share of papers where both make the same keep/drop call. <em>Kappa</em>: agreement corrected for luck; above 0.6 is substantial, above 0.8 is near-perfect. See the <a href="#gloss">glossary</a>.</div>
+
+<h2 id="results">Results: paper judgments</h2>
+<div class="stats">
+<div class="stat"><div class="v">0.12 s</div><div class="l">Median Jev time per paper (95th percentile 0.20 s)</div></div>
+<div class="stat"><div class="v">0.78–0.92</div><div class="l">Rank correlation with LLM relevance</div></div>
+<div class="stat"><div class="v">86–94%</div><div class="l">Keep/drop agreement with a calibrated Jev cutoff</div></div>
+<div class="stat"><div class="v">2–43%</div><div class="l">Topic-label agreement, too low to use</div></div>
+</div>
+
+<h3>Relevance</h3>
+<p>Each cell shows <em>first sample / second sample</em>. "Raw" converts Jev's level to the 1–10 scale and applies the profile's normal threshold. "Calibrated" uses a Jev cutoff tuned on the data.</p>
+<div class="tw"><table>
+<tr><th>Profile</th><th class="num">Papers</th><th class="num">Rank correlation</th><th class="num">Raw agreement (kappa)</th><th class="num">Calibrated agreement (kappa)</th></tr>
+<tr><td>Memory</td><td class="num">300 / 299</td><td class="num">0.92 / 0.90</td><td class="num">73% (0.50) / 70% (0.43)</td><td class="num">94% (0.88) / 90% (0.79)</td></tr>
+<tr><td>CXL</td><td class="num">292 / 230</td><td class="num">0.87 / 0.81</td><td class="num">58% (0.17) / 65% (0.06)</td><td class="num">93% (0.86) / 88% (0.75)</td></tr>
+<tr><td>Storage</td><td class="num">296 / 296</td><td class="num">0.88 / 0.90</td><td class="num">60% (0.20) / 57% (0.16)</td><td class="num">90% (0.80) / 94% (0.87)</td></tr>
+<tr><td>Optical</td><td class="num">299 / 298</td><td class="num">0.78 / 0.79</td><td class="num">68% (0.41) / 66% (0.39)</td><td class="num">86% (0.68) / 87% (0.71)</td></tr>
+</table></div>
+<p><strong>Why raw agreement is low but the ranking is strong.</strong> Jev reads its rubric literally. The LLM is generous: it often scores loosely related papers 5–7 and invents a topic label to justify it. So Jev's scale sits lower, but the order is almost the same. When Jev disagrees with a "pass", it is usually a paper most readers would call off-topic:</p>
+<div class="tw"><table>
+<tr><th>Profile</th><th>Paper the LLM passed but Jev scored low</th><th class="num">LLM score</th><th>LLM's topic label</th></tr>
+<tr><td>Storage</td><td>Fail Fast, Win Big: Rethinking the Drafting Strategy in Speculative Decoding</td><td class="num">6</td><td>Persistent Storage for AI Inference</td></tr>
+<tr><td>Storage</td><td>Nemotron 3 Nano: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Model</td><td class="num">6</td><td>Persistent Storage for AI Inference</td></tr>
+<tr><td>Storage</td><td>Syndrome-Flow Consistency Model Achieves One-step Denoising Error Correction Codes</td><td class="num">6</td><td>SSD Endurance / SSD Reliability</td></tr>
+<tr><td>Optical</td><td>High Coupling Tunable Acoustic Resonators in Monolithic Barium Titanate</td><td class="num">6</td><td>Modulator Technologies</td></tr>
+<tr><td>Optical</td><td>HierarchicalKV: A GPU Hash Table with Cache Semantics for Continuous Online Embedding</td><td class="num">6</td><td>Memory Disaggregation &amp; Pooling</td></tr>
+<tr><td>Memory</td><td>On the Convergence and Stability of Distributed Sub-model Training</td><td class="num">6</td><td>"Edge/IoT Memory" (not in the topic list)</td></tr>
+</table></div>
+<p>Because the goal was to keep the workflow's behavior unchanged, we still treated the LLM as ground truth. These differences are a reason to take a closer look later, not something the pre-screen is allowed to change.</p>
+
+<h3>Credibility</h3>
+<div class="tw"><table>
+<tr><th>Profile</th><th class="num">From affiliation list: rank corr. (gate kappa)</th><th class="num">From raw first page: rank corr. (gate kappa)</th></tr>
+<tr><td>Memory</td><td class="num">0.83 (0.46) / 0.86 (0.68)</td><td class="num">0.81 (0.79)</td></tr>
+<tr><td>CXL</td><td class="num">0.86 (0.79) / 0.91 (0.70)</td><td class="num">0.83 (0.88)</td></tr>
+<tr><td>Storage</td><td class="num">0.84 (0.74) / 0.81 (0.56)</td><td class="num">0.82 (0.55)</td></tr>
+<tr><td>Optical</td><td class="num">0.82 (0.92) / 0.80 (0.57)</td><td class="num">0.64 (0.49)</td></tr>
+</table></div>
+<p>Given the institution list, Jev judges credibility well. Given only the raw first page (about 50 papers per profile, first sample only), it is decent for memory and CXL and weaker for optical. In practice the credibility gate rarely decides anything: almost every paper the LLM rates relevant also clears its credibility bar.</p>
+
+<h3>Labels we should not take from Jev</h3>
+<div class="tw"><table>
+<tr><th>Profile</th><th class="num">Primary topic agrees (LLM-relevant papers)</th><th class="num">Impact within one level</th><th class="num">Actionable agrees</th></tr>
+<tr><td>Memory</td><td class="num">43% / 33%</td><td class="num">90% / 88%</td><td class="num">58% / 52%</td></tr>
+<tr><td>CXL</td><td class="num">10% / 2%</td><td class="num">89% / 98%</td><td class="num">58% / 66%</td></tr>
+<tr><td>Storage</td><td class="num">14% / 7%</td><td class="num">96% / 95%</td><td class="num">51% / 53%</td></tr>
+<tr><td>Optical</td><td class="num">21% / 28%</td><td class="num">94% / 96%</td><td class="num">60% / 56%</td></tr>
+</table></div>
+<p>The topic numbers look worse than the underlying skill, because the LLM frequently answers outside the profile's own list; the CXL prompt, for example, lets it write "Other CXL-related systems (…)". Either way, these fields should stay with the LLM.</p>
+
+<h2 id="prescreen">Weekly pre-screen: skip the LLM for clearly irrelevant papers</h2>
+<p>How it works: Jev scores every fetched paper first. Papers below a very low cutoff skip the first-page PDF download, affiliation extraction and classification. <strong>Every other paper goes through the existing LLM pipeline unchanged.</strong> If Jev errors on a paper, that paper is kept.</p>
+<p>The charts show the trade-off at each cutoff, averaged over the two samples; hover for both samples separately. <em>LLM calls saved</em> is measured on the random papers. <em>Passing kept</em> is the share of papers the LLM would pass that Jev keeps, and <em>featured kept</em> the share of papers from real past reports.</p>
+<div class="legend"><span><i style="border-color:var(--s1)"></i>LLM calls saved</span><span><i style="border-color:var(--s2)"></i>LLM-passing papers kept</span><span><i style="border-color:var(--s3);border-top-style:dashed"></i>Report-featured papers kept</span></div>
+<div class="charts">
+<figure class="viz" data-tip='{"cut": [0.02, 0.05, 0.08, 0.1, 0.15, 0.2, 0.3, 0.5], "s42": [[4, 100, 100], [9, 100, 100], [22, 100, 100], [31, 100, 100], [46, 99.4, 100], [61, 98.9, 100], [71, 96.6, 100], [83, 85.7, 100]], "s43": [[6, 100, 100], [15, 100, 100], [27, 100, 100], [36, 100, 100], [50, 100, 100], [58, 98.8, 100], [68, 95.3, 97.5], [76, 85.5, 96.3]], "avg": [[5.0, 100.0, 100.0], [12.0, 100.0, 100.0], [24.5, 100.0, 100.0], [33.5, 100.0, 100.0], [48.0, 99.7, 100.0], [59.5, 98.85, 100.0], [69.5, 95.94999999999999, 98.75], [79.5, 85.6, 98.15]], "x": [40.0, 78.3, 116.6, 154.9, 193.1, 231.4, 269.7, 308.0], "L": 40, "W": 400}'><figcaption>Memory — chosen cutoff 0.15</figcaption><svg viewBox="0 0 400 230" class="chart" role="img" aria-label="Memory: share of LLM calls saved and papers kept at each Jev cutoff"><line x1="40" x2="308" y1="196.0" y2="196.0" class="grid"/><text x="34" y="200.0" class="tick" text-anchor="end">0%</text><line x1="40" x2="308" y1="150.5" y2="150.5" class="grid"/><text x="34" y="154.5" class="tick" text-anchor="end">25%</text><line x1="40" x2="308" y1="105.0" y2="105.0" class="grid"/><text x="34" y="109.0" class="tick" text-anchor="end">50%</text><line x1="40" x2="308" y1="59.5" y2="59.5" class="grid"/><text x="34" y="63.5" class="tick" text-anchor="end">75%</text><line x1="40" x2="308" y1="14.0" y2="14.0" class="grid"/><text x="34" y="18.0" class="tick" text-anchor="end">100%</text><text x="40.0" y="212" class="tick" text-anchor="middle">0.02</text><text x="78.3" y="212" class="tick" text-anchor="middle">0.05</text><text x="116.6" y="212" class="tick" text-anchor="middle">0.08</text><text x="154.9" y="212" class="tick" text-anchor="middle">0.1</text><text x="193.1" y="212" class="tick" text-anchor="middle">0.15</text><text x="231.4" y="212" class="tick" text-anchor="middle">0.2</text><text x="269.7" y="212" class="tick" text-anchor="middle">0.3</text><text x="308.0" y="212" class="tick" text-anchor="middle">0.5</text><text x="174.0" y="226" class="axis" text-anchor="middle">Jev relevance cutoff</text><line x1="193.1" x2="193.1" y1="14" y2="196" class="chosen"/><text x="197.1" y="190" class="chosen-lbl">chosen</text><polyline points="40.0,186.9 78.3,174.2 116.6,151.4 154.9,135.0 193.1,108.6 231.4,87.7 269.7,69.5 308.0,51.3" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round"/><circle cx="40.0" cy="186.9" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="78.3" cy="174.2" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="116.6" cy="151.4" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="154.9" cy="135.0" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="193.1" cy="108.6" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="231.4" cy="87.7" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="269.7" cy="69.5" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="308.0" cy="51.3" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><polyline points="40.0,14.0 78.3,14.0 116.6,14.0 154.9,14.0 193.1,14.5 231.4,16.1 269.7,21.4 308.0,40.2" fill="none" stroke="var(--s2)" stroke-width="2" stroke-linejoin="round"/><circle cx="40.0" cy="14.0" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="78.3" cy="14.0" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="116.6" cy="14.0" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="154.9" cy="14.0" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="193.1" cy="14.5" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="231.4" cy="16.1" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="269.7" cy="21.4" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="308.0" cy="40.2" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><polyline points="40.0,14.0 78.3,14.0 116.6,14.0 154.9,14.0 193.1,14.0 231.4,14.0 269.7,16.3 308.0,17.4" fill="none" stroke="var(--s3)" stroke-width="2" stroke-linejoin="round" stroke-dasharray="5 4"/><circle cx="40.0" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="78.3" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="116.6" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="154.9" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="193.1" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="231.4" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="269.7" cy="16.3" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="308.0" cy="17.4" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><text x="316" y="20.9" class="dlabel">featured kept</text><text x="316" y="43.7" class="dlabel">passing kept</text><text x="316" y="55.7" class="dlabel">calls saved</text><line class="xhair" x1="0" x2="0" y1="14" y2="196" style="display:none"/><rect class="hit" x="40" y="14" width="268" height="182" fill="transparent"/></svg><div class="tip" hidden></div></figure>
+<figure class="viz" data-tip='{"cut": [0.02, 0.05, 0.08, 0.1, 0.15, 0.2, 0.3, 0.5], "s42": [[21, 100, 100], [61, 100, 100], [69, 100, 100], [73, 100, 100], [79, 98.0, 100], [80, 98.0, 100], [86, 95.9, 100], [91, 88.5, 100]], "s43": [[19, 100, 100], [54, 100, 100], [67, 100, 100], [71, 97.6, 100], [75, 96.5, 100], [79, 95.3, 100], [83, 90.6, 100], [91, 71.8, 100]], "avg": [[20.0, 100.0, 100.0], [57.5, 100.0, 100.0], [68.0, 100.0, 100.0], [72.0, 98.8, 100.0], [77.0, 97.25, 100.0], [79.5, 96.65, 100.0], [84.5, 93.25, 100.0], [91.0, 80.15, 100.0]], "x": [40.0, 78.3, 116.6, 154.9, 193.1, 231.4, 269.7, 308.0], "L": 40, "W": 400}'><figcaption>CXL — chosen cutoff 0.05</figcaption><svg viewBox="0 0 400 230" class="chart" role="img" aria-label="CXL: share of LLM calls saved and papers kept at each Jev cutoff"><line x1="40" x2="308" y1="196.0" y2="196.0" class="grid"/><text x="34" y="200.0" class="tick" text-anchor="end">0%</text><line x1="40" x2="308" y1="150.5" y2="150.5" class="grid"/><text x="34" y="154.5" class="tick" text-anchor="end">25%</text><line x1="40" x2="308" y1="105.0" y2="105.0" class="grid"/><text x="34" y="109.0" class="tick" text-anchor="end">50%</text><line x1="40" x2="308" y1="59.5" y2="59.5" class="grid"/><text x="34" y="63.5" class="tick" text-anchor="end">75%</text><line x1="40" x2="308" y1="14.0" y2="14.0" class="grid"/><text x="34" y="18.0" class="tick" text-anchor="end">100%</text><text x="40.0" y="212" class="tick" text-anchor="middle">0.02</text><text x="78.3" y="212" class="tick" text-anchor="middle">0.05</text><text x="116.6" y="212" class="tick" text-anchor="middle">0.08</text><text x="154.9" y="212" class="tick" text-anchor="middle">0.1</text><text x="193.1" y="212" class="tick" text-anchor="middle">0.15</text><text x="231.4" y="212" class="tick" text-anchor="middle">0.2</text><text x="269.7" y="212" class="tick" text-anchor="middle">0.3</text><text x="308.0" y="212" class="tick" text-anchor="middle">0.5</text><text x="174.0" y="226" class="axis" text-anchor="middle">Jev relevance cutoff</text><line x1="78.3" x2="78.3" y1="14" y2="196" class="chosen"/><text x="82.3" y="190" class="chosen-lbl">chosen</text><polyline points="40.0,159.6 78.3,91.4 116.6,72.2 154.9,65.0 193.1,55.9 231.4,51.3 269.7,42.2 308.0,30.4" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round"/><circle cx="40.0" cy="159.6" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="78.3" cy="91.4" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="116.6" cy="72.2" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="154.9" cy="65.0" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="193.1" cy="55.9" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="231.4" cy="51.3" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="269.7" cy="42.2" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="308.0" cy="30.4" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><polyline points="40.0,14.0 78.3,14.0 116.6,14.0 154.9,16.2 193.1,19.0 231.4,20.1 269.7,26.3 308.0,50.1" fill="none" stroke="var(--s2)" stroke-width="2" stroke-linejoin="round"/><circle cx="40.0" cy="14.0" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="78.3" cy="14.0" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="116.6" cy="14.0" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="154.9" cy="16.2" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="193.1" cy="19.0" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="231.4" cy="20.1" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="269.7" cy="26.3" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="308.0" cy="50.1" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><polyline points="40.0,14.0 78.3,14.0 116.6,14.0 154.9,14.0 193.1,14.0 231.4,14.0 269.7,14.0 308.0,14.0" fill="none" stroke="var(--s3)" stroke-width="2" stroke-linejoin="round" stroke-dasharray="5 4"/><circle cx="40.0" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="78.3" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="116.6" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="154.9" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="193.1" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="231.4" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="269.7" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="308.0" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><text x="316" y="17.5" class="dlabel">featured kept</text><text x="316" y="33.9" class="dlabel">calls saved</text><text x="316" y="53.6" class="dlabel">passing kept</text><line class="xhair" x1="0" x2="0" y1="14" y2="196" style="display:none"/><rect class="hit" x="40" y="14" width="268" height="182" fill="transparent"/></svg><div class="tip" hidden></div></figure>
+<figure class="viz" data-tip='{"cut": [0.02, 0.05, 0.08, 0.1, 0.15, 0.2, 0.3, 0.5], "s42": [[61, 100, 100], [75, 100, 100], [79, 96.7, 98.0], [82, 96.0, 97.0], [86, 92.7, 96.0], [90, 88.0, 93.1], [94, 82.0, 87.1], [95, 67.3, 76.2]], "s43": [[59, 100, 100], [74, 99.3, 100], [83, 98.0, 100], [86, 97.4, 100], [91, 93.4, 98.9], [92, 88.8, 92.3], [95, 79.6, 90.1], [97, 67.8, 78.0]], "avg": [[60.0, 100.0, 100.0], [74.5, 99.65, 100.0], [81.0, 97.35, 99.0], [84.0, 96.7, 98.5], [88.5, 93.05000000000001, 97.45], [91.0, 88.4, 92.69999999999999], [94.5, 80.8, 88.6], [96.0, 67.55, 77.1]], "x": [40.0, 78.3, 116.6, 154.9, 193.1, 231.4, 269.7, 308.0], "L": 40, "W": 400}'><figcaption>Storage — chosen cutoff 0.05</figcaption><svg viewBox="0 0 400 230" class="chart" role="img" aria-label="Storage: share of LLM calls saved and papers kept at each Jev cutoff"><line x1="40" x2="308" y1="196.0" y2="196.0" class="grid"/><text x="34" y="200.0" class="tick" text-anchor="end">0%</text><line x1="40" x2="308" y1="150.5" y2="150.5" class="grid"/><text x="34" y="154.5" class="tick" text-anchor="end">25%</text><line x1="40" x2="308" y1="105.0" y2="105.0" class="grid"/><text x="34" y="109.0" class="tick" text-anchor="end">50%</text><line x1="40" x2="308" y1="59.5" y2="59.5" class="grid"/><text x="34" y="63.5" class="tick" text-anchor="end">75%</text><line x1="40" x2="308" y1="14.0" y2="14.0" class="grid"/><text x="34" y="18.0" class="tick" text-anchor="end">100%</text><text x="40.0" y="212" class="tick" text-anchor="middle">0.02</text><text x="78.3" y="212" class="tick" text-anchor="middle">0.05</text><text x="116.6" y="212" class="tick" text-anchor="middle">0.08</text><text x="154.9" y="212" class="tick" text-anchor="middle">0.1</text><text x="193.1" y="212" class="tick" text-anchor="middle">0.15</text><text x="231.4" y="212" class="tick" text-anchor="middle">0.2</text><text x="269.7" y="212" class="tick" text-anchor="middle">0.3</text><text x="308.0" y="212" class="tick" text-anchor="middle">0.5</text><text x="174.0" y="226" class="axis" text-anchor="middle">Jev relevance cutoff</text><line x1="78.3" x2="78.3" y1="14" y2="196" class="chosen"/><text x="82.3" y="190" class="chosen-lbl">chosen</text><polyline points="40.0,86.8 78.3,60.4 116.6,48.6 154.9,43.1 193.1,34.9 231.4,30.4 269.7,24.0 308.0,21.3" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round"/><circle cx="40.0" cy="86.8" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="78.3" cy="60.4" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="116.6" cy="48.6" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="154.9" cy="43.1" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="193.1" cy="34.9" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="231.4" cy="30.4" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="269.7" cy="24.0" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="308.0" cy="21.3" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><polyline points="40.0,14.0 78.3,14.6 116.6,18.8 154.9,20.0 193.1,26.6 231.4,35.1 269.7,48.9 308.0,73.1" fill="none" stroke="var(--s2)" stroke-width="2" stroke-linejoin="round"/><circle cx="40.0" cy="14.0" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="78.3" cy="14.6" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="116.6" cy="18.8" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="154.9" cy="20.0" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="193.1" cy="26.6" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="231.4" cy="35.1" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="269.7" cy="48.9" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="308.0" cy="73.1" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><polyline points="40.0,14.0 78.3,14.0 116.6,15.8 154.9,16.7 193.1,18.6 231.4,27.3 269.7,34.7 308.0,55.7" fill="none" stroke="var(--s3)" stroke-width="2" stroke-linejoin="round" stroke-dasharray="5 4"/><circle cx="40.0" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="78.3" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="116.6" cy="15.8" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="154.9" cy="16.7" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="193.1" cy="18.6" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="231.4" cy="27.3" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="269.7" cy="34.7" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="308.0" cy="55.7" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><text x="316" y="24.8" class="dlabel">calls saved</text><text x="316" y="59.2" class="dlabel">featured kept</text><text x="316" y="76.6" class="dlabel">passing kept</text><line class="xhair" x1="0" x2="0" y1="14" y2="196" style="display:none"/><rect class="hit" x="40" y="14" width="268" height="182" fill="transparent"/></svg><div class="tip" hidden></div></figure>
+<figure class="viz" data-tip='{"cut": [0.02, 0.05, 0.08, 0.1, 0.15, 0.2, 0.3, 0.5], "s42": [[12, 100, 100], [32, 99.5, 100], [44, 96.4, 100], [47, 94.3, 100], [55, 91.1, 97.8], [59, 89.6, 96.7], [65, 81.8, 91.1], [74, 71.4, 81.1]], "s43": [[14, 99.5, 100], [35, 95.5, 100], [48, 93.0, 98.9], [51, 92.0, 98.9], [59, 89.4, 96.7], [61, 87.9, 96.7], [66, 84.9, 95.6], [72, 77.4, 88.9]], "avg": [[13.0, 99.75, 100.0], [33.5, 97.5, 100.0], [46.0, 94.7, 99.45], [49.0, 93.15, 99.45], [57.0, 90.25, 97.25], [60.0, 88.75, 96.7], [65.5, 83.35, 93.35], [73.0, 74.4, 85.0]], "x": [40.0, 78.3, 116.6, 154.9, 193.1, 231.4, 269.7, 308.0], "L": 40, "W": 400}'><figcaption>Optical — pre-screen off (see text)</figcaption><svg viewBox="0 0 400 230" class="chart" role="img" aria-label="Optical: share of LLM calls saved and papers kept at each Jev cutoff"><line x1="40" x2="308" y1="196.0" y2="196.0" class="grid"/><text x="34" y="200.0" class="tick" text-anchor="end">0%</text><line x1="40" x2="308" y1="150.5" y2="150.5" class="grid"/><text x="34" y="154.5" class="tick" text-anchor="end">25%</text><line x1="40" x2="308" y1="105.0" y2="105.0" class="grid"/><text x="34" y="109.0" class="tick" text-anchor="end">50%</text><line x1="40" x2="308" y1="59.5" y2="59.5" class="grid"/><text x="34" y="63.5" class="tick" text-anchor="end">75%</text><line x1="40" x2="308" y1="14.0" y2="14.0" class="grid"/><text x="34" y="18.0" class="tick" text-anchor="end">100%</text><text x="40.0" y="212" class="tick" text-anchor="middle">0.02</text><text x="78.3" y="212" class="tick" text-anchor="middle">0.05</text><text x="116.6" y="212" class="tick" text-anchor="middle">0.08</text><text x="154.9" y="212" class="tick" text-anchor="middle">0.1</text><text x="193.1" y="212" class="tick" text-anchor="middle">0.15</text><text x="231.4" y="212" class="tick" text-anchor="middle">0.2</text><text x="269.7" y="212" class="tick" text-anchor="middle">0.3</text><text x="308.0" y="212" class="tick" text-anchor="middle">0.5</text><text x="174.0" y="226" class="axis" text-anchor="middle">Jev relevance cutoff</text><polyline points="40.0,172.3 78.3,135.0 116.6,112.3 154.9,106.8 193.1,92.3 231.4,86.8 269.7,76.8 308.0,63.1" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round"/><circle cx="40.0" cy="172.3" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="78.3" cy="135.0" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="116.6" cy="112.3" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="154.9" cy="106.8" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="193.1" cy="92.3" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="231.4" cy="86.8" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="269.7" cy="76.8" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><circle cx="308.0" cy="63.1" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/><polyline points="40.0,14.5 78.3,18.6 116.6,23.6 154.9,26.5 193.1,31.7 231.4,34.5 269.7,44.3 308.0,60.6" fill="none" stroke="var(--s2)" stroke-width="2" stroke-linejoin="round"/><circle cx="40.0" cy="14.5" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="78.3" cy="18.6" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="116.6" cy="23.6" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="154.9" cy="26.5" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="193.1" cy="31.7" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="231.4" cy="34.5" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="269.7" cy="44.3" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><circle cx="308.0" cy="60.6" r="3.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/><polyline points="40.0,14.0 78.3,14.0 116.6,15.0 154.9,15.0 193.1,19.0 231.4,20.0 269.7,26.1 308.0,41.3" fill="none" stroke="var(--s3)" stroke-width="2" stroke-linejoin="round" stroke-dasharray="5 4"/><circle cx="40.0" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="78.3" cy="14.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="116.6" cy="15.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="154.9" cy="15.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="193.1" cy="19.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="231.4" cy="20.0" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="269.7" cy="26.1" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><circle cx="308.0" cy="41.3" r="3.5" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"/><text x="316" y="44.8" class="dlabel">featured kept</text><text x="316" y="64.1" class="dlabel">passing kept</text><text x="316" y="76.1" class="dlabel">calls saved</text><line class="xhair" x1="0" x2="0" y1="14" y2="196" style="display:none"/><rect class="hit" x="40" y="14" width="268" height="182" fill="transparent"/></svg><div class="tip" hidden></div></figure>
+</div>
+<h3>Chosen cutoffs</h3>
+<div class="tw"><table>
+<tr><th>Profile</th><th class="num">Cutoff</th><th class="num">LLM calls saved</th><th class="num">LLM-passing papers kept</th><th class="num">Featured papers kept</th></tr>
+<tr><td>Memory</td><td class="num">0.15</td><td class="num">46% / 50%</td><td class="num">99.4% / 100%</td><td class="num">100% / 100%</td></tr>
+<tr><td>CXL</td><td class="num">0.05</td><td class="num">61% / 54%</td><td class="num">100% / 100%</td><td class="num">100% / 100%</td></tr>
+<tr><td>Storage</td><td class="num">0.05</td><td class="num">75% / 74%</td><td class="num">100% / 99.3%</td><td class="num">100% / 100%</td></tr>
+<tr><td>Optical</td><td class="num">off</td><td colspan="3">A cutoff that keeps everything saves only 12–14%; anything higher starts dropping papers the LLM passes.</td></tr>
+</table></div>
+<p>The rule was: on <em>both</em> samples, keep at least 99% of LLM-passing papers and 100% of featured papers. Across both samples, Jev dropped at most one LLM-passing paper per profile out of roughly 230–350 checked. That puts the likely miss rate at about 1% or less. Featured-paper counts were smaller for CXL's second sample, since few CXL reports exist.</p>
+<details><summary>Full table: every cutoff, both samples</summary>
+<div class="tw"><table>
+<tr><th>Profile</th><th class="num">Cutoff</th><th class="num">LLM calls saved</th><th class="num">Passing kept</th><th class="num">Featured kept</th></tr>
+<tr><td>Memory</td><td>0.02</td><td>4% / 6%</td><td>100% / 100%</td><td>100% / 100%</td></tr>
+<tr><td>Memory</td><td>0.05</td><td>9% / 15%</td><td>100% / 100%</td><td>100% / 100%</td></tr>
+<tr><td>Memory</td><td>0.08</td><td>22% / 27%</td><td>100% / 100%</td><td>100% / 100%</td></tr>
+<tr><td>Memory</td><td>0.1</td><td>31% / 36%</td><td>100% / 100%</td><td>100% / 100%</td></tr>
+<tr class="hl"><td>Memory</td><td>0.15</td><td>46% / 50%</td><td>99.4% / 100%</td><td>100% / 100%</td></tr>
+<tr><td>Memory</td><td>0.2</td><td>61% / 58%</td><td>98.9% / 98.8%</td><td>100% / 100%</td></tr>
+<tr><td>Memory</td><td>0.3</td><td>71% / 68%</td><td>96.6% / 95.3%</td><td>100% / 97.5%</td></tr>
+<tr><td>Memory</td><td>0.5</td><td>83% / 76%</td><td>85.7% / 85.5%</td><td>100% / 96.3%</td></tr>
+<tr><td>CXL</td><td>0.02</td><td>21% / 19%</td><td>100% / 100%</td><td>100% / 100%</td></tr>
+<tr class="hl"><td>CXL</td><td>0.05</td><td>61% / 54%</td><td>100% / 100%</td><td>100% / 100%</td></tr>
+<tr><td>CXL</td><td>0.08</td><td>69% / 67%</td><td>100% / 100%</td><td>100% / 100%</td></tr>
+<tr><td>CXL</td><td>0.1</td><td>73% / 71%</td><td>100% / 97.6%</td><td>100% / 100%</td></tr>
+<tr><td>CXL</td><td>0.15</td><td>79% / 75%</td><td>98% / 96.5%</td><td>100% / 100%</td></tr>
+<tr><td>CXL</td><td>0.2</td><td>80% / 79%</td><td>98% / 95.3%</td><td>100% / 100%</td></tr>
+<tr><td>CXL</td><td>0.3</td><td>86% / 83%</td><td>95.9% / 90.6%</td><td>100% / 100%</td></tr>
+<tr><td>CXL</td><td>0.5</td><td>91% / 91%</td><td>88.5% / 71.8%</td><td>100% / 100%</td></tr>
+<tr><td>Storage</td><td>0.02</td><td>61% / 59%</td><td>100% / 100%</td><td>100% / 100%</td></tr>
+<tr class="hl"><td>Storage</td><td>0.05</td><td>75% / 74%</td><td>100% / 99.3%</td><td>100% / 100%</td></tr>
+<tr><td>Storage</td><td>0.08</td><td>79% / 83%</td><td>96.7% / 98%</td><td>98% / 100%</td></tr>
+<tr><td>Storage</td><td>0.1</td><td>82% / 86%</td><td>96% / 97.4%</td><td>97% / 100%</td></tr>
+<tr><td>Storage</td><td>0.15</td><td>86% / 91%</td><td>92.7% / 93.4%</td><td>96% / 98.9%</td></tr>
+<tr><td>Storage</td><td>0.2</td><td>90% / 92%</td><td>88% / 88.8%</td><td>93.1% / 92.3%</td></tr>
+<tr><td>Storage</td><td>0.3</td><td>94% / 95%</td><td>82% / 79.6%</td><td>87.1% / 90.1%</td></tr>
+<tr><td>Storage</td><td>0.5</td><td>95% / 97%</td><td>67.3% / 67.8%</td><td>76.2% / 78%</td></tr>
+<tr><td>Optical</td><td>0.02</td><td>12% / 14%</td><td>100% / 99.5%</td><td>100% / 100%</td></tr>
+<tr><td>Optical</td><td>0.05</td><td>32% / 35%</td><td>99.5% / 95.5%</td><td>100% / 100%</td></tr>
+<tr><td>Optical</td><td>0.08</td><td>44% / 48%</td><td>96.4% / 93%</td><td>100% / 98.9%</td></tr>
+<tr><td>Optical</td><td>0.1</td><td>47% / 51%</td><td>94.3% / 92%</td><td>100% / 98.9%</td></tr>
+<tr><td>Optical</td><td>0.15</td><td>55% / 59%</td><td>91.1% / 89.4%</td><td>97.8% / 96.7%</td></tr>
+<tr><td>Optical</td><td>0.2</td><td>59% / 61%</td><td>89.6% / 87.9%</td><td>96.7% / 96.7%</td></tr>
+<tr><td>Optical</td><td>0.3</td><td>65% / 66%</td><td>81.8% / 84.9%</td><td>91.1% / 95.6%</td></tr>
+<tr><td>Optical</td><td>0.5</td><td>74% / 72%</td><td>71.4% / 77.4%</td><td>81.1% / 88.9%</td></tr>
+</table></div>
+</details>
+
+<h3>Live test on real data</h3>
+<div class="callout good"><strong>Last week's memory papers: 2,000 fetched, 930 screened out in 28 seconds.</strong>
+That is 46.5%, in line with the benchmark. During the run TypeSafe returned one server error (HTTP 520) for one paper. That paper was kept and sent on to the LLM, as designed.</div>
+<p>One consequence: screened-out papers get no cached LLM result. Most backfill scripts already ignore low-relevance papers, but anything that uses <em>every</em> classified paper (for example the "all papers" statistics in the report) will see fewer papers. That is why the pre-screen is opt-in.</p>
+
+<h2 id="realtime">Realtime agent (MIRA Live)</h2>
+<p>A new agent that runs every hour and emails subscribers about new papers and news.</p>
+<ol>
+<li>Fetch the last 3 days of arXiv papers in the profile's categories, and crawl EE Times, SemiAnalysis, TrendForce and Digitimes.</li>
+<li>Skip anything already seen, using a per-profile ledger, so nothing is sent twice.</li>
+<li><strong>Jev</strong> scores relevance for each new paper (title and abstract) and article (title and text). For papers that pass, it downloads the first page and scores the institutions' credibility.</li>
+<li>Rank what passed. The top 10 papers and top 8 articles get a 2–3 sentence summary from the LLM, written for the profile's preferences. If the LLM is unavailable, Jev picks the most relevant sentence from the abstract instead.</li>
+<li>Email a digest: title, link, source, authors, topic, relevance and credibility, a "High priority" tag, the summary and the abstract (or an excerpt for news). The next 30 papers are listed below it, with a count of any others.</li>
+</ol>
+<h3>Calibrated alert cutoffs</h3>
+<p>Jev's scale is stricter than the LLM's, so the thresholds were converted using both samples together:</p>
+<div class="tw"><table>
+<tr><th>Profile</th><th class="num">Gate (= weekly relevance threshold)</th><th class="num">Agreement / precision / recall</th><th class="num">"High priority" (= LLM ≥ 7)</th><th class="num">Agreement / precision / recall</th></tr>
+<tr><td>Memory</td><td class="num">0.36</td><td class="num">92% / 92% / 95%</td><td class="num">0.81</td><td class="num">89% / 82% / 91%</td></tr>
+<tr><td>CXL</td><td class="num">0.37</td><td class="num">91% / 89% / 92%</td><td class="num">1.09</td><td class="num">90% / 71% / 58%</td></tr>
+<tr><td>Storage</td><td class="num">0.16</td><td class="num">92% / 92% / 92%</td><td class="num">1.32</td><td class="num">86% / 78% / 43%</td></tr>
+<tr><td>Optical</td><td class="num">0.20</td><td class="num">86% / 90% / 89%</td><td class="num">1.68</td><td class="num">85% / 72% / 52%</td></tr>
+</table></div>
+<p>The gate cutoffs are dependable. The "high priority" tag is reliable only for memory. For the other profiles it catches only about half of the papers the LLM would score 7 or higher, so treat it as a hint.</p>
+<h3>Runs so far</h3>
+<div class="tw"><table>
+<tr><th>When</th><th>Run</th><th>Result</th></tr>
+<tr><td>28 Sep</td><td>Dry run, memory profile</td><td>1,350 new papers (3-day backlog) → 424 passed; 5 new articles → 1 passed; 106 s</td></tr>
+<tr><td>28 Sep</td><td>First real run</td><td>Email sent to 1 subscriber. A repeat run found 0 new items and sent nothing (the ledger works).</td></tr>
+<tr><td>28 Sep →</td><td>Hourly schedule (macOS launchd, old <code>~/n8n</code> repo)</td><td>Running; later runs completed without errors</td></tr>
+<tr><td>29 Sep</td><td>Through Prefect in <code>mira-local</code> (dry run)</td><td>1,076 new papers → 336 passed; 5 articles → 2 passed; about 5 minutes (mostly a slow Digitimes crawl). This run exposed and fixed a PDF-library crash.</td></tr>
+</table></div>
+<p>A real summary from the first email, for a paper on MRAM sense amplifiers:</p>
+<p class="quote">"This is a direct hit for the team's memory focus: it proposes a co-designed MRAM sense amplifier and 4T-2MTJ bit cell (S-ALSA) that cuts read energy by up to 80% versus conventional PCSA while eliminating side-channel leakage during read operations… though the lack of physical hardware validation (simulation-only, 4x4 macro scale) should temper confidence in real-world scalability."</p>
+<div class="callout warn"><strong>Volume is the open issue.</strong> Roughly a third of new arXiv papers in the memory profile's categories pass the gate, which works out to about 140 on a typical day. arXiv publishes once a day, so most hourly runs contain only news, and one run a day carries a large batch.</div>
+
+<h2 id="gaps">What is not yet known</h2>
+<ul>
+<li><strong>News selection vs the LLM.</strong> The benchmark script is ready (<code>scripts/bench_jev_media.py</code>), but the LLM side was blocked by the OpenRouter credit limit.</li>
+<li><strong>LLM speed and cost for comparison.</strong> The planned timing run (<code>--llm-timing</code>) hit the same credit limit. So we know Jev takes 0.12 s per paper, but haven't measured the matching LLM number here.</li>
+<li><strong>How consistent the LLM is with itself.</strong> Without it, we don't know the ceiling: if two LLM runs agree only 90% of the time, Jev's 86–94% is near the maximum.</li>
+<li><strong>The baseline is mostly older models.</strong> Most cached judgments are from Gemini 3.1 Pro; production now uses GPT-5.6 Terra. The cutoffs should be rechecked against the current model.</li>
+<li><strong>Credibility from the first page</strong> was tested on only about 50 papers per profile.</li>
+<li><strong><code>jev-latest</code> is a moving target.</strong> The model behind the alias will change over time, and our cutoffs are calibrated to today's version.</li>
+</ul>
+
+<h2 id="recs">Recommendations</h2>
+<ol>
+<li><strong>Turn on the pre-screen for memory, CXL and storage, after a short trial.</strong> Run 2–3 weekly digests with and without <code>jev_prescreen</code> and compare the selected papers and reports. If they match, make it the default for those three profiles. Keep optical off.</li>
+<li><strong>Keep the LLM for everything that writes text, extracts affiliations, labels topics or makes the final selection.</strong></li>
+<li><strong>Tune the realtime agent's volume before adding more subscribers.</strong> Two options:
+<ul>
+<li>send arXiv papers once a day and keep news hourly</li>
+<li>feature only "high priority" memory papers and list the rest</li>
+</ul>
+Read a week of alerts and adjust <code>ALERT_CUTOFFS</code>.</li>
+<li><strong>Finish the missing measurements once OpenRouter is topped up:</strong>
+<ul>
+<li>news selection (<code>bench_jev_media.py</code>)</li>
+<li>LLM timing and cost (<code>bench_jev.py --llm-timing 40</code>)</li>
+<li>a fresh baseline from the current production model</li>
+</ul></li>
+<li><strong>Recalibrate when a model changes.</strong> Re-run the benchmark whenever the production LLM or Jev changes, or once a quarter. It costs only Jev calls, since it reuses cached LLM results.</li>
+<li><strong>Next candidate:</strong> the research-feasibility tier (T1–T4) as a Jev choice, benchmarked against the current Claude Haiku judge.</li>
+<li><strong>Get Jev approved like any other external API before company use</strong> (see below).</li>
+</ol>
+
+<h2 id="setup">Setup and how to run</h2>
+<h3>Account and key</h3>
+<ul>
+<li>Create a key at <a href="https://console.typesafe.ai/">console.typesafe.ai</a> and put it in <code>.env</code> as <code>TYPESAFE_API_KEY=…</code>. <code>.env</code> is gitignored, so never commit the key.</li>
+<li>Python SDK: <code>typesafe-sdk</code> (MIT license), already in <code>pyproject.toml</code>. Model: <code>jev-latest</code>; override it with the <code>JEV_MODEL</code> environment variable (<code>jev-preview</code> also exists).</li>
+<li>Limits from TypeSafe's docs: 64k tokens per request (32k for the content plus the longest question), and 1,200 requests/minute (limits are being adjusted). Billing is per input token; output is free. One of our paper judgments is about 400 tokens.</li>
+</ul>
+<div class="callout warn"><strong>Data sent to TypeSafe</strong>
+Paper titles and abstracts, the first 2,500 characters of a paper's first page, the title and first 3,000 characters of news articles, and each profile's focus and relevance guidance. The papers and news are public. The profile text, though, describes what your team cares about. Treat Jev like the LLM endpoint: get it approved, or leave the realtime agent and pre-screen switched off.</div>
+<h3>Where things are (in <code>mira-local</code>)</h3>
+<div class="tw"><table>
+<tr><th>File</th><th>What it holds</th></tr>
+<tr><td><code>mira/jev.py</code></td><td>All Jev questions (built from each profile's prompts), the paper, credibility and article judges, and the pre-screen with <code>PRESCREEN_CUTOFFS</code></td></tr>
+<tr><td><code>mira/realtime.py</code></td><td>Realtime agent: sources, ledger, triage, summaries, email; <code>ALERT_CUTOFFS</code></td></tr>
+<tr><td><code>configs/realtime.json</code></td><td>Subscribers per profile, lookback windows, item caps, news threshold</td></tr>
+<tr><td><code>mira_flows/realtime.py</code>, <code>mira_flows/digest.py</code></td><td>Prefect flows; the digest flow has a <code>jev_prescreen</code> parameter</td></tr>
+<tr><td><code>configs/schedules.json</code></td><td><code>realtime-hourly</code> schedule (disabled until cutover)</td></tr>
+<tr><td><code>scripts/bench_jev.py</code>, <code>scripts/bench_jev_media.py</code></td><td>The benchmarks in this report</td></tr>
+<tr><td><code>tests/test_jev.py</code>, <code>tests/test_realtime.py</code></td><td>Unit tests (no network)</td></tr>
+</table></div>
+<h3>Commands</h3>
+<pre><code># Weekly digest with the Jev pre-screen (CLI; or set jev_prescreen=true on digest-manual in the Prefect UI)
+.venv/bin/python run.py --profile memory-innovation --mode weekly --jev-prescreen --test-mode --no-email
+
+# Realtime agent once, without sending or updating the ledger
+.venv/bin/python run_realtime.py --dry-run
+
+# Re-run the benchmark. It needs the old LLM cache and reports under data/report-files/
+# (copy report-files/cache and report-files/prod from the n8n machine).
+.venv/bin/python scripts/bench_jev.py --per-profile 150 --first-pages 50
+.venv/bin/python scripts/bench_jev.py --per-profile 150 --first-pages 0 --seed 43   # second, independent sample
+.venv/bin/python scripts/bench_jev.py --llm-timing 40                               # needs LLM credit</code></pre>
+<h3>What is running right now</h3>
+<p>The hourly realtime job runs on this Mac from the old <code>~/n8n</code> repo (launchd job <code>com.mira.realtime</code>). It emails the address in that repo's <code>RECIPIENT_EMAIL</code>, and only for the memory profile. In <code>mira-local</code> the equivalent Prefect schedule exists but is off. When you switch, enable <code>realtime-hourly</code> and unload the old job with <code>launchctl bootout gui/$(id -u)/com.mira.realtime</code>, so alerts aren't sent twice.</p>
+
+<h2 id="gloss">Glossary</h2>
+<dl class="gloss">
+<dt>Level / cutoff</dt><dd>Jev's relevance answer is a position between 0 ("unrelated") and 4 ("core contribution"). A cutoff of 0.15 means "almost certainly unrelated".</dd>
+<dt>LLM-passing paper</dt><dd>A paper the current LLM pipeline would keep: relevance and credibility at or above the profile's thresholds.</dd>
+<dt>Featured paper</dt><dd>A paper that appeared in a real production report, the ones that matter most not to lose.</dd>
+<dt>Rank correlation (Spearman)</dt><dd>1.0 means both put papers in exactly the same order; 0 means no relationship.</dd>
+<dt>Agreement</dt><dd>Share of papers where Jev and the LLM make the same keep/drop decision.</dd>
+<dt>Kappa</dt><dd>Agreement corrected for chance. Above 0.6 is substantial, above 0.8 near-perfect. It matters here because most papers are irrelevant, so "drop everything" would already score high raw agreement.</dd>
+<dt>Precision / recall</dt><dd>Of the papers Jev passes, how many the LLM also passes (precision); of the papers the LLM passes, how many Jev also passes (recall).</dd>
+<dt>Pre-screen</dt><dd>A cheap first filter that removes clearly irrelevant papers before the expensive stages, leaving everything else to run as before.</dd>
+</dl>
+
+<footer>Generated 29 September 2026 from the benchmark outputs and run logs of this session. Numbers shown as "a / b" are the first and second independent samples.</footer>
+</main>
+<script>
+(function () {
+  var theme = null;
+  try { theme = localStorage.getItem("jev-report-theme"); } catch (e) {}
+  if (theme) document.documentElement.setAttribute("data-theme", theme);
+  document.querySelectorAll("figure.viz").forEach(function (fig) {
+    var d = JSON.parse(fig.getAttribute("data-tip"));
+    var svg = fig.querySelector("svg"), hit = svg.querySelector(".hit"),
+        xh = svg.querySelector(".xhair"), tip = fig.querySelector(".tip");
+    var names = [["LLM calls saved", "var(--s1)"], ["Passing kept", "var(--s2)"], ["Featured kept", "var(--s3)"]];
+    function show(evt) {
+      var pt = svg.createSVGPoint(); pt.x = evt.clientX; pt.y = evt.clientY;
+      var loc = pt.matrixTransform(svg.getScreenCTM().inverse());
+      var best = 0;
+      d.x.forEach(function (x, i) { if (Math.abs(x - loc.x) < Math.abs(d.x[best] - loc.x)) best = i; });
+      xh.setAttribute("x1", d.x[best]); xh.setAttribute("x2", d.x[best]); xh.style.display = "";
+      var html = "<b>Cutoff " + d.cut[best] + "</b><div style='color:var(--muted);margin-bottom:4px'>sample 1 / sample 2</div>";
+      names.forEach(function (n, k) {
+        html += "<div class='row'><span><span class='sw' style='background:" + n[1] + "'></span>" + n[0] +
+          "</span><span>" + d.s42[best][k] + "% / " + d.s43[best][k] + "%</span></div>";
+      });
+      tip.innerHTML = html; tip.hidden = false;
+      var box = fig.getBoundingClientRect(), sbox = svg.getBoundingClientRect();
+      var px = sbox.left - box.left + (d.x[best] / d.W) * sbox.width;
+      var left = px + 12;
+      if (left + 200 > box.width) left = px - 212;
+      tip.style.left = Math.max(4, left) + "px"; tip.style.top = "36px";
+    }
+    function hide() { tip.hidden = true; xh.style.display = "none"; }
+    hit.addEventListener("mousemove", show);
+    hit.addEventListener("mouseleave", hide);
+    hit.addEventListener("touchstart", function (e) { show(e.touches[0]); }, { passive: true });
+  });
+})();
+</script>
+</body>
+</html>
