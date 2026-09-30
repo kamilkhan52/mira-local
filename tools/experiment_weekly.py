@@ -68,10 +68,23 @@ def clear_pdf_caches() -> None:
         shutil.rmtree(TEMP_DIR / sub, ignore_errors=True)
 
 
-def run_n8n(args) -> dict:
+def n8n_cache(action: str) -> None:
+    """Cold n8n run that still writes its cache (so a retry after n8n's
+    post-selection crash only repeats the later stages): set the profile's
+    cache aside, then merge the new entries back into it afterwards."""
+    base = "/report-files/cache/memory-innovation"
+    if action == "aside":
+        cmd = f"[ -d {base}.pre-exp ] || mv {base} {base}.pre-exp; mkdir -p {base}"
+    else:  # restore: keep the original entries, add the new ones
+        cmd = (f"[ -d {base}.pre-exp ] && cp -Rn {base}/. {base}.pre-exp/ && rm -rf {base} "
+               f"&& mv {base}.pre-exp {base}")
+    subprocess.run(["docker", "exec", "n8n", "sh", "-c", cmd], check=True)
+
+
+def run_n8n(args, retry: bool = False) -> dict:
     payload = {"triggerNode": "Memory Weekly Trigger", "current_date_override": args.current_date,
                "lookback_days_override": 8, "trend_enabled_override": True,
-               "test_mode_override": True, "llm_cache_bypass": True, "max_limit": 2000}
+               "test_mode_override": True, "llm_cache_bypass": False, "max_limit": 2000}
     b0 = balance()
     t0 = time.time()
     r = requests.post(N8N_WEBHOOK, json=payload, timeout=6 * 3600)
@@ -130,11 +143,18 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     path = OUT / f"weekly_{args.current_date}.json"
     runs = json.loads(path.read_text()) if path.exists() else {}
-    plan = args.only or ["n8n", "off", "prescreen", "gate", "replace", "live"]
+    plan = args.only or ["off", "prescreen", "gate", "replace", "live", "n8n"]
     for step in plan:
         print(f"=== {step} started {datetime.now(timezone.utc).isoformat(timespec='seconds')}", flush=True)
         if step == "n8n":
-            runs["n8n"] = run_n8n(args)
+            n8n_cache("aside")
+            try:
+                runs["n8n"] = run_n8n(args)
+                if runs["n8n"]["execution"]["status"] != "success":
+                    path.write_text(json.dumps(runs, indent=2, default=str))
+                    runs["n8n-retry"] = run_n8n(args, retry=True)
+            finally:
+                n8n_cache("restore")
         elif step == "live":
             runs["live-1"] = run_live(args, "live-1")
             runs["live-2"] = run_live(args, "live-2")

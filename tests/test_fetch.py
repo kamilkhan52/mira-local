@@ -109,6 +109,7 @@ def test_extract_first_pages_uses_n8n_extractor_with_cache_and_32_workers(monkey
     assert captured["workers"] == 32
     assert captured["use_cache"] is True
     assert captured["ids"] == ["2605.11277"]
+    mock_module.ensure_cache_dirs.assert_called_once()  # dirs exist even after a cache wipe
 
 
 def test_extract_first_pages_empty_list_returns_empty():

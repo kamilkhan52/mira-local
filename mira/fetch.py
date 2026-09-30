@@ -163,6 +163,9 @@ def extract_first_pages(papers: list[dict]) -> list[dict]:
     # library and a per-paper first-page cache under the data dir, so reruns
     # and overlapping windows (weekly after daily) skip the download.
     import extract_arxiv_first_page as m  # type: ignore
+    # The script only creates its cache dirs on its CLI path; without them
+    # every download fails (no such file .../pdf_library/<id>.pdf.download).
+    m.ensure_cache_dirs()
     arxiv_ids = [p["id"] for p in papers]
     try:
         # process_batch dispatches sync downloads via run_in_executor(None, ...),
