@@ -14,6 +14,11 @@
   "arxiv_lookback_days": 3,
   "arxiv_max_results": 2000,
   "news_lookback_days": 2,
+  "news_sources": [
+    "eetimes",
+    "semianalysis",
+    "trendforce"
+  ],
   "news_min_level": 2.0,
   "max_featured_papers": 10,
   "max_listed_papers": 30,

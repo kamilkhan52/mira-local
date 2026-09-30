@@ -7,8 +7,8 @@ from mira import jev, realtime
 
 
 @task(retries=1, retry_delay_seconds=60)
-def crawl_news(lookback_days: int) -> list[dict]:
-    return realtime.crawl_news(lookback_days)
+def crawl_news(lookback_days: int, sources: list[str] | None = None) -> list[dict]:
+    return realtime.crawl_news(lookback_days, sources)
 
 
 @task(retries=1, retry_delay_seconds=120)
@@ -40,7 +40,7 @@ def realtime_flow(profiles: list[str] | None = None, include_news: bool = True,
     if include_papers is not None:
         settings["include_papers"] = include_papers
     profiles = profiles or [p for p, subs in settings["subscribers"].items() if subs]
-    news = crawl_news(settings["news_lookback_days"]) if include_news else []
+    news = crawl_news(settings["news_lookback_days"], settings.get("news_sources")) if include_news else []
     results = []
     for pid in profiles:
         results.append(alert_profile(pid, settings, news, llm_summaries, dry_run))

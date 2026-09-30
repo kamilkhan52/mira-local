@@ -40,7 +40,7 @@ def main() -> None:
     news = []
     if not args.no_news:
         print("Crawling news...")
-        news = realtime.crawl_news(settings["news_lookback_days"])
+        news = realtime.crawl_news(settings["news_lookback_days"], settings.get("news_sources"))
     for pid in profiles:
         print(f"[{pid}]")
         try:

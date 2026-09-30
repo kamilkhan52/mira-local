@@ -109,16 +109,30 @@ def fetch_recent_papers(config: dict, lookback_days: int, max_results: int) -> l
     return fetch_papers(cfg)
 
 
-def crawl_news(lookback_days: int) -> list[dict]:
+def crawl_news(lookback_days: int, sources: list[str] | None = None) -> list[dict]:
+    """Crawl the news sources in parallel (a run takes as long as the slowest
+    crawler, not the sum). sources: crawler keys; default from
+    configs/realtime.json "news_sources" (Digitimes is off by default: its
+    crawler times out at 180 s without returning articles)."""
+    from concurrent.futures import ThreadPoolExecutor
+
     from mira.media import _normalize_articles, _run_crawler
     end = datetime.now()
     window = {"start_date_iso": (end - timedelta(days=lookback_days)).strftime("%Y-%m-%d"),
               "end_date_iso": end.strftime("%Y-%m-%d")}
-    articles = []
-    for script, key, source in NEWS_CRAWLERS:
+    wanted = set(sources or ("eetimes", "semianalysis", "trendforce"))
+    crawlers = [c for c in NEWS_CRAWLERS if c[1] in wanted]
+
+    def one(c):
+        script, key, source = c
         raw = _run_crawler(script, window, key)
-        articles += [a for a in _normalize_articles(raw, source) if a.get("url")]
-        print(f"  {source}: {len(raw)} articles")
+        return source, raw, [a for a in _normalize_articles(raw, source) if a.get("url")]
+
+    articles = []
+    with ThreadPoolExecutor(max_workers=len(crawlers) or 1) as pool:
+        for source, raw, arts in pool.map(one, crawlers):
+            articles += arts
+            print(f"  {source}: {len(raw)} articles")
     return articles
 
 
