@@ -87,21 +87,27 @@ def test_extract_first_pages_attaches_text(monkeypatch):
     assert result[0]["first_page_text"] == "Authors: Alice"
 
 
-def test_extract_first_pages_passes_explicit_executor(monkeypatch):
-    """Round-1 P2: process_batch must receive PDF_CONCURRENCY and the explicit
-    executor (the run_in_executor default pool caps at min(32, cpu+4))."""
+def test_extract_first_pages_uses_n8n_extractor_with_cache_and_32_workers(monkeypatch):
+    """Uses n8n's extract_arxiv_first_page (PDF library + first-page cache) and
+    gives the loop a 32-worker default pool: its run_in_executor(None, ...)
+    would otherwise cap at min(32, cpu+4)."""
+    import asyncio
     import mira.fetch as F
-    from concurrent.futures import ThreadPoolExecutor
     captured = {}
     mock_module = MagicMock()
-    mock_module.process_batch = lambda ids, concurrency, executor=None: captured.update(
-        {"ids": ids, "concurrency": concurrency, "executor": executor}) or []
-    monkeypatch.setitem(sys.modules, "extract_arxiv_pdf", mock_module)
+
+    def fake_batch(ids, concurrency, use_cache=True):
+        loop = asyncio.get_event_loop()
+        captured.update({"ids": ids, "concurrency": concurrency, "use_cache": use_cache,
+                         "workers": loop._default_executor._max_workers})
+        return []
+    mock_module.process_batch = fake_batch
+    monkeypatch.setitem(sys.modules, "extract_arxiv_first_page", mock_module)
     papers = [{"id": "2605.11277", "title": "Test", "first_page_text": ""}]
     extract_first_pages(papers)
     assert captured["concurrency"] == F.PDF_CONCURRENCY == 32
-    assert isinstance(captured["executor"], ThreadPoolExecutor)
-    assert captured["executor"]._max_workers == 32
+    assert captured["workers"] == 32
+    assert captured["use_cache"] is True
     assert captured["ids"] == ["2605.11277"]
 
 
@@ -112,7 +118,7 @@ def test_extract_first_pages_empty_list_returns_empty():
 def test_extract_first_pages_failed_pdf_leaves_empty(monkeypatch):
     mock_module = MagicMock()
     mock_results = [{"id": "9999.00000", "success": False, "first_page_text": ""}]
-    monkeypatch.setitem(sys.modules, "extract_arxiv_pdf", mock_module)
+    monkeypatch.setitem(sys.modules, "extract_arxiv_first_page", mock_module)
     monkeypatch.setattr("mira.fetch.asyncio.run", lambda _: mock_results)
     papers = [{"id": "9999.00000", "title": "Test", "first_page_text": ""}]
     result = extract_first_pages(papers)

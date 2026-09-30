@@ -4,7 +4,9 @@
     "memory-innovation": ["${RECIPIENT_EMAIL}"],
     "cxl-research": [],
     "storage-innovation": [],
-    "optical-interconnects": []
+    "optical-interconnects": [],
+    "mcbu-memory": [],
+    "embedded-intelligence": []
   },
   "arxiv_lookback_days": 3,
   "arxiv_max_results": 2000,

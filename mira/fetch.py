@@ -159,18 +159,22 @@ def extract_first_pages(papers: list[dict]) -> list[dict]:
     if scripts_dir not in sys.path:
         sys.path.insert(0, scripts_dir)
 
-    import extract_arxiv_pdf as m  # type: ignore
+    # The same script n8n's "Extract PDFs (Batch)" runs: it keeps a PDF
+    # library and a per-paper first-page cache under the data dir, so reruns
+    # and overlapping windows (weekly after daily) skip the download.
+    import extract_arxiv_first_page as m  # type: ignore
     arxiv_ids = [p["id"] for p in papers]
     try:
         # process_batch dispatches sync downloads via run_in_executor(None, ...),
         # whose default pool is min(32, cpu+4) — 12 on an 8-core Mac — so the
-        # semaphore's 32 would never be reached without an explicit pool.
+        # semaphore's 32 would never be reached without a bigger default pool.
         executor = ThreadPoolExecutor(max_workers=PDF_CONCURRENCY)
         loop = asyncio.new_event_loop()
         try:
             asyncio.set_event_loop(loop)
+            loop.set_default_executor(executor)
             results = loop.run_until_complete(
-                m.process_batch(arxiv_ids, PDF_CONCURRENCY, executor=executor)
+                m.process_batch(arxiv_ids, PDF_CONCURRENCY, use_cache=True)
             )
         finally:
             executor.shutdown(wait=False)

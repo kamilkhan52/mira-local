@@ -17,7 +17,10 @@ ROOT = Path(__file__).parent.parent
 
 # n8n fans its LLM nodes out across items; this loop used to be strictly serial,
 # which is why a 366-paper weekly run took ~40 min in the CLI and ~21 in n8n.
-CLASSIFY_CONCURRENCY = 8
+# Papers classified in parallel (each worker runs affiliation then
+# classification). n8n's live runs reach ~19 concurrent per-paper LLM calls
+# (execution 2084: 312 calls in ~74 s per stage); 20 matches that.
+CLASSIFY_CONCURRENCY = int(os.environ.get("MIRA_CLASSIFY_CONCURRENCY", "20"))
 
 # Ensure scripts/ is on the path and patch Docker-only path constants for local use
 _scripts_dir = str(SCRIPTS_DIR)

@@ -13,6 +13,8 @@
      "parameters": {"profile": "storage-innovation", "mode": "weekly"}, "enabled": false},
     {"name": "optical-interconnects-weekly", "flow": "digest", "cron": "0 6 * * 1",
      "parameters": {"profile": "optical-interconnects", "mode": "weekly"}, "enabled": false},
+    {"name": "optical-interconnects-daily", "flow": "digest", "cron": "0 6 * * *",
+     "parameters": {"profile": "optical-interconnects", "mode": "daily"}, "enabled": false},
     {"name": "mcbu-memory-weekly", "flow": "digest", "cron": "0 6 * * 1",
      "parameters": {"profile": "mcbu-memory", "mode": "weekly"}, "enabled": false},
     {"name": "embedded-intelligence-weekly", "flow": "digest", "cron": "0 6 * * 1",

@@ -17,6 +17,8 @@ n8n deployment: no n8n, no Docker, no cloud accounts.
 
 The Jev evaluation (what was tested, results, recommendations, setup) is in
 [`docs/jev-report.html`](docs/jev-report.html); open it in a browser.
+The side-by-side comparison with n8n (output parity, speed, cost, profiles) is in
+[`docs/n8n-vs-mira-report.html`](docs/n8n-vs-mira-report.html).
 
 ## Why this stack
 
