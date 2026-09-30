@@ -2,6 +2,7 @@ from __future__ import annotations
 from mira.paths import REPORT_FILES, LOCAL_CACHE, TEMP_DIR, SCRIPTS_DIR
 import hashlib
 import json
+from datetime import datetime, timezone
 import os
 import re
 import sys
@@ -246,7 +247,10 @@ def _shared_cache_write(config: dict, stage: str, arxiv_id: str, model: str,
         "cache_schema_version": 1,
         "model": model,
         "fingerprint": fingerprint,
-        "written_by": "mira-cli",
+        # n8n's entries carry created_at; downstream tools (benchmarks, cache
+        # housekeeping) pick the newest entry per paper by it.
+        "created_at": datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z"),
+        "written_by": "mira",
         "result": result,
     }
     try:
