@@ -314,6 +314,13 @@ def _read_cache(cache_path: Path, fingerprint: str) -> dict | None:
     return entry.get("result") if isinstance(entry.get("result"), dict) else None
 
 
+def _js_json_list(values) -> str:
+    """JSON.stringify of a string array (compact, unicode unescaped)."""
+    if isinstance(values, str):
+        return values
+    return json.dumps(list(values or []), ensure_ascii=False, separators=(",", ":"))
+
+
 def _get_affiliation(paper: dict, config: dict, client, cache: dict) -> dict:
     from mira.config import (apply_template, parse_json_response, llm_call,
                              model_for, record_parse_failure)
@@ -335,8 +342,11 @@ def _get_affiliation(paper: dict, config: dict, client, cache: dict) -> dict:
         "arxiv_id": url_id,
         "title": paper["title"],
         "summary": paper["summary"],
-        "authors": ", ".join(paper.get("authors", [])),
-        "category": ", ".join(paper.get("categories", [])),
+        # n8n's "Prep Data for Pipeline" stores author/category as
+        # JSON.stringify'd arrays, and that string is what reaches the prompt
+        # (and the cache fingerprint): '["A","B"]', not "A, B".
+        "authors": _js_json_list(paper.get("authors", [])),
+        "category": _js_json_list(paper.get("categories", [])),
         "first_page_text": paper.get("first_page_text", ""),
         "topic_focus": config["topic"]["focus"],
     })
@@ -450,8 +460,13 @@ def classify_papers(papers: list[dict], config: dict, client) -> list[dict]:
       Normalize Classification Output (`value || default`)."""
     from mira.config import js_or
 
-    aff_cache = _load_cache("affiliations")
-    cls_cache = _load_cache("classifications")
+    # Per-run memo only. The old CLI also persisted these to
+    # cache/{affiliations,classifications}.json keyed by bare arXiv id — no
+    # profile, model or prompt in the key — so a paper classified for one
+    # profile leaked its result into every other profile. n8n has no such
+    # cache; the per-paper shared cache (fingerprinted) is the only one.
+    aff_cache: dict = {}
+    cls_cache: dict = {}
     with _STATS_LOCK:
         _STATS.clear()
 
@@ -498,8 +513,6 @@ def classify_papers(papers: list[dict], config: dict, client) -> list[dict]:
     with ThreadPoolExecutor(max_workers=CLASSIFY_CONCURRENCY) as pool:
         list(pool.map(_classify_one, papers))
 
-    _save_cache("affiliations", aff_cache)
-    _save_cache("classifications", cls_cache)
     print(f"  Affiliation — cache hits: {_STATS['aff_cache_hit']}, LLM calls: {_STATS['aff_llm_call']}, "
           f"skipped (no first-page text): {_STATS['aff_no_pdf_text']}")
     print(f"  Classification — cache hits: {_STATS['cls_cache_hit']}, LLM calls: {_STATS['cls_llm_call']}")
@@ -689,6 +702,9 @@ def format_for_selection(papers: list[dict]) -> list[dict]:
         for key, source in fields:
             if source in p:  # absent = undefined = omitted; None stays null
                 entry[key] = p[source]
+        if isinstance(entry.get("authors"), list):
+            # n8n carries `author` as the JSON.stringify'd array string.
+            entry["authors"] = _js_json_list(entry["authors"])
         # `summary || output.summary`: an empty abstract is undefined.
         if p.get("summary"):
             entry["abstract"] = p["summary"]
@@ -934,7 +950,7 @@ def build_analysis_prompt(paper: dict, config: dict, full_text: str,
     prompts = (config.get("prompts") or {}).get("analysis") or {}
     authors = paper.get("authors")
     if isinstance(authors, list):
-        authors = ", ".join("" if a is None else str(a) for a in authors)
+        authors = _js_json_list(authors)  # n8n: the JSON.stringify'd array string
     else:
         authors = "" if authors is None else authors
     max_chars = _analysis_max_chars()

@@ -79,8 +79,11 @@ def _parse_xml(xml_text: str) -> list[dict]:
     for entry in root.findall("atom:entry", _NS):
         raw_id = entry.findtext("atom:id", "", _NS)
         arxiv_id = raw_id.split("/abs/")[-1].split("v")[0]
-        title = (entry.findtext("atom:title", "", _NS) or "").strip().replace("\n", " ")
-        summary = (entry.findtext("atom:summary", "", _NS) or "").strip().replace("\n", " ")
+        # Verbatim like n8n's "Convert XML to JSON" (default options): ends
+        # trimmed, internal newlines kept. Flattening them changed the prompts
+        # and the per-paper cache fingerprints for multi-paragraph abstracts.
+        title = (entry.findtext("atom:title", "", _NS) or "").strip()
+        summary = (entry.findtext("atom:summary", "", _NS) or "").strip()
         published = (entry.findtext("atom:published", "", _NS) or "")[:10]
         authors = [
             a.findtext("atom:name", "", _NS)

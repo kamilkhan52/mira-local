@@ -118,6 +118,36 @@ To carry over history (for trend analysis) and the LLM cache, copy the old
 - Prior reports containing the word "test" are excluded from trend history.
 - `trend_enabled` is effectively always on.
 
+## Checking parity with n8n (replay)
+
+`tools/` reproduces a real n8n run in mira-local and diffs every stage, with no LLM spend:
+
+```bash
+# 1. Run n8n for a window (test mode), e.g. the memory daily digest for 2026-09-26
+curl -X POST http://localhost:5678/webhook/mira-backfill -H "Content-Type: application/json" \
+  --data '{"triggerNode":"Memory Daily Trigger","current_date_override":"2026-09-26","lookback_days_override":1,"trend_enabled_override":true,"test_mode_override":true,"llm_cache_bypass":false,"max_limit":2000}'
+# 2. Export that execution and copy the profile's cache
+.venv/bin/python tools/n8n_export.py                  # -> data/parity/exec_<id>.json
+docker cp n8n:/report-files/cache/memory-innovation data/report-files/cache/
+# 3. Replay: same inputs, LLM answers taken from n8n's recording
+.venv/bin/python tools/n8n_replay.py data/parity/exec_<id>.json --current-date 2026-09-26 --lookback-days 1 --test-mode
+```
+
+The replay checks that:
+- the arXiv parsing matches n8n's
+- the ranked paper pool matches
+- the report statistics and dashboard data match
+- the subject matches
+- every LLM prompt is byte-identical to n8n's
+- the final email HTML is byte-identical to n8n's
+
+Execution 2085 (memory, daily, 2026-09-26) passes all of these.
+
+Three n8n LLM calls are intentionally not reproduced:
+- **Parse Report Output:** mira parses the report directly and calls this step only if that fails.
+- **The analysis output-parser auto-fix:** n8n used it only to add a missing `pdf_analysis_performed` flag, which mira sets itself.
+- **Transport:** n8n's agents answer through a `format_final_json_response` tool call; mira asks for the JSON directly.
+
 ## Maintenance
 
 - **Tests**: `make test`. Parity tests run the original n8n JavaScript under

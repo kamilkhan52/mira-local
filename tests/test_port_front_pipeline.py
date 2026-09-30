@@ -38,10 +38,16 @@ def _config(**over) -> dict:
 
 # --- fixture in n8n item shape, converted to the CLI's flat papers ----------
 
+def _js(values):
+    return json.dumps(values, ensure_ascii=False, separators=(",", ":"))
+
+
 def _orig(n, title, *, cred=None, summary="Abstract {n}.", authors=("A. One", "B. Two")):
     item = {"id": f"http://arxiv.org/abs/2609.{n:05d}v1", "title": title,
-            "summary": summary.format(n=n), "author": list(authors),
-            "category": ["cs.AR"], "published": "2026-09-20T00:00:00.000Z", "run_date": "2026-09-28"}
+            # Real n8n items carry author/category as JSON.stringify'd arrays
+            # ("Prep Data for Pipeline"), verified against execution 2085.
+            "summary": summary.format(n=n), "author": _js(list(authors)),
+            "category": _js(["cs.AR"]), "published": "2026-09-20T00:00:00.000Z", "run_date": "2026-09-28"}
     if cred is not None:  # affiliation stage ran (Merge Affiliation Data: `|| 0`)
         item.update({"arxiv_id": item["id"], "affiliations": ["Lab"], "author_affiliations": {},
                      "credibility_tier": cred, "credibility_reasoning": f"why {n}"})
@@ -77,8 +83,8 @@ def _n8n_items():
 
 def _flat(orig: dict, cls: dict | None) -> dict:
     p = {"id": orig["id"].split("/abs/")[1].split("v")[0], "raw_id": orig["id"],
-         "title": orig["title"], "summary": orig["summary"], "authors": orig["author"],
-         "categories": orig["category"], "published": "2026-09-20", "first_page_text": ""}
+         "title": orig["title"], "summary": orig["summary"], "authors": json.loads(orig["author"]),
+         "categories": json.loads(orig["category"]), "published": "2026-09-20", "first_page_text": ""}
     if "credibility_tier" in orig:
         p.update({k: orig[k] for k in ("affiliations", "author_affiliations", "credibility_tier",
                                        "credibility_reasoning")})
@@ -265,11 +271,11 @@ def test_analysis_prompt_matches_n8n(tmp_path, monkeypatch, success, text):
     item = {"selected_papers": {"arxiv_id": "http://arxiv.org/abs/2609.00008v1",
                                 "selection_reasoning": "because", "priority_rank": 1},
             "id": "http://arxiv.org/abs/2609.00008v1", "title": "Über-fast DRAM",
-            "author": ["A. One", "B. Two"], "output": {"primary_topic": "3D DRAM"},
+            "author": _js(["A. One", "B. Two"]), "output": {"primary_topic": "3D DRAM"},
             "full_text": text, "pdf_download_success": success}
     js = run_node(tmp_path, "Build Deep Analysis Prompt", [item], {"Set Run Mode": [{"config": PROFILE}]})[0]
     paper = {"id": "2609.00008", "raw_id": item["id"], "arxiv_id": item["id"], "title": item["title"],
-             "authors": item["author"], "primary_topic": "3D DRAM", "selection_reasoning": "because"}
+             "authors": json.loads(item["author"]), "primary_topic": "3D DRAM", "selection_reasoning": "because"}
     user, system = build_analysis_prompt(paper, _config(), text, success)
     assert user == js["analysis_prompt"] and system == js["analysis_system"]
     assert f'"pdf_analysis_performed": {"true" if success else "false"}' in user
@@ -397,7 +403,7 @@ def test_run_pipeline_contract(monkeypatch):
     _patch_llm(monkeypatch, reply)
     monkeypatch.setattr(pl, "classify_papers", fake_classify)
     papers = [{"id": _flat(o, c)["id"], "raw_id": o["id"], "title": o["title"], "summary": o["summary"],
-               "authors": o["author"], "categories": o["category"]} for o, c in FIXTURE]
+               "authors": json.loads(o["author"]), "categories": json.loads(o["category"])} for o, c in FIXTURE]
     res = run_pipeline(papers, _config(), client=None)
     assert set(res) == {"selected", "remaining", "total_scanned", "classified", "ranked", "selection_pool",
                         "selection", "unknown_selected_ids", "gate_dropped", "stats"}
