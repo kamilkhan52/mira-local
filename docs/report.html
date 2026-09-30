@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRA Local and Jev</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f5f2; --surface: #fcfcfb; --surface-2: #f0efeb; --border: #dddcd6;
+  --text: #1b1b1a; --text-2: #52514e; --muted: #75746f; --link: #1f63b8;
+  --accent: #2a78d6; --good: #1b7a3f; --warn: #a15c00; --bad: #b3261e;
+  --good-bg: #e7f4ec; --warn-bg: #fdf1dc; --bad-bg: #fbe9e7; --note-bg: #eaf1fb;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --grid: #e3e2dc; --hl: #fff6d6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #121211; --surface: #1a1a19; --surface-2: #232321; --border: #34342f;
+    --text: #f2f1ec; --text-2: #c3c2b7; --muted: #9a998f; --link: #7fb2f0;
+    --accent: #3987e5; --good: #6fcf97; --warn: #f2b54a; --bad: #f28b82;
+    --good-bg: #16291e; --warn-bg: #2e2412; --bad-bg: #321a18; --note-bg: #17222f;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --grid: #2c2c29; --hl: #2f2a14;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121211; --surface: #1a1a19; --surface-2: #232321; --border: #34342f;
+  --text: #f2f1ec; --text-2: #c3c2b7; --muted: #9a998f; --link: #7fb2f0;
+  --accent: #3987e5; --good: #6fcf97; --warn: #f2b54a; --bad: #f28b82;
+  --good-bg: #16291e; --warn-bg: #2e2412; --bad-bg: #321a18; --note-bg: #17222f;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --grid: #2c2c29; --hl: #2f2a14;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+main { max-width: 920px; margin: 0 auto; padding: 32px 16px 80px; }
+h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 6px; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; margin: 48px 0 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+h3 { font-size: 1.1rem; margin: 28px 0 8px; }
+p, li { color: var(--text); }
+.sub { color: var(--text-2); margin: 0 0 24px; }
+a { color: var(--link); }
+code { font: 0.88em/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: var(--surface-2); padding: 1px 5px; border-radius: 4px; word-break: break-word; }
+pre { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; overflow-x: auto; font: 0.85rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+pre code { background: none; padding: 0; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin: 16px 0; }
+.tldr { border-left: 4px solid var(--accent); }
+.tldr h2 { border: 0; margin: 0 0 8px; padding: 0; font-size: 1.15rem; }
+.tldr ol { margin: 0; padding-left: 20px; }
+.tldr li { margin: 6px 0; }
+.callout { border-radius: 10px; padding: 12px 16px; margin: 16px 0; }
+.callout.good { background: var(--good-bg); }
+.callout.warn { background: var(--warn-bg); }
+.callout.note { background: var(--note-bg); }
+.callout strong:first-child { display: block; margin-bottom: 2px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 16px 0; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+.stat .v { font-size: 1.6rem; font-weight: 650; line-height: 1.2; }
+.stat .l { color: var(--text-2); font-size: 0.85rem; }
+.tw { overflow-x: auto; margin: 12px 0; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { background: var(--surface-2); font-weight: 600; color: var(--text-2); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.hl td { background: var(--hl); font-weight: 600; }
+.tag { display: inline-block; font-size: 0.78rem; font-weight: 600; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.tag.good { background: var(--good-bg); color: var(--good); }
+.tag.warn { background: var(--warn-bg); color: var(--warn); }
+.tag.bad { background: var(--bad-bg); color: var(--bad); }
+.charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin: 12px 0; }
+figure.viz { position: relative; margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 10px 4px; }
+figure.viz figcaption { font-weight: 600; font-size: 0.95rem; margin: 2px 4px 4px; }
+svg.chart { width: 100%; height: auto; display: block; overflow: visible; }
+.grid { stroke: var(--grid); stroke-width: 1; }
+.tick { fill: var(--muted); font-size: 10px; }
+.axis { fill: var(--text-2); font-size: 10.5px; }
+.dlabel { fill: var(--text-2); font-size: 10px; }
+.chosen { stroke: var(--text-2); stroke-width: 1; stroke-dasharray: 3 3; }
+.chosen-lbl { fill: var(--text-2); font-size: 10px; }
+.xhair { stroke: var(--muted); stroke-width: 1; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.88rem; color: var(--text-2); margin: 8px 0 4px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { display: inline-block; width: 18px; height: 0; border-top: 2px solid; }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 10px; font-size: 0.8rem; line-height: 1.45; box-shadow: 0 4px 14px rgba(0,0,0,.15);
+  min-width: 190px; z-index: 5; color: var(--text); }
+.tip b { font-weight: 600; }
+.tip .row { display: flex; justify-content: space-between; gap: 10px; }
+.tip .sw { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.toc { columns: 2; column-gap: 24px; padding-left: 20px; margin: 8px 0 0; }
+@media (max-width: 560px) { .toc { columns: 1; } h1 { font-size: 1.6rem; } }
+details summary { cursor: pointer; font-weight: 600; margin: 8px 0; }
+.quote { border-left: 3px solid var(--border); padding: 4px 0 4px 14px; color: var(--text-2); margin: 12px 0; }
+dl.gloss dt { font-weight: 600; margin-top: 10px; }
+dl.gloss dd { margin: 2px 0 0 0; color: var(--text-2); }
+footer { color: var(--muted); font-size: 0.85rem; margin-top: 56px; }
+</style>
+
+<style>
+.rowlbl { fill: var(--text); font-size: 12.5px; }
+.vlbl { fill: var(--text-2); font-size: 12px; }
+.chart rect[data-tip] { cursor: default; }
+.delta { color: var(--good); font-size: 0.82em; font-weight: 600; margin-left: 4px; }
+td.dot { text-align: center; color: var(--text); width: 64px; }
+th.dotc { text-align: center; width: 64px; }
+details.more { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); padding: 2px 14px; margin: 12px 0; }
+details.more > summary { padding: 10px 0; }
+details.more[open] > summary { border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+.charttip { position: fixed; pointer-events: none; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 10px; font-size: 0.82rem; box-shadow: 0 4px 14px rgba(0,0,0,.15); z-index: 10; }
+.small { font-size: 0.88rem; color: var(--text-2); }
+table.wrap th { white-space: normal; vertical-align: bottom; }
+table.runs td:first-child { white-space: nowrap; }
+figure.scroll { overflow-x: auto; }
+figure.scroll svg { min-width: 620px; }
+table.picks td.dot, table.picks th.dotc { width: 44px; }
+table.picks th { white-space: normal; }
+@media (max-width: 560px) {
+  table.cards tr:first-child { display: none; }
+  table.cards, table.cards tbody, table.cards tr, table.cards td { display: block; width: 100%; }
+  table.cards tr { border-bottom: 1px solid var(--border); padding: 8px 0; }
+  table.cards td { border: 0; padding: 3px 12px; text-align: left !important; white-space: normal; }
+  table.cards td::before { content: attr(data-label); display: inline-block; min-width: 55%; color: var(--text-2); font-size: 0.85em; }
+  table.cards td:first-child::before { content: none; }
+  table.cards td:first-child { font-weight: 650; }
+  table.cards.stack td::before { display: block; min-width: 0; margin-bottom: 1px; }
+  table.cards.stack td { padding-bottom: 6px; }
+  table.picks th, table.picks td { padding: 7px 4px; }
+  table.picks td.dot, table.picks th.dotc { width: 36px; }
+  details.more { padding: 2px 10px; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>MIRA on the local workflow, with Jev</h1>
+<p class="sub">The memory weekly digest for 21–28 Sep 2026 (2,000 arXiv papers), run on 30 Sep by the original n8n workflow and by the new local workflow: once with Jev off (All LLM) and once at each of three Jev levels. Jev is a fast scoring model from TypeSafe. It decides which papers need the expensive per-paper LLM calls.</p>
+
+<section class="card tldr">
+<h2>Summary</h2>
+<ol>
+<li><strong>The local workflow reproduces the n8n digest and runs unattended.</strong> A schedule or a single command runs everything, from arXiv to the delivered email. Replaying a real n8n daily run with identical inputs produced a byte-identical email.</li>
+<li><strong>n8n could not produce this week's digest</strong>: every weekly attempt crashed after paper selection. After the fixes listed under <a href="#reliability">Reliability</a>, all four local runs completed and sent their digests.</li>
+<li><strong>Jev cuts the weekly cost by 55–85% and the time by 27–65%.</strong> 16 of the 20 deep-dive papers were picked by every run, n8n included.</li>
+<li><strong>Recommendation: the Jev gate level for weekly digests.</strong> It costs $11.84 instead of $35.68 and takes 15 minutes instead of 25. Its shortlist and picks are as close to an all-LLM run as two all-LLM runs are to each other.</li>
+<li><strong>New: a live news agent.</strong> It checks the news sources every hour and alerts only on relevant articles. A run takes about a minute and costs a fraction of a cent when nothing is new.</li>
+</ol>
+</section>
+
+<h2 id="levels">What the Jev levels do</h2>
+<p>TypeSafe's Jev model returns a score in about 0.1 s per item and does not write text. The levels differ only in which papers get the two per-paper LLM calls, credibility and relevance. Selection, deep analysis, report and email are the same LLM steps at every level.</p>
+<div class="tw"><table class="wrap cards stack">
+<tr><th>Level</th><th>What Jev does</th><th>What still uses the LLM</th><th>Trade-off</th></tr>
+<tr><td data-label="Level"><strong>All LLM</strong></td><td data-label="What Jev does">Nothing (Jev off)</td><td data-label="What still uses the LLM">Everything, as in n8n</td><td data-label="Trade-off">Reference cost and speed</td></tr>
+<tr><td data-label="Level"><strong>Prescreen</strong></td><td data-label="What Jev does">Drops clearly off-topic papers (45% this week)</td><td data-label="What still uses the LLM">Credibility and relevance for the rest</td><td data-label="Trade-off">Calibrated to keep every paper that has appeared in a past digest</td></tr>
+<tr class="hl"><td data-label="Level"><strong>Gate</strong></td><td data-label="What Jev does">Drops papers below a relevance level that keeps about 95% of what the LLM would pass (69% dropped this week)</td><td data-label="What still uses the LLM">Credibility and relevance for the rest</td><td data-label="Trade-off">Can drop a borderline paper</td></tr>
+<tr><td data-label="Level"><strong>Replace</strong></td><td data-label="What Jev does">Scores relevance and credibility for every paper itself</td><td data-label="What still uses the LLM">Only selection, deep analysis and report</td><td data-label="Trade-off">Cheapest and fastest. The shortlist loses affiliation lists and one-line key findings; deep analysis still reads each chosen paper in full</td></tr>
+</table></div>
+
+<h2 id="weekly">Weekly digest, head to head</h2>
+<p>All runs used the same week, prompts and models. Each run scores the papers, shortlists the top 100, and has the LLM pick 20 of those for deep analysis. Two independent all-LLM runs (n8n and local) share 85 of the 100 shortlisted papers and 17 of the 20 picks, so that is what normal run-to-run variation looks like.</p>
+<div class="tw"><table class="wrap cards runs">
+<tr><th>Run</th><th class="num">Time</th><th class="num">Cost</th><th class="num">Papers sent to LLM scoring</th><th class="num">Shortlist shared with All LLM</th><th class="num">Picks shared with n8n</th><th class="num">Picks shared with All LLM</th></tr>
+<tr><td data-label="Run">n8n <span class="tag bad">crashed, no email</span></td><td data-label="Time" class=num>26.6 min*</td><td data-label="Cost" class=num>$30.85*</td><td data-label="Sent to LLM scoring" class=num>2,000</td><td data-label="Shortlist shared with All LLM" class=num>85 / 100</td><td data-label="Picks shared with n8n" class=num>—</td><td data-label="Picks shared with All LLM" class=num>17 / 20</td></tr>
+<tr><td data-label="Run">All LLM</td><td data-label="Time" class=num>25.2 min</td><td data-label="Cost" class=num>$35.68</td><td data-label="Sent to LLM scoring" class=num>2,000</td><td data-label="Shortlist shared with All LLM" class=num>—</td><td data-label="Picks shared with n8n" class=num>17 / 20</td><td data-label="Picks shared with All LLM" class=num>—</td></tr>
+<tr><td data-label="Run">Jev prescreen</td><td data-label="Time" class=num>18.3 min <span class="delta">−27%</span></td><td data-label="Cost" class=num>$16.08 <span class="delta">−55%</span></td><td data-label="Sent to LLM scoring" class=num>1,102</td><td data-label="Shortlist shared with All LLM" class=num>82 / 100</td><td data-label="Picks shared with n8n" class=num>16 / 20</td><td data-label="Picks shared with All LLM" class=num>19 / 20</td></tr>
+<tr class="hl"><td data-label="Run">Jev gate</td><td data-label="Time" class=num>14.8 min <span class="delta">−41%</span></td><td data-label="Cost" class=num>$11.84 <span class="delta">−67%</span></td><td data-label="Sent to LLM scoring" class=num>627</td><td data-label="Shortlist shared with All LLM" class=num>87 / 100</td><td data-label="Picks shared with n8n" class=num>17 / 20</td><td data-label="Picks shared with All LLM" class=num>17 / 20</td></tr>
+<tr><td data-label="Run">Jev replace</td><td data-label="Time" class=num>8.9 min <span class="delta">−65%</span></td><td data-label="Cost" class=num>$5.23 <span class="delta">−85%</span></td><td data-label="Sent to LLM scoring" class=num>0</td><td data-label="Shortlist shared with All LLM" class=num>55 / 100</td><td data-label="Picks shared with n8n" class=num>18 / 20</td><td data-label="Picks shared with All LLM" class=num>17 / 20</td></tr>
+</table></div>
+<p class="small">* n8n crashed after selection, so its figures cover only the stages up to that point. In the local runs, the later stages (deep analysis, report, trend) add about 5 minutes and $4.40. The All LLM time excludes a one-off 3.5-minute PDF download that the other runs didn't repeat (see <a href="#method">method</a>).</p>
+
+<p><strong>Reading the quality columns.</strong> Prescreen and gate stay within normal variation on both the shortlist and the picks. Gate's three picks that differ from All LLM's were all on its shortlist; they came from the final selection, not from Jev dropping them. Replace's 20 picks look fine, but it shortlists a noticeably different 100 papers (55 shared, against about 85 between LLM runs). That is why it isn't recommended as the default.</p>
+
+<h3>Where the money goes</h3>
+<div class="legend"><span><i style="border-color:var(--s1);border-top-width:8px"></i>Per-paper LLM (credibility + relevance)</span><span><i style="border-color:var(--s2);border-top-width:8px"></i>Selection, deep analysis, report, trend</span><span><i style="border-color:var(--s3);border-top-width:8px"></i>Jev</span></div>
+<figure class="viz scroll"><svg viewBox="0 0 720 242" class="chart" role="img" aria-label="Cost per weekly run by component"><line x1="170.0" x2="170.0" y1="8" y2="212" class="grid"/><text x="170.0" y="228" class="tick" text-anchor="middle">$0</text><line x1="285.0" x2="285.0" y1="8" y2="212" class="grid"/><text x="285.0" y="228" class="tick" text-anchor="middle">$10</text><line x1="400.0" x2="400.0" y1="8" y2="212" class="grid"/><text x="400.0" y="228" class="tick" text-anchor="middle">$20</text><line x1="515.0" x2="515.0" y1="8" y2="212" class="grid"/><text x="515.0" y="228" class="tick" text-anchor="middle">$30</text><line x1="630.0" x2="630.0" y1="8" y2="212" class="grid"/><text x="630.0" y="228" class="tick" text-anchor="middle">$40</text><text x="160" y="31" class="rowlbl" text-anchor="end">n8n</text><rect x="170.0" y="16" width="342.4" height="22" rx="3" fill="var(--s1)" stroke="var(--surface)" stroke-width="2" data-tip="n8n · Per-paper LLM stages (credibility + relevance): $29.77"/><rect x="512.4" y="16" width="12.4" height="22" rx="3" fill="var(--s2)" stroke="var(--surface)" stroke-width="2" data-tip="n8n · Selection, deep analysis, report, trend: $1.08"/><text x="532.8" y="31" class="vlbl">$30.85 · stopped after selection</text><text x="160" y="71" class="rowlbl" text-anchor="end">All LLM</text><rect x="170.0" y="56" width="347.4" height="22" rx="3" fill="var(--s1)" stroke="var(--surface)" stroke-width="2" data-tip="All LLM · Per-paper LLM stages (credibility + relevance): $30.21"/><rect x="517.4" y="56" width="62.8" height="22" rx="3" fill="var(--s2)" stroke="var(--surface)" stroke-width="2" data-tip="All LLM · Selection, deep analysis, report, trend: $5.46"/><text x="588.2" y="71" class="vlbl">$35.68</text><text x="160" y="111" class="rowlbl" text-anchor="end">Jev prescreen</text><rect x="170.0" y="96" width="119.9" height="22" rx="3" fill="var(--s1)" stroke="var(--surface)" stroke-width="2" data-tip="Jev prescreen · Per-paper LLM stages (credibility + relevance): $10.43"/><rect x="289.9" y="96" width="63.0" height="22" rx="3" fill="var(--s2)" stroke="var(--surface)" stroke-width="2" data-tip="Jev prescreen · Selection, deep analysis, report, trend: $5.48"/><rect x="353.0" y="96" width="2.5" height="22" rx="3" fill="var(--s3)" stroke="var(--surface)" stroke-width="2" data-tip="Jev prescreen · Jev: $0.17"/><text x="363.5" y="111" class="vlbl">$16.08</text><text x="160" y="151" class="rowlbl" text-anchor="end">Jev gate</text><rect x="170.0" y="136" width="70.0" height="22" rx="3" fill="var(--s1)" stroke="var(--surface)" stroke-width="2" data-tip="Jev gate · Per-paper LLM stages (credibility + relevance): $6.09"/><rect x="240.0" y="136" width="64.2" height="22" rx="3" fill="var(--s2)" stroke="var(--surface)" stroke-width="2" data-tip="Jev gate · Selection, deep analysis, report, trend: $5.58"/><rect x="304.2" y="136" width="2.5" height="22" rx="3" fill="var(--s3)" stroke="var(--surface)" stroke-width="2" data-tip="Jev gate · Jev: $0.17"/><text x="314.7" y="151" class="vlbl">$11.84</text><text x="160" y="191" class="rowlbl" text-anchor="end">Jev replace</text><rect x="170.0" y="176" width="58.1" height="22" rx="3" fill="var(--s2)" stroke="var(--surface)" stroke-width="2" data-tip="Jev replace · Selection, deep analysis, report, trend: $5.05"/><rect x="228.1" y="176" width="2.5" height="22" rx="3" fill="var(--s3)" stroke="var(--surface)" stroke-width="2" data-tip="Jev replace · Jev: $0.18"/><text x="238.6" y="191" class="vlbl">$5.23</text></svg></figure>
+<p>In an all-LLM week, the two per-paper LLM calls are 85% of the cost. Jev judges all 2,000 papers for about 17 cents, and the rest of the digest costs about $5.50 at every level.</p>
+
+<details class="more"><summary>Which picks differed</summary>
+<p>16 papers were picked by all five runs. The rest, marked ● where picked:</p>
+<div class="tw"><table class="picks">
+<tr><th>Paper</th><th class="dotc">n8n</th><th class="dotc">All LLM</th><th class="dotc">Pre&shy;screen</th><th class="dotc">Gate</th><th class="dotc">Re&shy;place</th></tr>
+<tr><td><a href="https://arxiv.org/abs/2609.34380" title="DPS: Dual-Mode Precision LLM Serving with Semi-Unified Memory">DPS</a></td><td class="dot"></td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td></tr>
+<tr><td><a href="https://arxiv.org/abs/2609.33051" title="SketchSSM: Write to the Full State, Read from a Compact Sketch">SketchSSM</a></td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot">●</td><td class="dot">●</td></tr>
+<tr><td><a href="https://arxiv.org/abs/2609.26030" title="Intrinsic switching leads to oxygen diffusion and breakdown in hafnia ferroelectrics">Hafnia switching</a></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td><td class="dot">●</td><td class="dot"></td></tr>
+<tr><td><a href="https://arxiv.org/abs/2609.33619" title="S-ALSA: Co-Design of Adiabatic Logic-based Sensing and Balanced Bit-Cells for Secure and Energy-Efficient MRAM">S-ALSA</a></td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td></tr>
+<tr><td><a href="https://arxiv.org/abs/2609.27085" title="Crossflow: Prefill-Decode Elasticity for Agentic LLM Serving">Crossflow</a></td><td class="dot">●</td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot"></td></tr>
+<tr><td><a href="https://arxiv.org/abs/2609.28870" title="When Fancy Eviction Fails: Rethinking Cache Replacement For LLM Prefix Reuse">Fancy Eviction</a></td><td class="dot"></td><td class="dot">●</td><td class="dot">●</td><td class="dot"></td><td class="dot"></td></tr>
+<tr><td><a href="https://arxiv.org/abs/2609.26476" title="Don't let your Memory defy you: Fragmentation-Aware Serverless Allocation with Elastic Memory Locality">Elastic Memory Locality</a></td><td class="dot"></td><td class="dot">●</td><td class="dot">●</td><td class="dot"></td><td class="dot"></td></tr>
+<tr><td><a href="https://arxiv.org/abs/2609.25560" title="Co-Fabric: Breaking Host-Domain Boundaries for Unified xPU Interconnection">Co-Fabric</a></td><td class="dot">●</td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td></tr>
+<tr><td><a href="https://arxiv.org/abs/2609.33762" title="EfficientAgent: What Makes KV Cache Offloading Work for Concurrent Agents?">EfficientAgent</a></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td><td class="dot"></td></tr>
+<tr><td><a href="https://arxiv.org/abs/2609.25782" title="Hot-Cold Tiering of HBM and High Bandwidth Flash for Agentic LLM Serving">HBM/HBF tiering</a></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot"></td><td class="dot">●</td></tr>
+</table></div>
+<p>These are borderline papers that different runs rank just above or below the top 20. No Jev level missed a paper that every other run picked. The only such miss was n8n's (DPS).</p>
+</details>
+
+<details class="more"><summary>Time by stage (local runs)</summary>
+<div class="tw"><table class="wrap runs"><tr><th>Run</th><th class="num">Jev relevance</th><th class="num">First-page PDFs</th><th class="num">Jev credibility</th><th class="num">LLM scoring, selection, deep analysis</th><th class="num">Report, trend, PDF</th><th class="num">Email</th></tr><tr><td>All LLM</td><td class="num">–</td><td class="num">209 s</td><td class="num">–</td><td class="num">1418 s</td><td class="num">80 s</td><td class="num">4 s</td></tr><tr><td>Jev prescreen</td><td class="num">19 s</td><td class="num">11 s</td><td class="num">–</td><td class="num">978 s</td><td class="num">86 s</td><td class="num">3 s</td></tr><tr><td>Jev gate</td><td class="num">16 s</td><td class="num">9 s</td><td class="num">–</td><td class="num">777 s</td><td class="num">84 s</td><td class="num">3 s</td></tr><tr><td>Jev replace</td><td class="num">17 s</td><td class="num">8 s</td><td class="num">4 s</td><td class="num">405 s</td><td class="num">92 s</td><td class="num">5 s</td></tr></table></div>
+<p class="small">The per-paper LLM calls, selection and deep analysis are logged as one stage. Selection and deep analysis of 20 papers take about 6–7 minutes (all of replace's 405 s). The rest scales with the number of papers sent to LLM scoring.</p>
+</details>
+
+<h2 id="recs">Recommendation</h2>
+<div class="tw"><table class="wrap cards stack">
+<tr><th>Profile</th><th>Setting</th><th>Evidence</th></tr>
+<tr><td data-label="Profile">memory-innovation (weekly)</td><td data-label="Setting"><strong>Jev gate</strong></td><td data-label="Evidence">Measured this week: −67% cost, −41% time, shortlist and picks within normal variation</td></tr>
+<tr><td data-label="Profile">cxl-research (monthly), storage-innovation, optical-interconnects</td><td data-label="Setting">Jev gate, after one side-by-side run each</td><td data-label="Evidence">Cutoffs calibrated against about 600 past LLM judgments per profile; not yet run end to end</td></tr>
+<tr><td data-label="Profile">mcbu-memory, embedded-intelligence</td><td data-label="Setting">All LLM for now</td><td data-label="Evidence">No Jev calibration yet (a one-off step using cached past LLM judgments)</td></tr>
+</table></div>
+<ul>
+<li><strong>Move the weekly and monthly schedules off n8n.</strong> Its selection step crashes on paper IDs without a version suffix (see <a href="#reliability">Reliability</a>). The monthly CXL flow uses the same step; that path wasn't tested.</li>
+<li>The level is one setting per run (<code>jev_level</code>), so going back to All LLM is immediate.</li>
+</ul>
+
+<h2 id="live">The live news agent</h2>
+<div class="stats">
+<div class="stat"><div class="v">~1 min</div><div class="l">Per run: EE Times, SemiAnalysis and TrendForce crawled in parallel</div></div>
+<div class="stat"><div class="v">~0.1 s</div><div class="l">For Jev to score each new article</div></div>
+<div class="stat"><div class="v">&lt; $0.001</div><div class="l">A quiet run (nothing new)</div></div>
+<div class="stat"><div class="v">≈ $0.007</div><div class="l">Per article alerted, for its LLM-written summary</div></div>
+</div>
+<p>Every hour the agent crawls the news sources and skips anything already seen. Jev scores each new article against the profile's focus. Only the articles that pass get a two- to three-sentence LLM summary written for that profile, and those go out in a short email. Paper alerts are off by default: new papers appear once a day and are covered by the weekly digest.</p>
+<details class="more"><summary>Measurements and settings</summary>
+<ul>
+<li>The first run found 6 articles worth sending; the alert, including summaries, cost $0.04. Quiet runs cost about $0.0003 in Jev calls.</li>
+<li>Runs took about 4.5 minutes until the crawlers were made to run in parallel and the Digitimes crawler was switched off. Digitimes times out after 180 s without returning anything.</li>
+<li>Subscribers, sources, the item limit and paper alerts (<code>include_papers</code>) are set in <code>configs/realtime.json</code>. The hourly schedule is <code>realtime-hourly</code> in <code>configs/schedules.json</code>.</li>
+</ul>
+</details>
+
+<h2 id="reliability">Reliability</h2>
+<div class="tw"><table class="wrap cards stack">
+<tr><th>Issue</th><th>n8n</th><th>Local</th></tr>
+<tr><td data-label="Issue">Selection returns paper IDs without the version suffix (<code>…/abs/2609.24343</code> instead of <code>…v1</code>)</td><td data-label="n8n"><span class="tag bad">Run crashes</span> after selection. On 30 Sep this happened in all 4 weekly attempts</td><td data-label="Local"><span class="tag good">Handled</span>: IDs match regardless of version</td></tr>
+<tr><td data-label="Issue">Account balance near the point where OpenRouter auto-reloads</td><td data-label="n8n"><span class="tag bad">Calls fail</span>: each call reserves room for up to 128k output tokens. 5–40% of papers lost their scores in affected runs</td><td data-label="Local"><span class="tag good">Handled</span>: reservations are capped, and a call waits and retries</td></tr>
+<tr><td data-label="Issue">Very long structured answers (the 100-paper selection)</td><td data-label="n8n">Answered through a schema-checked tool call</td><td data-label="Local"><span class="tag good">Fixed</span>: the local run failed here until it adopted the same tool mechanism</td></tr>
+<tr><td data-label="Issue">arXiv throttling (HTTP 429/503)</td><td data-label="n8n">No retry</td><td data-label="Local"><span class="tag good">Fixed</span>: a local run failed here until it backed off for up to 15 minutes and reused the saved query response</td></tr>
+</table></div>
+
+<h2 id="background">Background</h2>
+<details class="more"><summary>The local workflow in brief</summary>
+<ul>
+<li><strong>What it is:</strong> the n8n workflow rebuilt in Python on Prefect (Apache-2.0), running on one machine, with a local UI for run history, logs and manual runs. There is no n8n or Docker, and telemetry is off.</li>
+<li><strong>Parity:</strong> replaying a real n8n daily run gave every LLM step identical inputs and produced a byte-identical email.</li>
+<li><strong>Profiles unchanged:</strong> 6 profiles and 8 profile/mode combinations, each with its own prompts, thresholds, arXiv categories, email style, schedule and cache.</li>
+<li><strong>Data leaving the machine:</strong> calls to the LLM provider (configurable, e.g. a company gateway), to Jev, and to arXiv and the news sites.</li>
+</ul>
+</details>
+
+<details class="more"><summary>Running it</summary>
+<pre><code># one-off digest (the same code path the schedule uses)
+.venv/bin/python run.py --profile memory-innovation --mode weekly --jev-level gate
+
+# local scheduler and UI (http://127.0.0.1:4200)
+make server   # terminal 1
+make serve    # terminal 2 — schedules come from configs/schedules.json
+
+# calibrate Jev for a profile from cached LLM judgments
+.venv/bin/python scripts/bench_jev.py --per-profile 150
+
+# reproduce this comparison
+bin/mira-env python tools/experiment_weekly.py --current-date 2026-09-28
+.venv/bin/python tools/experiment_analysis.py --current-date 2026-09-28</code></pre>
+<p class="small">Each run writes a summary with time and cost per stage to <code>data/runs/</code>. This comparison's results are in <code>docs/data/</code>.</p>
+</details>
+
+<details class="more" id="method"><summary>Method and caveats</summary>
+<ul>
+<li><strong>Scope:</strong> one week and one profile (memory, weekly), 2,000 papers (the arXiv query cap). Jev's cutoffs for the other profiles come from about 600 past LLM judgments each.</li>
+<li><strong>Same inputs:</strong> all local runs read one saved arXiv response; n8n queried arXiv itself and got the same 2,000 papers.</li>
+<li><strong>PDFs:</strong> first pages were already cached for every run except the first local all-LLM run, which downloaded them in 3.5 minutes. Its time is shown without that download (25.2 minutes).</li>
+<li><strong>Cost:</strong> local costs are OpenRouter's reported cost per call, plus Jev at $0.042 per million input tokens. n8n's cost is its recorded token counts at OpenRouter's prices; that method matched the account balance within 5% on an earlier run. Balance changes couldn't be used on 30 Sep because the account auto-reloaded mid-run.</li>
+<li><strong>LLM caches:</strong> bypassed in every run, so each paid for all its LLM calls.</li>
+<li><strong>Lost calls:</strong> the local all-LLM run lost 10 of 4,021 LLM calls (before the retry fix). The n8n run shown (execution 2088) lost 98 relevance calls.</li>
+<li><strong>Test mode:</strong> all runs used it. Reports were stored as tests and emailed only to a test inbox, with the level tagged in the subject.</li>
+</ul>
+</details>
+
+<footer>Data: <code>docs/data/</code> in the mira-local repo. n8n executions 2087–2090 (four weekly attempts); the figures come from 2088.</footer>
+</main>
+<div class="charttip" hidden></div>
+<script>
+(function () {
+  var tip = document.querySelector(".charttip");
+  document.querySelectorAll("svg.chart [data-tip]").forEach(function (el) {
+    el.addEventListener("mousemove", function (e) {
+      tip.textContent = el.getAttribute("data-tip"); tip.hidden = false;
+      tip.style.left = (e.clientX + 12) + "px"; tip.style.top = (e.clientY + 12) + "px";
+    });
+    el.addEventListener("mouseleave", function () { tip.hidden = true; });
+  });
+})();
+</script>
+</body>
+</html>

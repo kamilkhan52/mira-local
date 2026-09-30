@@ -15,10 +15,7 @@ n8n deployment: no n8n, no Docker, no cloud accounts.
   (TypeSafe), with the top items summarized for each profile's preferences
   and emailed to the subscribers in `configs/realtime.json`.
 
-The Jev evaluation (what was tested, results, recommendations, setup) is in
-[`docs/jev-report.html`](docs/jev-report.html); open it in a browser.
-The side-by-side comparison with n8n (output parity, speed, cost, profiles) is in
-[`docs/n8n-vs-mira-report.html`](docs/n8n-vs-mira-report.html).
+**Results:** [`docs/report.html`](docs/report.html) compares the weekly digest from n8n and from this workflow at each Jev level (time, cost, quality), gives a recommendation, and covers the live news agent. Open it in a browser; its data is in `docs/data/`.
 
 ## Why this stack
 
