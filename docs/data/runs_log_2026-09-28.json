@@ -1,0 +1,99 @@
+{
+  "mira-off": {
+    "run": "mira-off",
+    "flow_run": "f7d4cfab-da2e-4fc0-beac-91267c7f1f8f",
+    "state": "COMPLETED",
+    "wall_seconds": 1720.9,
+    "cost_measured_usd": -14.323,
+    "result": {
+      "error": "MissingResult('State data is missing. Typically, this occurs when result persistence is disabled and the state has been retrieved from the API.')"
+    }
+  },
+  "mira-prescreen": {
+    "run": "mira-prescreen",
+    "flow_run": "192d7061-6b32-4826-99b4-786a0a2fab74",
+    "state": "COMPLETED",
+    "wall_seconds": 1108.1,
+    "cost_measured_usd": -34.055,
+    "result": {
+      "error": "MissingResult('State data is missing. Typically, this occurs when result persistence is disabled and the state has been retrieved from the API.')"
+    }
+  },
+  "mira-gate": {
+    "run": "mira-gate",
+    "flow_run": "d50a97af-fe63-4f27-b251-e85a2769bd39",
+    "state": "COMPLETED",
+    "wall_seconds": 901.3,
+    "cost_measured_usd": 11.6986,
+    "result": {
+      "error": "MissingResult('State data is missing. Typically, this occurs when result persistence is disabled and the state has been retrieved from the API.')"
+    }
+  },
+  "mira-replace": {
+    "run": "mira-replace",
+    "flow_run": "413477b7-aebb-4bc5-afee-6de3f35458b3",
+    "state": "COMPLETED",
+    "wall_seconds": 535.9,
+    "cost_measured_usd": -44.9528,
+    "result": {
+      "error": "MissingResult('State data is missing. Typically, this occurs when result persistence is disabled and the state has been retrieved from the API.')"
+    }
+  },
+  "live-1": {
+    "run": "live-1",
+    "state": "COMPLETED",
+    "wall_seconds": 282.8,
+    "cost_measured_usd": 0.0427,
+    "result": {
+      "error": "MissingResult('State data is missing. Typically, this occurs when result persistence is disabled and the state has been retrieved from the API.')"
+    }
+  },
+  "live-2": {
+    "run": "live-2",
+    "state": "COMPLETED",
+    "wall_seconds": 262.3,
+    "cost_measured_usd": 0.0,
+    "result": {
+      "error": "MissingResult('State data is missing. Typically, this occurs when result persistence is disabled and the state has been retrieved from the API.')"
+    }
+  },
+  "n8n": {
+    "run": "n8n",
+    "http": 500,
+    "response": "{\"message\":\"Error in workflow\"}",
+    "execution": {
+      "id": 2088,
+      "status": "error",
+      "startedAt": "2026-09-30 19:35:47.213",
+      "stoppedAt": "2026-09-30 20:02:22.403"
+    },
+    "wall_seconds": 1598.0,
+    "cost_measured_usd": 29.5905
+  },
+  "n8n-retry": {
+    "run": "n8n",
+    "http": 500,
+    "response": "{\"message\":\"Error in workflow\"}",
+    "execution": {
+      "id": 2089,
+      "status": "error",
+      "startedAt": "2026-09-30 20:04:01.743",
+      "stoppedAt": "2026-09-30 20:10:30.722"
+    },
+    "wall_seconds": 390.5,
+    "cost_measured_usd": 1.9597
+  },
+  "n8n-retry2": {
+    "run": "n8n",
+    "http": 500,
+    "response": "{\"message\":\"Error in workflow\"}",
+    "execution": {
+      "id": 2090,
+      "status": "error",
+      "startedAt": "2026-09-30 20:12:45.197",
+      "stoppedAt": "2026-09-30 20:18:52.308"
+    },
+    "wall_seconds": 368.5,
+    "cost_measured_usd": 1.2716
+  }
+}

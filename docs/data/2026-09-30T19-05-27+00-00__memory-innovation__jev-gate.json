@@ -1,0 +1,839 @@
+{
+  "started_at": "2026-09-30T19:05:27+00:00",
+  "profile": "memory-innovation",
+  "mode": "weekly",
+  "variant": "jev-gate",
+  "window": [
+    "2026-09-21",
+    "2026-09-28"
+  ],
+  "papers_fetched": 2000,
+  "papers_screened_by_jev": 1373,
+  "media_seconds": 75.3,
+  "status": "ok",
+  "subject": "[mira \u00b7 Jev gate] MIRA  Digest - Top  Papers Published on Arxiv and Notable News Articles - 2026-09-28 - [2000 scanned, 20 analyzed]",
+  "wall_seconds": 890.0,
+  "papers_classified": 627,
+  "papers_passing": 100,
+  "ranked_pool": [
+    {
+      "id": "http://arxiv.org/abs/2609.24343v1",
+      "title": "Beyond HBM-on-GPU: Thermal Design Envelope for 3D Volumetric DRAM-on-GPU Integration",
+      "relevance_score": 10,
+      "credibility_tier": 10
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.27040v1",
+      "title": "EMA: Elastic and Performance Transparent Memory Across GPUs",
+      "relevance_score": 9,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.35065v1",
+      "title": "TempoKV: Timely Staging of LLM KV Caches for Memory-Semantic Flash",
+      "relevance_score": 9,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.32654v1",
+      "title": "Electro-Thermal Origins of Enhanced Performance and Scalability in Disc-Type Phase-Change Memory",
+      "relevance_score": 9,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33762v1",
+      "title": "EfficientAgent: What Makes KV Cache Offloading Work for Concurrent Agents?",
+      "relevance_score": 9,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.36111v1",
+      "title": "Automated Pre-Silicon Verification of High-Speed DDR5 and LPDDR5/6 Memory Controllers: Closed-Loop Timing, Mode Register, and PHY Synchronization in UVM",
+      "relevance_score": 9,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33051v1",
+      "title": "SketchSSM: Write to the Full State, Read from a Compact Sketch",
+      "relevance_score": 8,
+      "credibility_tier": 10
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.25451v1",
+      "title": "Fast Recovery for LLM Serving via Decoupled Device Memory Lifetime in Dynamo",
+      "relevance_score": 8,
+      "credibility_tier": 10
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.32122v1",
+      "title": "In-Memory AM Demodulation Using an All-Silicon Independent-Dual-Gate Gain-Cell Memory with $<10^{-22}$ A Leakage Determined by Single-Electron Counting",
+      "relevance_score": 9,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33477v1",
+      "title": "Just Let Linear States Forget the Distant Past: Prefix Caching via Suffix Replay for Hybrid LLMs",
+      "relevance_score": 9,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.32278v1",
+      "title": "RR-Evict: Fine-Grained Prefix Cache Eviction beyond LRU for Agentic LLM Serving",
+      "relevance_score": 9,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.24298v1",
+      "title": "KV-COBRA: KV Cache Compression via Co-Optimized Bit-Rank Allocation",
+      "relevance_score": 9,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.27085v1",
+      "title": "Crossflow: Prefill-Decode Elasticity for Agentic LLM Serving",
+      "relevance_score": 8,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.24270v1",
+      "title": "Dissecting How Die Scaling Breaks GPU Fine-grained Scheduling",
+      "relevance_score": 8,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.24182v1",
+      "title": "Ferroelectric switching of odd-parity magnon spin splitting",
+      "relevance_score": 8,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.28870v1",
+      "title": "When Fancy Eviction Fails: Rethinking Cache Replacement For LLM Prefix Reuse",
+      "relevance_score": 8,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.31415v1",
+      "title": "Evaluating the accuracy of KV cache reuse techniques",
+      "relevance_score": 8,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33746v1",
+      "title": "PQ-HSA: Reusing Product-Quantized Scores for Hybrid Sparse-Approximate Attention",
+      "relevance_score": 8,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.24197v1",
+      "title": "H-Spec: Parallel Speculative Decoding Without a Drafter-Side KV Cache",
+      "relevance_score": 8,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.26333v1",
+      "title": "Disaggregated Quantization: Specializing LLM Prefill and Decode",
+      "relevance_score": 8,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.34683v1",
+      "title": "AgentPerfBench: A Benchmarking and Evaluation Suite for Inference Performance of Agentic LLMs",
+      "relevance_score": 8,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.35621v1",
+      "title": "Cartridges++: KV Cache Compression without Off-Context Derailment",
+      "relevance_score": 8,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.26300v1",
+      "title": "CompKV: Compensation-Aware KV Selection for Long-Context LLM Inference",
+      "relevance_score": 8,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.30854v1",
+      "title": "The KV Cache Is the New Memory Wall",
+      "relevance_score": 9,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.29857v1",
+      "title": "Spin-Polarized Magnetic Metal Electrodes for Magnetic Tunnel Junctions",
+      "relevance_score": 9,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.34380v1",
+      "title": "DPS: Dual-Mode Precision LLM Serving with Semi-Unified Memory",
+      "relevance_score": 9,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.34657v1",
+      "title": "Torch-PIM: Automated Profile-Guided PIM Offloading for PyTorch",
+      "relevance_score": 9,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.24288v1",
+      "title": "Circuit-Architecture-Training Co-Design with Regenerative-SA Similarity Sensing for Aggressive SAR Skipping in Analog Compute-in-Memory",
+      "relevance_score": 9,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.27266v1",
+      "title": "xTier: Intelligent Tiering for CXL-Enabled Memory",
+      "relevance_score": 9,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.34612v1",
+      "title": "SPIMOE: Exploiting Hybrid Sparsity for Reasoning MoE Inference on Heterogeneous PIM Architectures",
+      "relevance_score": 9,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.30468v1",
+      "title": "SR-Gadgets: Make Scan-Resistant Caching Practical",
+      "relevance_score": 7,
+      "credibility_tier": 10
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.32031v1",
+      "title": "A Voltage-controlled MTJ-CMOS Neuron Emulating Tunable Izhikevich-Inspired Dynamics",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.25916v1",
+      "title": "Beyond Scalar Sensitivity: Activation-Aware Mixed-Precision LLM Quantization with Cross-Layer Refinement",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.30047v1",
+      "title": "From Processing to Functionality: Engineering Accessible Material States in Cu-Embedded SiO$_x$ Memristive Devices",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.34653v2",
+      "title": "OmniTide: Co-Designing Algorithms and Systems for Efficient On-Device Omni-LLM Streaming",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.35750v2",
+      "title": "KV-streams for Efficient Compaction in Agentic Reinforcement Learning",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.31093v1",
+      "title": "Block Sparse Attention with Log-Linear Complexity",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.29812v2",
+      "title": "FlashLoop: Fast and Memory-Efficient Looped Transformers via Lazy Updates",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.32114v1",
+      "title": "Empowering Hybrid Attention Models on NPUs",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.32259v1",
+      "title": "Prefill-Free Cross-Family KV Cache Transfer for Heterogeneous Multi-Agent LLMs",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.34054v1",
+      "title": "PReCache: Efficient KV Cache Sharing for Multi-LoRA Agents via Low-Rank Precomputation and Neutral Reconstruction",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.31395v1",
+      "title": "ActKV: Efficient LLM Agents through Action-Guided KV Cache Management",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.27193v1",
+      "title": "LayerCheck: Adaptive Layer-wise Checkpointing for Large Language Model Post-training",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33334v1",
+      "title": "When to Evict, Not What to Keep: Draft-Guided Eviction for Training-Free KV-Cache Compression",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.24417v1",
+      "title": "ARM: Attention with Routed-Memory for Learnable Sparse Control",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.30738v1",
+      "title": "Beyond Mean Attention: Diversity-Aware, Layer-Wise Scoring for KV Cache Eviction",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.32429v1",
+      "title": "PrismQuant: Optimal Null-Space Rotations for Grouped Quantizers",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.35139v1",
+      "title": "CacheRepair: Learning to Repair Cross-Chunk Context in RAG for KV Cache Fusion",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33410v1",
+      "title": "FoldAttention: Declared-Reference Softmax for Fast Decode and Deterministic Backward",
+      "relevance_score": 9,
+      "credibility_tier": 6
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.32759v1",
+      "title": "The Extender: A Log-Structured Transformer",
+      "relevance_score": 9,
+      "credibility_tier": 6
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.32663v1",
+      "title": "Distance-KV: Exploiting Relative Distance for Efficient Long-Context Inference",
+      "relevance_score": 9,
+      "credibility_tier": 6
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33619v1",
+      "title": "S-ALSA: Co-Design of Adiabatic Logic-based Sensing and Balanced Bit-Cells for Secure and Energy-Efficient MRAM",
+      "relevance_score": 9,
+      "credibility_tier": 6
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.29246v1",
+      "title": "HBF-Sim: An Extensible HBF Simulator for Large-scale GPU Memory Systems",
+      "relevance_score": 9,
+      "credibility_tier": 6
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.36074v1",
+      "title": "GEM-KMeans: Memory-Efficient and Accurate Clustering on Massive Scale with GPU Optimization",
+      "relevance_score": 7,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.36070v1",
+      "title": "Mixture-of-Kittens: MoE Megakernel for NVL72s",
+      "relevance_score": 7,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.25851v1",
+      "title": "Cryogenic Voltage Control of Magnetism in Silicon-Integrated \\newline SrTiO$_3$/Fe Heterostructures",
+      "relevance_score": 7,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.25624v1",
+      "title": "Accelerating the Mitigation of LLM Inference Nondeterminism Across GPU Architectures",
+      "relevance_score": 7,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.32525v1",
+      "title": "Does Transolver really need a Transformer?",
+      "relevance_score": 7,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.25949v1",
+      "title": "Flux: Optimal Scheduling of Optical Circuit Switches for LLM Training",
+      "relevance_score": 7,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.35257v1",
+      "title": "AIM-ZO: Activation-Informed Subspace Maintenance for Zeroth-Order LLM Fine-Tuning",
+      "relevance_score": 7,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.32540v1",
+      "title": "In-Flight KV Cache with Clean Anchors for Faster Autoregressive Video Diffusion",
+      "relevance_score": 7,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.34117v1",
+      "title": "SlimWise: Decoupling Expert Pruning Across Prefill and Decode for Efficient MoE Serving",
+      "relevance_score": 7,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.34680v1",
+      "title": "QuantForge: Discovering Residual Decompositions for MXFP4 Post-Training Quantization",
+      "relevance_score": 7,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.31947v1",
+      "title": "On-Policy Attention Linearization",
+      "relevance_score": 7,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.32942v1",
+      "title": "The Key Handoff: Retrieval in Hybrid Language Models",
+      "relevance_score": 7,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.25869v1",
+      "title": "Decoupling Logical Masks from GPU Execution for Dynamic Block-Sparse Attention",
+      "relevance_score": 7,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.30448v1",
+      "title": "To Store or To Regenerate? A Cost Model for AI-Generated Content at Scale",
+      "relevance_score": 7,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.29029v1",
+      "title": "Exploiting answer-invariant redundancies in satellite imagery for efficient VLM inference on edge",
+      "relevance_score": 7,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33889v1",
+      "title": "Where Activation Sparsity and KV-Cache Sparsity Cross in LLM Decoding",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.35440v1",
+      "title": "SOLO: Pretraining Billion-Parameter Language Models with Shared-Output Local Learning",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33135v1",
+      "title": "MpFA: Hardware-Efficient Train-Free QK4V8 FlashAttention Kernels on Blackwell GPUs",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33133v1",
+      "title": "Splitting Prompt Prefill from Response Replay for Context-Parallel Long-Context LLM Post-Training",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.26551v1",
+      "title": "Toki: Profiling HBM Performance on FPGA Systems with RISC-V Soft Cores and PCIe Host DMA Traffic",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.27981v1",
+      "title": "Risk-Controlled KV-Cache Eviction: From Memory Budgets to Risk Targets",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.32831v1",
+      "title": "UniCache: Task- and Type-Aware KV Cache Compression for Unified Multimodal Models",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33536v1",
+      "title": "Does Execution Require Target KV Fidelity? A Mixed-Fidelity KV Runtime for LLM Serving",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33184v1",
+      "title": "Resource-Efficient Speculative Decoding for Long-Context LLM Serving",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33163v1",
+      "title": "JFS-CryoMem: A Cryogenic Memory with Voltage-Controlled Superconducting Devices and Femtojoule-Scale Write/Read Energies",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.30884v1",
+      "title": "CacheReforge: Bounded Recovery for Stale KV Caches under Evolving Adapters",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.26476v1",
+      "title": "Don't let your Memory defy you: Fragmentation-Aware Serverless Allocation with Elastic Memory Locality",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.26030v1",
+      "title": "Intrinsic switching leads to oxygen diffusion and breakdown in hafnia ferroelectrics",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33385v1",
+      "title": "OLED-MoE: Accelerating MoE-Based dLLM Inference via Inter-Iteration Locality-Aware Expert Offloading",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.35508v1",
+      "title": "Argus: Agentic, Reference-Calibrated, Tree-Guided, System-Software-Level Bottleneck Localization",
+      "relevance_score": 6,
+      "credibility_tier": 10
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.35110v1",
+      "title": "Sol-H3: Recursive Self-Improvement for MiniMax-H3 Inference Acceleration on Sol-Engine across Cloud and Edge",
+      "relevance_score": 6,
+      "credibility_tier": 10
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.34370v1",
+      "title": "Spexis: Speculative Lookahead Scheduling for LLM Inference",
+      "relevance_score": 7,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.24847v1",
+      "title": "SPECTRA: Adaptive Execution of Speculative Decoding on a Runtime-Reconfigurable Tiled Architecture",
+      "relevance_score": 7,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.36301v1",
+      "title": "MoRE: Scaling mixture of experts with hardware-aware low-rank routing",
+      "relevance_score": 7,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.31950v1",
+      "title": "Nanodiamond Sensing of Stray Fields during Domain Reversal",
+      "relevance_score": 7,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.34866v1",
+      "title": "From Attention Sensitivity to Layer Role: Revisiting Mixed-Precision Quantization of Transformers",
+      "relevance_score": 7,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.30465v3",
+      "title": "RAZOR: Pruning Replaceable Experts in LLMs",
+      "relevance_score": 7,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.27189v1",
+      "title": "ZOCheck: CPU-Shadow Checkpointing for Zeroth-Order LLM Fine-Tuning",
+      "relevance_score": 7,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.34765v1",
+      "title": "Beyond Reconstruction Loss in Post-Training Quantization: Balanced Fitting for Large Vision-Language Models",
+      "relevance_score": 7,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.35576v1",
+      "title": "Share-Borne AI Virus: Memory-Hopping Attacks Across LLM Agents",
+      "relevance_score": 7,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.34385v1",
+      "title": "Just-In-Time Agent Memory with Runtime Agentic Research",
+      "relevance_score": 7,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.32579v1",
+      "title": "DimPO: Dimensionality Reduction for Attention using Preference Optimization",
+      "relevance_score": 7,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33252v1",
+      "title": "CascadeEP: Asynchronous Expert Execution for MoE Prefill under Attention Imbalance",
+      "relevance_score": 7,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33166v1",
+      "title": "Downstream-Aware Context Selection for Online In-Context Reinforcement Learning",
+      "relevance_score": 7,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33093v1",
+      "title": "How Linear Attention Remembers",
+      "relevance_score": 7,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.31250v1",
+      "title": "Deterministic Regime Switching and Feasibility Inversion in Dynamic Tensor Rematerialization",
+      "relevance_score": 8,
+      "credibility_tier": 6
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33916v1",
+      "title": "Validating Memory-Optimal Transformer Kernels on Real Hardware: From Formal Derivation to Measured Performance Across Two HPC Clusters",
+      "relevance_score": 8,
+      "credibility_tier": 6
+    }
+  ],
+  "selected": [
+    {
+      "id": "http://arxiv.org/abs/2609.24343v1",
+      "title": "Beyond HBM-on-GPU: Thermal Design Envelope for 3D Volumetric DRAM-on-GPU Integration",
+      "relevance_score": 10,
+      "credibility_tier": 10
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.35065v1",
+      "title": "TempoKV: Timely Staging of LLM KV Caches for Memory-Semantic Flash",
+      "relevance_score": 9,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.25451v1",
+      "title": "Fast Recovery for LLM Serving via Decoupled Device Memory Lifetime in Dynamo",
+      "relevance_score": 8,
+      "credibility_tier": 10
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.32654v1",
+      "title": "Electro-Thermal Origins of Enhanced Performance and Scalability in Disc-Type Phase-Change Memory",
+      "relevance_score": 9,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.24270v1",
+      "title": "Dissecting How Die Scaling Breaks GPU Fine-grained Scheduling",
+      "relevance_score": 8,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.36111v1",
+      "title": "Automated Pre-Silicon Verification of High-Speed DDR5 and LPDDR5/6 Memory Controllers: Closed-Loop Timing, Mode Register, and PHY Synchronization in UVM",
+      "relevance_score": 9,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.32122v1",
+      "title": "In-Memory AM Demodulation Using an All-Silicon Independent-Dual-Gate Gain-Cell Memory with $<10^{-22}$ A Leakage Determined by Single-Electron Counting",
+      "relevance_score": 9,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.29246v1",
+      "title": "HBF-Sim: An Extensible HBF Simulator for Large-scale GPU Memory Systems",
+      "relevance_score": 9,
+      "credibility_tier": 6
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.26551v1",
+      "title": "Toki: Profiling HBM Performance on FPGA Systems with RISC-V Soft Cores and PCIe Host DMA Traffic",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.27266v1",
+      "title": "xTier: Intelligent Tiering for CXL-Enabled Memory",
+      "relevance_score": 9,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.34657v1",
+      "title": "Torch-PIM: Automated Profile-Guided PIM Offloading for PyTorch",
+      "relevance_score": 9,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.34612v1",
+      "title": "SPIMOE: Exploiting Hybrid Sparsity for Reasoning MoE Inference on Heterogeneous PIM Architectures",
+      "relevance_score": 9,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.27040v1",
+      "title": "EMA: Elastic and Performance Transparent Memory Across GPUs",
+      "relevance_score": 9,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.30854v1",
+      "title": "The KV Cache Is the New Memory Wall",
+      "relevance_score": 9,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.34380v1",
+      "title": "DPS: Dual-Mode Precision LLM Serving with Semi-Unified Memory",
+      "relevance_score": 9,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33762v1",
+      "title": "EfficientAgent: What Makes KV Cache Offloading Work for Concurrent Agents?",
+      "relevance_score": 9,
+      "credibility_tier": 9
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33051v1",
+      "title": "SketchSSM: Write to the Full State, Read from a Compact Sketch",
+      "relevance_score": 8,
+      "credibility_tier": 10
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.33163v1",
+      "title": "JFS-CryoMem: A Cryogenic Memory with Voltage-Controlled Superconducting Devices and Femtojoule-Scale Write/Read Energies",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.30047v1",
+      "title": "From Processing to Functionality: Engineering Accessible Material States in Cu-Embedded SiO$_x$ Memristive Devices",
+      "relevance_score": 8,
+      "credibility_tier": 8
+    },
+    {
+      "id": "http://arxiv.org/abs/2609.26030v1",
+      "title": "Intrinsic switching leads to oxygen diffusion and breakdown in hafnia ferroelectrics",
+      "relevance_score": 8,
+      "credibility_tier": 7
+    }
+  ],
+  "record_path": "/Users/kamil/mira-local/data/report-files/tests/memory-innovation/report-memory-technology-research-2026-09-28-2026-09-30T19-20-02-341Z.json",
+  "html_path": "/Users/kamil/mira-local/data/report-files/report-memory-2026-09-30T19-20-12.html",
+  "pdf_path": "/Users/kamil/mira-local/data/report-files/report-memory-2026-09-30T19-20-12.pdf",
+  "emailed": true,
+  "llm": [
+    {
+      "stage": "credibility (affiliation)",
+      "model": "openai/gpt-5.6-terra",
+      "calls": 627.0,
+      "prompt_tokens": 1305043.0,
+      "completion_tokens": 227480.0,
+      "reasoning_tokens": 78926.0,
+      "cost_usd": 2.994154,
+      "seconds": 4017.862573
+    },
+    {
+      "stage": "relevance (classification)",
+      "model": "openai/gpt-5.6-terra",
+      "calls": 627.0,
+      "prompt_tokens": 985307.0,
+      "completion_tokens": 241179.0,
+      "reasoning_tokens": 87614.0,
+      "cost_usd": 3.094595,
+      "seconds": 4705.4549
+    },
+    {
+      "stage": "news selection + summary",
+      "model": "anthropic/claude-sonnet-5",
+      "calls": 2.0,
+      "prompt_tokens": 17421.0,
+      "completion_tokens": 1778.0,
+      "reasoning_tokens": 537.0,
+      "cost_usd": 0.052622,
+      "seconds": 18.362707
+    },
+    {
+      "stage": "selection",
+      "model": "anthropic/claude-opus-5",
+      "calls": 1.0,
+      "prompt_tokens": 122249.0,
+      "completion_tokens": 18033.0,
+      "reasoning_tokens": 5203.0,
+      "cost_usd": 1.06207,
+      "seconds": 201.669368
+    },
+    {
+      "stage": "deep analysis",
+      "model": "anthropic/claude-opus-5",
+      "calls": 20.0,
+      "prompt_tokens": 542437.0,
+      "completion_tokens": 50462.0,
+      "reasoning_tokens": 5501.0,
+      "cost_usd": 3.973735,
+      "seconds": 605.357112
+    },
+    {
+      "stage": "report",
+      "model": "anthropic/claude-opus-5",
+      "calls": 1.0,
+      "prompt_tokens": 40222.0,
+      "completion_tokens": 7658.0,
+      "reasoning_tokens": 0.0,
+      "cost_usd": 0.39256,
+      "seconds": 71.597635
+    },
+    {
+      "stage": "trend",
+      "model": "anthropic/claude-opus-5",
+      "calls": 1.0,
+      "prompt_tokens": 16329.0,
+      "completion_tokens": 757.0,
+      "reasoning_tokens": 14.0,
+      "cost_usd": 0.10057,
+      "seconds": 9.641522
+    }
+  ],
+  "jev": [
+    {
+      "stage": "paper relevance",
+      "calls": 2000.0,
+      "input_tokens": 3957387.0,
+      "cost_usd": 0.16621,
+      "seconds": 259.163642
+    }
+  ],
+  "stage_seconds": {
+    "arXiv fetch": 0.0,
+    "Jev screening": 16.3,
+    "first-page PDFs": 9.1,
+    "classify + select + analyze": 777.1,
+    "report + trend + PDF": 83.6,
+    "email": 3.4
+  },
+  "llm_cost_usd": 11.6703,
+  "jev_cost_usd": 0.16621,
+  "llm_calls": 1279,
+  "jev_calls": 2000
+}

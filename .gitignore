@@ -3,7 +3,7 @@
 *.env
 !deploy/*.env.example
 # Runtime data (reports, caches, PDFs, ledgers) — see mira/paths.py
-data/
+/data/
 # Python / Node
 .venv/
 __pycache__/
