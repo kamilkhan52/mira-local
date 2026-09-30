@@ -37,7 +37,7 @@ def test_load_settings_resolves_env_subscribers(monkeypatch):
 
 
 def test_triage_papers_gates_ranks_and_skips_failed(monkeypatch):
-    levels = {"low": 0.05, "mid": 0.5, "top": 2.5, "boom": None}
+    levels = {"low": 0.05, "mid": 0.7, "top": 2.5, "boom": None}
 
     def fake_judge(p, rubric):
         if levels[p["id"]] is None:

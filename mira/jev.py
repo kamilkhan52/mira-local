@@ -329,16 +329,19 @@ def select_articles(articles: list[dict], focus: str, guidance: str, n: int = 10
 # baseline on two disjoint samples (scripts/bench_jev.py, seeds 42 and 43).
 #   prescreen  papers below it skip the LLM stages; kept >= 99% of LLM-passing
 #              and 100% of report-featured papers on both samples
-#   gate       agreement-maximising equivalent of the profile's relevance
-#              threshold (86-92% agreement with the LLM's pass/fail)
+#   gate       keeps ~95% of LLM-passing papers (the LLM still re-checks what
+#              passes); memory: 98.8% of featured kept, 73% of calls saved
+#   decide     Jev's decision is final (replace mode, live paper alerts):
+#              best F1 against the LLM's pass/fail on the random (real-traffic)
+#              papers; memory: passes 17.3% like the LLM, 79% precision/recall
 #   priority   equivalent of LLM relevance >= 7
 #   cred_gate  credibility level (first-page header) equivalent of the
 #              profile's credibility threshold
 CUTOFFS = {
-    "memory-innovation":     {"prescreen": 0.15, "gate": 0.36, "priority": 0.81, "cred_gate": 0.02},
-    "cxl-research":          {"prescreen": 0.05, "gate": 0.37, "priority": 1.09, "cred_gate": 0.16},
-    "storage-innovation":    {"prescreen": 0.05, "gate": 0.16, "priority": 1.32, "cred_gate": 0.22},
-    "optical-interconnects": {"prescreen": None, "gate": 0.20, "priority": 1.68, "cred_gate": 0.08},
+    "memory-innovation":     {"prescreen": 0.15, "gate": 0.35, "decide": 0.57, "priority": 0.81, "cred_gate": 0.02},
+    "cxl-research":          {"prescreen": 0.05, "gate": 0.26, "decide": 0.67, "priority": 1.09, "cred_gate": 0.16},
+    "storage-innovation":    {"prescreen": 0.05, "gate": 0.11, "decide": 0.60, "priority": 1.32, "cred_gate": 0.22},
+    "optical-interconnects": {"prescreen": None, "gate": 0.07, "decide": 0.31, "priority": 1.68, "cred_gate": 0.08},
 }
 PRESCREEN_CUTOFFS = {k: v["prescreen"] for k, v in CUTOFFS.items() if v["prescreen"] is not None}
 JEV_LEVELS = ("off", "prescreen", "gate", "replace")
@@ -398,7 +401,7 @@ def replace_classification(papers: list[dict], profile: dict, workers: int = 16)
         if j is None:
             continue  # like a failed LLM stage: the completeness gate drops it
         mapped = j["relevance_score"]
-        passed = j["relevance_level"] >= cut["gate"]
+        passed = j["relevance_level"] >= cut["decide"]
         p.update({
             "relevance_score": max(mapped, rmin) if passed else min(mapped, rmin - 1),
             "primary_topic": j["primary_topic"], "secondary_topics": [],

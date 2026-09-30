@@ -141,7 +141,7 @@ def triage_papers(papers: list[dict], config: dict) -> tuple[list[dict], list[di
     from mira.fetch import extract_first_pages
 
     pid = config["profile_id"]
-    cut = ALERT_CUTOFFS.get(pid, {"gate": 1.0, "priority": 2.0, "cred_gate": 1.0})
+    cut = ALERT_CUTOFFS.get(pid, {"decide": 1.0, "priority": 2.0, "cred_gate": 1.0})
     rubric = jev.profile_rubric(config)
     judged = _parallel(lambda p: jev.judge_paper(p, rubric), papers)
     rows, candidates = [], []
@@ -150,7 +150,7 @@ def triage_papers(papers: list[dict], config: dict) -> tuple[list[dict], list[di
             continue
         p["jev"] = j
         rows.append(p)
-        if j["relevance_level"] >= cut["gate"]:
+        if j["relevance_level"] >= cut["decide"]:
             candidates.append(p)
 
     # Credibility needs the first page; only fetch it for relevant papers.

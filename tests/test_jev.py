@@ -68,7 +68,7 @@ def test_prescreen_is_noop_without_validated_cutoff(monkeypatch):
 
 
 def test_gate_level_uses_calibrated_gate_cutoff(monkeypatch):
-    levels = {"a": 0.2, "b": 0.5}   # memory: prescreen 0.15, gate 0.36
+    levels = {"a": 0.2, "b": 0.5}   # memory: prescreen 0.15, gate 0.35
     monkeypatch.setattr(jev, "judge_paper", lambda p, r: {
         "relevance_level": levels[p["id"]], "relevance_confidence": 0.9, "primary_topic": "x"})
     prof = _profiles()["memory-innovation"]
@@ -80,8 +80,8 @@ def test_gate_level_uses_calibrated_gate_cutoff(monkeypatch):
 
 
 def test_replace_snaps_scores_to_profile_thresholds(monkeypatch):
-    # gate 0.36, cred_gate 0.02; memory thresholds relevance 5 / credibility 5
-    js = {"pass_low_mapped": (0.40, 2), "fail": (0.30, 2), "pass_high": (3.0, 8)}
+    # decide 0.57, cred_gate 0.02; memory thresholds relevance 5 / credibility 5
+    js = {"pass_low_mapped": (0.60, 2), "fail": (0.50, 2), "pass_high": (3.0, 8)}
     monkeypatch.setattr(jev, "judge_paper", lambda p, r: {
         "relevance_level": js[p["id"]][0], "relevance_score": js[p["id"]][1], "relevance_confidence": 1,
         "primary_topic": "HBM", "potential_impact": "High", "actionable": "Yes"})
