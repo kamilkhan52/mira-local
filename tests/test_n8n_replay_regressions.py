@@ -62,3 +62,30 @@ def test_classify_ignores_legacy_id_keyed_cache(monkeypatch, tmp_path):
              "authors": [], "categories": [], "first_page_text": "x" * 60}
     out = mp.classify_papers([paper], config, None)
     assert out[0]["relevance_score"] == 8 and out[0]["primary_topic"] == "HBM"
+
+
+def test_structured_llm_call_uses_n8n_tool_protocol():
+    """Structured stages answer via n8n's format_final_json_response tool, with
+    n8n's instruction appended to the system message (execution-verified)."""
+    import json
+    from types import SimpleNamespace
+    from mira.config import llm_call
+    from mira import structured
+    sent = {}
+
+    class Completions:
+        def create(self, **kw):
+            sent.update(kw)
+            call = SimpleNamespace(function=SimpleNamespace(
+                arguments=json.dumps({"output": {"selected_indices": [0, 2]}})))
+            msg = SimpleNamespace(content=None, tool_calls=[call])
+            return SimpleNamespace(choices=[SimpleNamespace(message=msg)], usage=None)
+    client = SimpleNamespace(chat=SimpleNamespace(completions=Completions()))
+    out = llm_call(client, "m", "Pick articles.\n", "articles...", schema="media_selection")
+    assert json.loads(out) == {"selected_indices": [0, 2]}
+    assert sent["messages"][0]["content"] == "Pick articles.\n\n\n" + structured.SYSTEM_SUFFIX
+    tool = sent["tools"][0]["function"]
+    assert tool["name"] == "format_final_json_response"
+    assert tool["parameters"]["properties"]["output"] == structured.SCHEMAS["media_selection"]
+    llm_call(client, "m", "", "x", schema="trend")
+    assert sent["messages"][0]["content"] == structured.SYSTEM_SUFFIX  # empty system: instruction only

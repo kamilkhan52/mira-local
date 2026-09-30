@@ -172,6 +172,20 @@ def digest_flow(
         trend_enabled=trend_enabled)
     media_future = media.submit(config) if include_media else None
 
+    try:
+        return _run(config, media_future, jev_level, recipients, send_email, subject_tag, graph, pdf,
+                    started, t_run)
+    except Exception as e:
+        # Keep the evidence (stage times and spend so far) for failed runs too.
+        _write_summary({"started_at": started.isoformat(timespec="seconds"),
+                        "profile": config["profile_id"], "mode": config["mode"],
+                        "variant": f"jev-{jev_level}" if jev_level != "off" else "all-llm",
+                        "status": "failed", "error": repr(e),
+                        "wall_seconds": round(time.perf_counter() - t_run, 1), **usage.snapshot()})
+        raise
+
+
+def _run(config, media_future, jev_level, recipients, send_email, subject_tag, graph, pdf, started, t_run):
     papers = fetch(config)
     fetched = len(papers)
     screened: list[dict] = []

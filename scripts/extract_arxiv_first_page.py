@@ -4,6 +4,7 @@ import json
 import asyncio
 import time
 import os
+import threading
 # Scratch dir for PDFs/results: MIRA_TEMP_DIR, else <MIRA_DATA_DIR or repo/data>/temp.
 _TEMP = os.environ.get("MIRA_TEMP_DIR") or os.path.join(
     os.environ.get("MIRA_DATA_DIR") or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data"), "temp")
@@ -32,13 +33,18 @@ OUTPUT_DIR = _TEMP
 PDF_LIBRARY_DIR = os.path.join(_TEMP, "pdf_library")
 FIRST_PAGE_CACHE_DIR = os.path.join(_TEMP, "first_page_cache")
 
+_STDERR_LOCK = threading.Lock()
+
+
 @contextmanager
 def suppress_c_stderr():
     """
     Context manager to suppress C-level stderr (fd 2) output.
     This silences warnings from libraries like MuPDF/Ghostscript.
+    Serialized: fd 2 is process-wide, and unsynchronized save/redirect/restore
+    from concurrent threads can leave stderr pointing at /dev/null for good.
     """
-    with open(os.devnull, 'w') as devnull:
+    with _STDERR_LOCK, open(os.devnull, 'w') as devnull:
         original_stderr_fd = os.dup(sys.stderr.fileno())
         try:
             sys.stderr.flush()
@@ -49,22 +55,6 @@ def suppress_c_stderr():
             os.dup2(original_stderr_fd, sys.stderr.fileno())
             os.close(original_stderr_fd)
 
-@contextmanager
-def suppress_c_stderr():
-    """
-    Context manager to suppress C-level stderr (fd 2) output.
-    This silences warnings from libraries like MuPDF/Ghostscript.
-    """
-    with open(os.devnull, 'w') as devnull:
-        original_stderr_fd = os.dup(sys.stderr.fileno())
-        try:
-            sys.stderr.flush()
-            os.dup2(devnull.fileno(), sys.stderr.fileno())
-            yield
-        finally:
-            sys.stderr.flush()
-            os.dup2(original_stderr_fd, sys.stderr.fileno())
-            os.close(original_stderr_fd)
 
 def get_cache_filename(count: int) -> str:
     """Generate a cache filename based on today's date and paper count"""

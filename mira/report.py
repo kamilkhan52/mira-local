@@ -1208,7 +1208,7 @@ def run_trend_analysis(trend_prompt: str, trend_system: str, config: dict, clien
     trend_section_markdown; raises ValueError when both passes fail."""
     from mira import config as cfg
 
-    raw = cfg.llm_call(client, cfg.model_for(config, "trend"), trend_system, trend_prompt)
+    raw = cfg.llm_call(client, cfg.model_for(config, "trend"), trend_system, trend_prompt, schema="trend")
     obj = _extract_json_object(raw)
     if obj and isinstance(obj.get("trend_section_markdown"), str):
         return obj["trend_section_markdown"].strip()

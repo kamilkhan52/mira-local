@@ -1,5 +1,6 @@
 import sys
 import os
+import threading
 # Scratch dir for PDFs/results: MIRA_TEMP_DIR, else <MIRA_DATA_DIR or repo/data>/temp.
 _TEMP = os.environ.get("MIRA_TEMP_DIR") or os.path.join(
     os.environ.get("MIRA_DATA_DIR") or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data"), "temp")
@@ -16,13 +17,18 @@ CACHE_DIR = os.path.join(_TEMP, "full_pdfs")
 PDF_LIBRARY_DIR = os.path.join(_TEMP, "pdf_library")
 FULL_TEXT_CACHE_DIR = os.path.join(_TEMP, "full_text_cache")
 
+_STDERR_LOCK = threading.Lock()
+
+
 @contextmanager
 def suppress_c_stderr():
     """
     Context manager to suppress C-level stderr (fd 2) output.
     This silences warnings from libraries like MuPDF/Ghostscript.
     """
-    with open(os.devnull, 'w') as devnull:
+    # Serialized: fd 2 is process-wide; concurrent save/redirect/restore can
+    # leave stderr pointing at /dev/null for good.
+    with _STDERR_LOCK, open(os.devnull, 'w') as devnull:
         original_stderr_fd = os.dup(sys.stderr.fileno())
         try:
             sys.stderr.flush()

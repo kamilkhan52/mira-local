@@ -371,7 +371,7 @@ def _get_affiliation(paper: dict, config: dict, client, cache: dict) -> dict:
         return shared
 
     _bump("aff_llm_call")
-    raw = llm_call(client, model, system, user, reasoning_effort="high")
+    raw = llm_call(client, model, system, user, reasoning_effort="high", schema="affiliation")
 
     try:
         result = parse_json_response(raw)
@@ -431,7 +431,7 @@ def _classify_paper(paper: dict, config: dict, client, cache: dict) -> dict:
         return shared
 
     _bump("cls_llm_call")
-    raw = llm_call(client, model, system, user, reasoning_effort="high")
+    raw = llm_call(client, model, system, user, reasoning_effort="high", schema="classification")
 
     try:
         result = parse_json_response(raw)
@@ -815,6 +815,9 @@ def validate_selection_output(output) -> dict:
     }
 
 
+SELECTION_MAX_TOKENS = 64000
+
+
 def _run_selection_agent(user: str, system: str, config: dict, client) -> dict:
     from mira.config import llm_call, model_for, record_parse_failure
 
@@ -822,7 +825,10 @@ def _run_selection_agent(user: str, system: str, config: dict, client) -> dict:
     last: Exception | None = None
     for attempt in range(SELECTION_MAX_TRIES):
         try:
-            raw = llm_call(client, model, system, user, retries=1)
+            # The selection answer carries reasoning for every candidate: ~15k
+            # output tokens for a 100-paper pool, so the default cap is too low.
+            raw = llm_call(client, model, system, user, retries=1, schema="selection",
+                           max_tokens=SELECTION_MAX_TOKENS)
             return _parse_json_object(raw)
         except Exception as e:  # noqa: BLE001 — n8n retries the whole agent call
             if isinstance(e, ValueError):
@@ -989,7 +995,7 @@ def _analyze_paper(paper: dict, config: dict, client) -> dict:
     result, last = None, None
     for attempt in range(ANALYSIS_MAX_TRIES):
         try:
-            raw = llm_call(client, model, system, user, retries=1)
+            raw = llm_call(client, model, system, user, retries=1, schema="analysis")
             result = _parse_json_object(raw)
             break
         except Exception as e:  # noqa: BLE001 — retryOnFail covers any agent error

@@ -46,9 +46,9 @@ def split_messages(msg: str) -> tuple[str, str]:
         system, human = msg[len("System: "):i], msg[i + len("\nHuman: "):]
     elif msg.startswith("Human: "):
         human = msg[len("Human: "):]
-    j = system.find(TOOL_SUFFIX)
-    base = system[:j].rstrip("\n") if j >= 0 else system
-    return base, human
+    # Full system message, including n8n's tool instruction: mira sends the
+    # same instruction for structured stages (mira/structured.py).
+    return system, human
 
 
 class Recorder:
@@ -80,7 +80,10 @@ class Recorder:
 
     def __call__(self, client, model, system, user, *a, **k):
         system = system or ""
-        exact = [r for r in self.recs if r["human"] == user and r["system"] == system.rstrip("\n")]
+        if k.get("schema") is not None:  # what the real llm_call sends for structured stages
+            from mira.structured import system_with_instruction
+            system = system_with_instruction(system)
+        exact = [r for r in self.recs if r["human"] == user and r["system"] == system]
         if exact:
             r = next((x for x in exact if not x["used"]), exact[0])
             status = "exact"

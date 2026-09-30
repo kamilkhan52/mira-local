@@ -478,7 +478,7 @@ def run_media(config: dict, client, include_digitimes: bool | None = None,
     if item["article_count"] > MEDIA_SELECT_THRESHOLD:
         user, system = build_selection_prompt(item, config)
         try:
-            raw = llm_call(client, model_for(config, "media_selection"), system, user)
+            raw = llm_call(client, model_for(config, "media_selection"), system, user, schema="media_selection")
         except Exception as e:  # noqa: BLE001 — n8n routes the error output to Apply Selection
             print(f"  WARNING: media selection failed — {e}. Using the first {MEDIA_MAX_SELECT}.")
             raw = {}

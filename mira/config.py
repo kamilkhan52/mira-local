@@ -513,7 +513,8 @@ def llm_call(client: OpenAI, model: str, system: str, user: str, retries: int = 
              temperature: float | None = None,
              reasoning_effort: str | None = None,
              max_tokens: int | None = None,
-             retry_wait: float = 10) -> str:
+             retry_wait: float = 10,
+             schema: str | dict | None = None) -> str:
     # PR #30 review r2: n8n sends reasoning_effort=high ONLY on the per-paper
     # terra nodes (options.modelKwargs) — the CLI mirrors that for
     # affiliation/classification call sites (passed explicitly), not for
@@ -528,6 +529,13 @@ def llm_call(client: OpenAI, model: str, system: str, user: str, retries: int = 
     if cap is not None:
         extra["max_tokens"] = cap  # type: ignore[assignment]
     caller = sys._getframe(1).f_code.co_name  # stage label for the usage ledger
+    # schema: answer through n8n's `format_final_json_response` tool (the
+    # agent + Structured Output Parser protocol) instead of free JSON text.
+    from mira import structured
+    if schema is not None:
+        schema_obj = structured.SCHEMAS[schema] if isinstance(schema, str) else schema
+        system = structured.system_with_instruction(system)
+        extra["tools"] = [structured.tool_for(schema_obj)]  # type: ignore[assignment]
     last_err: Exception | None = None
     for attempt in range(retries):
         try:
@@ -544,7 +552,11 @@ def llm_call(client: OpenAI, model: str, system: str, user: str, retries: int = 
             )
             from mira import usage
             usage.record_llm(caller, model, getattr(resp, "usage", None), time.perf_counter() - t0)
-            content = resp.choices[0].message.content
+            message = resp.choices[0].message
+            calls = getattr(message, "tool_calls", None)
+            if schema is not None and isinstance(calls, (list, tuple)) and calls:
+                return structured.unwrap(calls[0].function.arguments)
+            content = message.content
             if content is None:
                 raise RuntimeError("LLM returned empty content (possible content filter)")
             return content
