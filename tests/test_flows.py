@@ -86,7 +86,11 @@ def test_digest_flow_end_to_end(harness, monkeypatch, tmp_path):
                         recipients=["team@example.com"])
 
     assert out["status"] == "ok", out
-    assert out["selected"] == 1
+    summary = json.loads(open(out["summary_path"]).read())
+    assert len(summary["selected"]) == 1
+    assert summary["variant"] == "all-llm" and summary["papers_passing"] >= 1
+    assert "stage_seconds" in summary and "llm_cost_usd" in summary
+    out = summary
     record = json.loads(open(out["record_path"]).read())
     rec = record[0] if isinstance(record, list) else record
     assert rec["profile_id"] == "cxl-research"

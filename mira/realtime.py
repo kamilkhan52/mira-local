@@ -1,4 +1,5 @@
-"""Realtime monitor: new arXiv papers and news, triaged by Jev, emailed to subscribers.
+"""Realtime monitor ("MIRA Live"): breaking industry news (and optionally new
+arXiv papers), triaged by Jev, emailed to subscribers.
 
 Each run (hourly via run_realtime.py):
   1. fetch recent arXiv papers per profile and crawl the news sources once;
@@ -38,12 +39,7 @@ STATE_DIR = REALTIME_DIR
 #   priority  — equivalent of LLM relevance >= 7 (marked "high priority")
 #   cred_gate — credibility level (first-page header) equivalent of the
 #               weekly credibility gate
-ALERT_CUTOFFS = {
-    "memory-innovation":     {"gate": 0.36, "priority": 0.81, "cred_gate": 0.02},
-    "cxl-research":          {"gate": 0.37, "priority": 1.09, "cred_gate": 0.16},
-    "storage-innovation":    {"gate": 0.16, "priority": 1.32, "cred_gate": 0.22},
-    "optical-interconnects": {"gate": 0.20, "priority": 1.68, "cred_gate": 0.08},
-}
+ALERT_CUTOFFS = jev.CUTOFFS  # calibrated in mira/jev.py
 
 NEWS_CRAWLERS = [
     ("ee-times-crawler.ts",     "eetimes",      "EE Times"),
@@ -222,9 +218,13 @@ def summarize(item: dict, kind: str, config: dict, client, model: str, max_token
                   "this team specifically. No preamble, no markdown, no hype.")
         user = f"{'Paper' if kind == 'paper' else 'Article'}: {item['title']}\n\n{text}"
         try:
+            from mira import usage
+            t0 = time.perf_counter()
             resp = client.chat.completions.create(
                 model=model, max_tokens=max_tokens,
-                messages=[{"role": "system", "content": system}, {"role": "user", "content": user}])
+                messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
+                extra_body={"usage": {"include": True}})
+            usage.record_llm("summarize", model, getattr(resp, "usage", None), time.perf_counter() - t0)
             out = (resp.choices[0].message.content or "").strip()
             if out:
                 return out, "llm"
@@ -326,10 +326,13 @@ def run_profile(profile_id: str, settings: dict, news_pool: list[dict] | None,
     ledger = Ledger(profile_id)
     t0 = time.perf_counter()
 
-    papers = fetch_recent_papers(config, settings["arxiv_lookback_days"], settings["arxiv_max_results"])
-    new_papers = [p for p in papers if ledger.is_new(p["id"])]
-    print(f"  arXiv: {len(papers)} in window, {len(new_papers)} new")
-    passing, paper_log = triage_papers(new_papers, config)
+    if settings.get("include_papers", False):
+        papers = fetch_recent_papers(config, settings["arxiv_lookback_days"], settings["arxiv_max_results"])
+        new_papers = [p for p in papers if ledger.is_new(p["id"])]
+        print(f"  arXiv: {len(papers)} in window, {len(new_papers)} new")
+        passing, paper_log = triage_papers(new_papers, config)
+    else:  # news-first: papers arrive once a day and wait for the weekly digest
+        new_papers, passing, paper_log = [], [], []
 
     news_new = [a for a in (news_pool or []) if ledger.is_new(a["url"])]
     news_pass, news_log = triage_news(news_new, config, settings["news_min_level"])

@@ -26,8 +26,10 @@ def alert_profile(profile_id: str, settings: dict, news: list[dict],
 
 @flow(name="realtime", log_prints=True)
 def realtime_flow(profiles: list[str] | None = None, include_news: bool = True,
+                  include_papers: bool | None = None,
                   llm_summaries: bool = True, dry_run: bool = False) -> list[dict]:
-    """New arXiv papers and news, triaged by Jev, emailed to subscribers.
+    """Breaking news (and optionally new arXiv papers), triaged by Jev, emailed
+    to subscribers. include_papers: default from configs/realtime.json (off).
 
     profiles: default = every profile with subscribers in configs/realtime.json.
     dry_run: judge and write the alert HTML but send nothing and keep the ledger.
@@ -35,6 +37,8 @@ def realtime_flow(profiles: list[str] | None = None, include_news: bool = True,
     if not jev.enabled():
         raise RuntimeError("TYPESAFE_API_KEY is not set")
     settings = realtime.load_settings()
+    if include_papers is not None:
+        settings["include_papers"] = include_papers
     profiles = profiles or [p for p, subs in settings["subscribers"].items() if subs]
     news = crawl_news(settings["news_lookback_days"]) if include_news else []
     results = []

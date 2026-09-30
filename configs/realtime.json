@@ -1,13 +1,16 @@
 {
-  "_note": "Realtime monitor (mira/realtime.py, run_realtime.py). A profile runs when it has subscribers. Subscriber entries may be literal addresses or ${ENV_VAR} references resolved from .env. Relevance/credibility cutoffs are Jev-calibrated in mira/realtime.py (ALERT_CUTOFFS), not here.",
+  "_note": "Realtime monitor (mira/realtime.py, run_realtime.py). A profile runs when it has subscribers. Subscriber entries may be literal addresses or ${ENV_VAR} references resolved from .env. Relevance/credibility cutoffs are Jev-calibrated in mira/jev.py (CUTOFFS), not here. include_papers: also alert on new arXiv papers (off by default: the live agent is for news; papers are covered by the weekly digests).",
   "subscribers": {
-    "memory-innovation": ["${RECIPIENT_EMAIL}"],
+    "memory-innovation": [
+      "${RECIPIENT_EMAIL}"
+    ],
     "cxl-research": [],
     "storage-innovation": [],
     "optical-interconnects": [],
     "mcbu-memory": [],
     "embedded-intelligence": []
   },
+  "include_papers": false,
   "arxiv_lookback_days": 3,
   "arxiv_max_results": 2000,
   "news_lookback_days": 2,

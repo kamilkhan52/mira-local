@@ -1086,7 +1086,7 @@ def compute_paper_statistics(classified: list[dict], abstracts_analyzed: int) ->
     }
 
 
-def run_pipeline(papers: list[dict], config: dict, client) -> dict:
+def run_pipeline(papers: list[dict], config: dict, client, *, classify: bool = True) -> dict:
     """classify -> completeness gate -> thresholds -> rank/cap -> select ->
     deep analysis, following the live n8n workflow node by node.
 
@@ -1107,9 +1107,12 @@ def run_pipeline(papers: list[dict], config: dict, client) -> dict:
       unknown_selected_ids  agent ids that matched no candidate
       gate_dropped     completeness-gate drop records
       stats            Compute Paper Statistics output
+    classify=False: papers already carry the per-paper fields (Jev replace
+    mode), so the affiliation/classification LLM stages are skipped.
     Raises NoEligiblePapers / SelectionError (see select_papers_detailed)."""
     total = len(papers)
-    papers = classify_papers(papers, config, client)
+    if classify:
+        papers = classify_papers(papers, config, client)
     classified = [p for p in papers if "relevance_score" in p]
     stats = compute_paper_statistics(classified, total)
     valid, dropped = completeness_gate(papers, config)

@@ -73,6 +73,11 @@ def client():
     return TypeSafeClient(model=JEV_MODEL)
 
 
+def _record(stage: str, response, seconds: float) -> None:
+    from mira import usage
+    usage.record_jev(stage, getattr(getattr(response, "usage", None), "input_tokens", 0) or 0, seconds)
+
+
 def enabled() -> bool:
     return bool(os.environ.get("TYPESAFE_API_KEY"))
 
@@ -227,6 +232,7 @@ def judge_paper(paper: dict, rubric: dict) -> dict:
     t0 = time.perf_counter()
     r = client().system_one(state, paper_questions(rubric))
     latency = time.perf_counter() - t0
+    _record("paper relevance", r, latency)
     rel = r.scores["relevance"]
     topic = r.choices["primary_topic"]
     return {
@@ -254,6 +260,7 @@ def judge_credibility(focus: str, *, affiliations: list[str] | None = None,
     t0 = time.perf_counter()
     r = client().system_one(state, {"credibility": credibility_question(focus)})
     latency = time.perf_counter() - t0
+    _record("credibility", r, latency)
     cred = r.scores["credibility"]
     return {
         "credibility_tier": credibility_to_10(cred.score),
@@ -294,6 +301,7 @@ def judge_article(article: dict, focus: str, guidance: str) -> dict:
     r = client().system_one(state, {"relevance": Score(instructions=instructions,
                                                        criteria=ARTICLE_LEVELS)})
     ans = r.scores["relevance"]
+    _record("news relevance", r, time.perf_counter() - t0)
     return {"relevance_level": ans.score, "relevance_confidence": ans.confidence,
             "latency_s": time.perf_counter() - t0, "input_tokens": r.usage.input_tokens}
 
@@ -317,33 +325,50 @@ def select_articles(articles: list[dict], focus: str, guidance: str, n: int = 10
 # cached LLM baseline (scripts/bench_jev.py, seeds 42 and 43) >= 99% of papers
 # the LLM passed and 100% of papers featured in production reports were kept.
 # Profiles without a validated cutoff are not pre-screened.
-PRESCREEN_CUTOFFS = {
-    "memory-innovation": 0.15,
-    "cxl-research": 0.05,
-    "storage-innovation": 0.05,
+# Jev relevance-level cutoffs per profile, calibrated against the cached LLM
+# baseline on two disjoint samples (scripts/bench_jev.py, seeds 42 and 43).
+#   prescreen  papers below it skip the LLM stages; kept >= 99% of LLM-passing
+#              and 100% of report-featured papers on both samples
+#   gate       agreement-maximising equivalent of the profile's relevance
+#              threshold (86-92% agreement with the LLM's pass/fail)
+#   priority   equivalent of LLM relevance >= 7
+#   cred_gate  credibility level (first-page header) equivalent of the
+#              profile's credibility threshold
+CUTOFFS = {
+    "memory-innovation":     {"prescreen": 0.15, "gate": 0.36, "priority": 0.81, "cred_gate": 0.02},
+    "cxl-research":          {"prescreen": 0.05, "gate": 0.37, "priority": 1.09, "cred_gate": 0.16},
+    "storage-innovation":    {"prescreen": 0.05, "gate": 0.16, "priority": 1.32, "cred_gate": 0.22},
+    "optical-interconnects": {"prescreen": None, "gate": 0.20, "priority": 1.68, "cred_gate": 0.08},
 }
+PRESCREEN_CUTOFFS = {k: v["prescreen"] for k, v in CUTOFFS.items() if v["prescreen"] is not None}
+JEV_LEVELS = ("off", "prescreen", "gate", "replace")
 
 
-def prescreen(papers: list[dict], profile: dict, workers: int = 16) -> tuple[list[dict], list[dict]]:
-    """Split papers into (kept, screened). Screened papers are clearly below the
-    profile's relevance gate; kept papers go through the LLM stages unchanged.
-    Any Jev failure keeps the paper (fails open to the existing path)."""
+def _judge_all(papers: list[dict], rubric: dict, workers: int) -> list:
     from concurrent.futures import ThreadPoolExecutor
-
-    cutoff = PRESCREEN_CUTOFFS.get(profile["profile_id"])
-    if cutoff is None or not papers:
-        return papers, []
-    rubric = profile_rubric(profile)
 
     def one(p):
         try:
             return judge_paper(p, rubric)
         except Exception as e:  # noqa: BLE001 — fail open
-            print(f"  WARNING: Jev pre-screen failed for {p['id']} — {e}. Keeping.")
+            print(f"  WARNING: Jev judgment failed for {p['id']} — {e}. Keeping.")
             return None
-
     with ThreadPoolExecutor(max_workers=workers) as pool:
-        judgments = list(pool.map(one, papers))
+        return list(pool.map(one, papers))
+
+
+def prescreen(papers: list[dict], profile: dict, workers: int = 16,
+              level: str = "prescreen") -> tuple[list[dict], list[dict]]:
+    """Split papers into (kept, screened). level="prescreen" uses the safe
+    cutoff (only clearly irrelevant papers are screened); level="gate" uses the
+    calibrated relevance gate, so Jev decides relevance and the LLM stages run
+    only on what Jev passes. Kept papers go through the LLM stages unchanged.
+    Any Jev failure keeps the paper (fails open to the existing path)."""
+    cut = CUTOFFS.get(profile["profile_id"]) or {}
+    cutoff = cut.get("prescreen") if level == "prescreen" else cut.get("gate")
+    if cutoff is None or not papers:
+        return papers, []
+    judgments = _judge_all(papers, profile_rubric(profile), workers)
     kept, screened = [], []
     for p, j in zip(papers, judgments):
         if j is not None and j["relevance_level"] < cutoff:
@@ -353,3 +378,58 @@ def prescreen(papers: list[dict], profile: dict, workers: int = 16) -> tuple[lis
         else:
             kept.append(p)
     return kept, screened
+
+
+def replace_classification(papers: list[dict], profile: dict, workers: int = 16) -> list[dict]:
+    """Jev instead of the per-paper LLM stages (affiliation + classification).
+
+    Relevance, topic, impact and actionable come from one Jev call per paper;
+    credibility from the first-page header, only for papers past the relevance
+    gate (call after extract_first_pages on those). Scores are written on the
+    LLM's 1-10 scale, snapped so the profile's own thresholds reproduce Jev's
+    calibrated gates. Not available from Jev: key findings, affiliation lists,
+    reasoning text (left empty)."""
+    cut = CUTOFFS[profile["profile_id"]]
+    th = profile["thresholds"]
+    rmin, cmin = th["relevance_score_min"], th["credibility_tier_min"]
+    judgments = _judge_all(papers, profile_rubric(profile), workers)
+    out = []
+    for p, j in zip(papers, judgments):
+        if j is None:
+            continue  # like a failed LLM stage: the completeness gate drops it
+        mapped = j["relevance_score"]
+        passed = j["relevance_level"] >= cut["gate"]
+        p.update({
+            "relevance_score": max(mapped, rmin) if passed else min(mapped, rmin - 1),
+            "primary_topic": j["primary_topic"], "secondary_topics": [],
+            "potential_impact": j["potential_impact"], "actionable": j["actionable"],
+            "key_findings": "", "affiliations": [], "author_affiliations": {},
+            "credibility_reasoning": "", "jev": {"relevance_level": j["relevance_level"]},
+        })
+        out.append(p)
+    return out
+
+
+def judge_credibility_for(papers: list[dict], profile: dict, workers: int = 16) -> None:
+    """Credibility tier from the first-page header, snapped to the profile's
+    threshold at Jev's calibrated credibility gate (replace mode)."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    cut = CUTOFFS[profile["profile_id"]]
+    cmin = profile["thresholds"]["credibility_tier_min"]
+    focus = profile["topic"]["focus"]
+
+    def one(p):
+        try:
+            return judge_credibility(focus, first_page_text=p.get("first_page_text", ""))
+        except Exception as e:  # noqa: BLE001
+            print(f"  WARNING: Jev credibility failed for {p['id']} — {e}")
+            return None
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        creds = list(pool.map(one, papers))
+    for p, c in zip(papers, creds):
+        if c is None:
+            p["credibility_tier"] = cmin  # no evidence either way: don't block on credibility
+            continue
+        ok = c["credibility_level"] >= cut["cred_gate"]
+        p["credibility_tier"] = max(c["credibility_tier"], cmin) if ok else min(c["credibility_tier"], cmin - 1)

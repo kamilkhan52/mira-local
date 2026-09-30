@@ -65,3 +65,35 @@ def test_prescreen_is_noop_without_validated_cutoff(monkeypatch):
     prof = _profiles()["optical-interconnects"]
     papers = [{"id": "x", "title": "t", "summary": "s"}]
     assert jev.prescreen(papers, prof) == (papers, [])
+
+
+def test_gate_level_uses_calibrated_gate_cutoff(monkeypatch):
+    levels = {"a": 0.2, "b": 0.5}   # memory: prescreen 0.15, gate 0.36
+    monkeypatch.setattr(jev, "judge_paper", lambda p, r: {
+        "relevance_level": levels[p["id"]], "relevance_confidence": 0.9, "primary_topic": "x"})
+    prof = _profiles()["memory-innovation"]
+    papers = [{"id": k, "title": k, "summary": k} for k in levels]
+    kept, screened = jev.prescreen([dict(p) for p in papers], prof, level="prescreen")
+    assert [p["id"] for p in kept] == ["a", "b"]
+    kept, screened = jev.prescreen([dict(p) for p in papers], prof, level="gate")
+    assert [p["id"] for p in kept] == ["b"] and [p["id"] for p in screened] == ["a"]
+
+
+def test_replace_snaps_scores_to_profile_thresholds(monkeypatch):
+    # gate 0.36, cred_gate 0.02; memory thresholds relevance 5 / credibility 5
+    js = {"pass_low_mapped": (0.40, 2), "fail": (0.30, 2), "pass_high": (3.0, 8)}
+    monkeypatch.setattr(jev, "judge_paper", lambda p, r: {
+        "relevance_level": js[p["id"]][0], "relevance_score": js[p["id"]][1], "relevance_confidence": 1,
+        "primary_topic": "HBM", "potential_impact": "High", "actionable": "Yes"})
+    prof = _profiles()["memory-innovation"]
+    out = {p["id"]: p for p in jev.replace_classification(
+        [{"id": k, "title": k, "summary": k} for k in js], prof)}
+    assert out["pass_low_mapped"]["relevance_score"] == 5     # Jev passed -> meets threshold
+    assert out["fail"]["relevance_score"] <= 4                # Jev failed -> below threshold
+    assert out["pass_high"]["relevance_score"] == 8           # keeps its own higher score
+    assert out["fail"]["key_findings"] == "" and out["fail"]["affiliations"] == []
+    monkeypatch.setattr(jev, "judge_credibility", lambda focus, first_page_text: {
+        "credibility_level": 0.01 if "weak" in first_page_text else 2.5, "credibility_tier": 3})
+    ps = [{"id": "x", "first_page_text": "weak lab"}, {"id": "y", "first_page_text": "strong lab"}]
+    jev.judge_credibility_for(ps, prof)
+    assert ps[0]["credibility_tier"] <= 4 and ps[1]["credibility_tier"] == 5

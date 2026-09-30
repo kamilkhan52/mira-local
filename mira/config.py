@@ -5,6 +5,7 @@ import json
 import os
 import re
 import threading
+import sys
 import time
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -526,17 +527,23 @@ def llm_call(client: OpenAI, model: str, system: str, user: str, retries: int = 
     cap = max_tokens if max_tokens is not None else _default_max_tokens()
     if cap is not None:
         extra["max_tokens"] = cap  # type: ignore[assignment]
+    caller = sys._getframe(1).f_code.co_name  # stage label for the usage ledger
     last_err: Exception | None = None
     for attempt in range(retries):
         try:
+            t0 = time.perf_counter()
             resp = client.chat.completions.create(
                 model=model,
                 messages=[
                     {"role": "system", "content": system},
                     {"role": "user", "content": user},
                 ],
+                # OpenRouter usage accounting: returns the call's cost.
+                extra_body={"usage": {"include": True}},
                 **extra,
             )
+            from mira import usage
+            usage.record_llm(caller, model, getattr(resp, "usage", None), time.perf_counter() - t0)
             content = resp.choices[0].message.content
             if content is None:
                 raise RuntimeError("LLM returned empty content (possible content filter)")

@@ -28,8 +28,12 @@ def main() -> None:
     ap.add_argument("--no-email", dest="send_email", action="store_false", help="Build everything, send nothing")
     ap.add_argument("--no-pdf", dest="pdf", action="store_false")
     ap.add_argument("--to", dest="recipients", action="append", help="Recipient (repeatable)")
-    ap.add_argument("--jev-prescreen", action="store_true",
-                    help="Screen out clearly irrelevant papers with Jev before the LLM stages")
+    ap.add_argument("--jev-level", default="off", choices=["off", "prescreen", "gate", "replace"],
+                    help="off: all LLM (like n8n); prescreen: Jev skips clearly irrelevant papers; "
+                         "gate: Jev decides relevance, LLM only on what passes; replace: Jev instead "
+                         "of the per-paper LLM stages")
+    ap.add_argument("--jev-prescreen", action="store_true", help="Same as --jev-level prescreen")
+    ap.add_argument("--subject-tag", help="Text prepended to the email subject (test runs)")
     ap.add_argument("--graph", action="store_true", help="Also ingest into the LightRAG graph")
     args = ap.parse_args()
     if args.start_date and not args.end_date:
