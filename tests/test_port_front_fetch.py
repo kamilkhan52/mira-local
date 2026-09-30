@@ -46,6 +46,11 @@ FEED = """<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom">
 <published>2026-09-02T00:00:00Z</published></entry></feed>"""
 
 
+@pytest.fixture(autouse=True)
+def _no_query_cache(monkeypatch):
+    monkeypatch.setattr(fetch, "ARXIV_CACHE_HOURS", 0)
+
+
 def test_fetch_retries_transient_errors_then_succeeds(monkeypatch):
     calls, sleeps = [], []
     responses = [requests.Timeout("slow"), _Resp(503), requests.ConnectionError("reset"), _Resp(200, FEED)]
@@ -60,14 +65,14 @@ def test_fetch_retries_transient_errors_then_succeeds(monkeypatch):
     monkeypatch.setattr(fetch.requests, "get", fake_get)
     monkeypatch.setattr(fetch.time, "sleep", sleeps.append)
     papers = fetch_papers(BASE)
-    assert len(calls) == 4 and sleeps == [5.0, 10.0, 20.0]
+    assert len(calls) == 4 and sleeps == [30.0, 60.0, 120.0]
     assert [p["raw_id"] for p in papers] == ["http://arxiv.org/abs/2609.00001v1"]  # deduplicated
 
 
 def test_fetch_gives_up_after_attempts(monkeypatch):
     monkeypatch.setattr(fetch.requests, "get", lambda *a, **k: _Resp(503))
     monkeypatch.setattr(fetch.time, "sleep", lambda s: None)
-    with pytest.raises(RuntimeError, match="after 4 attempts"):
+    with pytest.raises(RuntimeError, match="after 6 attempts"):
         fetch_papers(BASE)
 
 
@@ -78,3 +83,12 @@ def test_fetch_does_not_retry_a_bad_request(monkeypatch):
     with pytest.raises(requests.HTTPError):
         fetch_papers(BASE)
     assert len(calls) == 1
+
+
+def test_identical_query_reuses_saved_response(monkeypatch, tmp_path):
+    monkeypatch.setattr(fetch, "ARXIV_CACHE_HOURS", 12)
+    monkeypatch.setattr(fetch, "LOCAL_CACHE", tmp_path)
+    calls = []
+    monkeypatch.setattr(fetch.requests, "get", lambda url, headers, timeout: calls.append(url) or _Resp(200, FEED))
+    first, second = fetch_papers(BASE), fetch_papers(BASE)
+    assert len(calls) == 1 and first == second

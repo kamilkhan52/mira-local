@@ -7,7 +7,7 @@ balance (ground truth) as well as mira's own per-call ledger:
   1. n8n (webhook, test mode, cache bypass)
   2. mira all-LLM, 3. mira Jev prescreen, 4. mira Jev gate, 5. mira Jev replace
      (Prefect deployment digest-manual — the production path; LLM cache
-     bypassed and PDF caches cleared before each, so all start cold)
+     bypassed so LLM stages start cold; first-page PDFs warm for every run)
   6-7. live agent (news) twice: first run and the steady state
 
 Needs: n8n container up; `make server` and `make serve` running.
@@ -98,7 +98,9 @@ def run_n8n(args, retry: bool = False) -> dict:
 
 def run_mira(args, level: str) -> dict:
     from prefect.deployments import run_deployment
-    clear_pdf_caches()
+    # PDFs stay warm for every run (n8n's container has its own warm cache):
+    # equal footing without re-downloading ~2,000 PDFs from arXiv per run.
+    # Cold PDF times are reported separately. LLM caches are bypassed.
     tag = {"off": "[mira · all LLM]", "prescreen": "[mira · Jev prescreen]",
            "gate": "[mira · Jev gate]", "replace": "[mira · Jev replace]"}[level]
     params = {"profile": "memory-innovation", "mode": "weekly", "current_date": args.current_date,

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from mira.paths import TEMP_DIR, SCRIPTS_DIR
+from mira.paths import LOCAL_CACHE, TEMP_DIR, SCRIPTS_DIR
 import asyncio
 import os
 import sys
@@ -26,9 +26,13 @@ _HEADERS = {"User-Agent": "mira-local/1.0" + (f" (mailto:{os.environ['MIRA_CONTA
 PDF_CONCURRENCY = 32
 
 # n8n's Query arXiv node has no retry; a transient arXiv 503 used to kill the
-# run. Four attempts, 5 s doubling backoff (5, 10, 20 s).
-FETCH_ATTEMPTS = 4
-FETCH_BACKOFF_SECONDS = 5.0
+# run. arXiv's rate limiter (429/503) needs minutes, not seconds, to clear:
+# six attempts, 30 s doubling backoff (30 s ... 8 min, ~15 min in total).
+FETCH_ATTEMPTS = 6
+FETCH_BACKOFF_SECONDS = 30.0
+# Identical queries within this many hours reuse the saved response (reruns,
+# retries after a later-stage failure, side-by-side tests). 0 disables.
+ARXIV_CACHE_HOURS = float(os.environ.get("MIRA_ARXIV_CACHE_HOURS", "12"))
 _RETRY_STATUSES = {408, 429, 500, 502, 503, 504}
 # Characters encodeURIComponent leaves unescaped.
 _URI_COMPONENT_SAFE = "-_.!~*'()"
@@ -143,10 +147,21 @@ def _get_with_retries(url: str, *, attempts: int = FETCH_ATTEMPTS,
     raise RuntimeError(f"arXiv query failed after {attempts} attempts: {last_err}")
 
 
+def _cached_query(url: str) -> str:
+    import hashlib
+    path = LOCAL_CACHE / "arxiv_queries" / (hashlib.sha1(url.encode()).hexdigest()[:16] + ".xml")
+    if ARXIV_CACHE_HOURS > 0 and path.exists() and (time.time() - path.stat().st_mtime) < ARXIV_CACHE_HOURS * 3600:
+        print(f"  arXiv query: reusing response saved {(time.time() - path.stat().st_mtime) / 60:.0f} min ago")
+        return path.read_text()
+    text = _get_with_retries(url).text
+    if ARXIV_CACHE_HOURS > 0:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
+    return text
+
+
 def fetch_papers(config: dict) -> list[dict]:
-    url = _build_url(config)
-    resp = _get_with_retries(url)
-    papers = _parse_xml(resp.text)
+    papers = _parse_xml(_cached_query(_build_url(config)))
     return _deduplicate(papers)
 
 
