@@ -829,7 +829,13 @@ def _run_selection_agent(user: str, system: str, config: dict, client) -> dict:
             # output tokens for a 100-paper pool, so the default cap is too low.
             raw = llm_call(client, model, system, user, retries=1, schema="selection",
                            max_tokens=SELECTION_MAX_TOKENS)
-            return _parse_json_object(raw)
+            parsed = _parse_json_object(raw)
+            if not any(isinstance(p, dict) and p.get("arxiv_id")
+                       for p in (parsed.get("selected_papers") or []) if isinstance(parsed.get("selected_papers"), list)):
+                # A parsed answer without usable selections is a failed try
+                # (retried), not an immediate run failure.
+                raise ValueError(f"no usable selected_papers in the answer: {str(raw)[:300]}")
+            return parsed
         except Exception as e:  # noqa: BLE001 — n8n retries the whole agent call
             if isinstance(e, ValueError):
                 record_parse_failure("selection")

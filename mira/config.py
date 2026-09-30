@@ -537,7 +537,10 @@ def llm_call(client: OpenAI, model: str, system: str, user: str, retries: int = 
         system = structured.system_with_instruction(system)
         extra["tools"] = [structured.tool_for(schema_obj)]  # type: ignore[assignment]
     last_err: Exception | None = None
-    for attempt in range(retries):
+    budget_waits = 0
+    attempt = -1
+    while attempt < retries - 1:
+        attempt += 1
         try:
             t0 = time.perf_counter()
             resp = client.chat.completions.create(
@@ -562,9 +565,26 @@ def llm_call(client: OpenAI, model: str, system: str, user: str, retries: int = 
             return content
         except Exception as e:
             last_err = e
+            # OpenRouter 402 "in_flight_budget_exhausted": the prepaid balance
+            # is momentarily below the sum of in-flight reservations (e.g.
+            # while an auto-reload lands). Wait it out instead of failing.
+            if _is_budget_wait(e) and budget_waits < BUDGET_WAIT_MAX:
+                budget_waits += 1
+                time.sleep(BUDGET_WAIT_SECONDS)
+                attempt -= 1  # a budget wait is not a failed attempt
+                continue
             if attempt < retries - 1:
                 time.sleep(retry_wait)
     raise RuntimeError(f"LLM call failed after {retries} attempts: {last_err}")
+
+
+BUDGET_WAIT_SECONDS = 30
+BUDGET_WAIT_MAX = 20  # up to 10 minutes
+
+
+def _is_budget_wait(e: Exception) -> bool:
+    text = str(e)
+    return "402" in text and ("in_flight" in text or "Payment required" in text or "more credits" in text)
 
 
 def apply_template(template: str, variables: dict) -> str:

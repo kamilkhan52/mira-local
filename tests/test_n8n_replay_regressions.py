@@ -89,3 +89,32 @@ def test_structured_llm_call_uses_n8n_tool_protocol():
     assert tool["parameters"]["properties"]["output"] == structured.SCHEMAS["media_selection"]
     llm_call(client, "m", "", "x", schema="trend")
     assert sent["messages"][0]["content"] == structured.SYSTEM_SUFFIX  # empty system: instruction only
+
+
+def test_llm_call_waits_out_in_flight_budget_402(monkeypatch):
+    from types import SimpleNamespace
+    import mira.config as cfg
+    monkeypatch.setattr(cfg.time, "sleep", lambda s: None)
+    state = {"n": 0}
+
+    class Completions:
+        def create(self, **kw):
+            state["n"] += 1
+            if state["n"] <= 5:  # more than `retries`, but budget waits don't count
+                raise RuntimeError("Error code: 402 - {'error': {'metadata': {'reason': 'in_flight_budget_exhausted'}}}")
+            msg = SimpleNamespace(content="ok", tool_calls=None)
+            return SimpleNamespace(choices=[SimpleNamespace(message=msg)], usage=None)
+    client = SimpleNamespace(chat=SimpleNamespace(completions=Completions()))
+    assert cfg.llm_call(client, "m", "", "x", retries=3) == "ok"
+    assert state["n"] == 6
+
+
+def test_unwrap_decodes_stringified_nested_arrays():
+    import json
+    from mira.structured import unwrap
+    args = json.dumps({"output": {"reasoning": "r",
+                                  "selected_papers": json.dumps([{"arxiv_id": "a", "priority_rank": 1}]),
+                                  "remaining_papers": "[]"}})
+    out = json.loads(unwrap(args))
+    assert out["selected_papers"] == [{"arxiv_id": "a", "priority_rank": 1}]
+    assert out["remaining_papers"] == [] and out["reasoning"] == "r"

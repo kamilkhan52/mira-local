@@ -113,11 +113,19 @@ def main():
         side = n8n_side(ex, wf, prices) if ex.exists() else {}
         out["runs"]["n8n"] = {**side, "wall_seconds": r["wall_seconds"], "status": r["execution"]["status"],
                               "cost_measured_usd": r["cost_measured_usd"]}
-    for key in ("mira-off", "mira-prescreen", "mira-gate", "mira-replace"):
+    variant = {"mira-off": "all-llm", "mira-prescreen": "jev-prescreen", "mira-gate": "jev-gate",
+               "mira-replace": "jev-replace"}
+    for key, var in variant.items():
         r = runs.get(key)
-        if not r or not isinstance(r.get("result"), dict) or "summary_path" not in r["result"]:
+        if not r:
             continue
-        out["runs"][key] = {**mira_side(r["result"]["summary_path"]), "wall_seconds": r["wall_seconds"],
+        # Flow results aren't persisted by Prefect; each run writes its own
+        # summary to data/runs — take the newest one for this variant/day.
+        summaries = sorted((DATA_DIR / "runs").glob(f"*__memory-innovation__{var}.json"))
+        summaries = [p for p in summaries if json.loads(p.read_text()).get("window", [None, None])[1] == args.current_date]
+        if not summaries:
+            continue
+        out["runs"][key] = {**mira_side(str(summaries[-1])), "wall_seconds": r["wall_seconds"],
                             "cost_measured_usd": r["cost_measured_usd"], "status": r["state"]}
     for key in ("live-1", "live-2"):
         if key in runs:

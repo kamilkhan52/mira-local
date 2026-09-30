@@ -243,10 +243,13 @@ def test_selection_retries_three_times_then_fails(monkeypatch):
 
 
 def test_selection_with_nothing_selected_fails_the_run(monkeypatch):
-    calls = _patch_llm(monkeypatch, [json.dumps({"reasoning": "none", "selected_papers": []})])
-    with pytest.raises(SelectionError, match="no valid selected_papers"):
+    empty = json.dumps({"reasoning": "none", "selected_papers": []})
+    calls = _patch_llm(monkeypatch, [empty, empty, empty])
+    with pytest.raises(SelectionError, match="no usable selected_papers"):
         select_papers_detailed(_ranked_pool(), _config(), client=None)
-    assert len(calls) == 1  # validation failure is not retried (separate n8n node)
+    # Deviation from n8n (which fails the run at once): an answer with no usable
+    # selections is retried like any other failed try.
+    assert len([c for c in calls if "model" in c]) == 3
 
 
 def test_selection_of_only_unknown_ids_fails(monkeypatch):

@@ -60,6 +60,7 @@ SCHEMAS = {
             "remaining_papers": {"type": "array", "items": {"type": "object", "properties": {
                 "arxiv_id": _STR, "exclusion_reasoning": _STR}}},
         },
+        "required": ["reasoning", "selected_papers", "remaining_papers"],
     },
     # Structured Output Parser (Analysis)
     "analysis": {
@@ -94,6 +95,21 @@ def tool_for(schema: dict) -> dict:
         "parameters": {"type": "object", "properties": {"output": schema}, "required": ["output"]}}}
 
 
+def _decode_nested(value):
+    """Models sometimes send a nested array/object as a JSON *string* inside the
+    tool arguments (seen on a long selection answer). Decode those."""
+    if isinstance(value, str) and value.strip()[:1] in ("[", "{"):
+        try:
+            return _decode_nested(json.loads(value))
+        except ValueError:
+            return value
+    if isinstance(value, dict):
+        return {k: _decode_nested(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_decode_nested(v) for v in value]
+    return value
+
+
 def unwrap(arguments: str) -> str:
     """Tool-call arguments → the JSON text of the `output` object."""
     data = json.loads(arguments)
@@ -104,4 +120,4 @@ def unwrap(arguments: str) -> str:
                 data = json.loads(data)
             except ValueError:
                 return data
-    return json.dumps(data, ensure_ascii=False)
+    return json.dumps(_decode_nested(data), ensure_ascii=False)
