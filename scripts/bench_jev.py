@@ -513,7 +513,10 @@ def main():
         base_sample = build_sample(args.per_profile, profiles)
         exclude = {i for b in base_sample.values() for i in b["rows"]}
     sample = build_sample(args.per_profile, profiles, args.seed, exclude)
-    store = ResultStore(OUT / "results.jsonl")
+    # One result file per decision-model backend (JEV_BACKEND), so local
+    # alternatives are scored on exactly the same samples as Jev.
+    tag = "" if jev.BACKEND == "typesafe" else f"_{jev.BACKEND}"
+    store = ResultStore(OUT / f"results{tag}.jsonl")
     if not args.analyse_only:
         all_ids = [i for b in sample.values() for i in b["rows"]]
         print(f"Fetching arXiv metadata for {len(set(all_ids))} papers...")
@@ -531,7 +534,7 @@ def main():
             run_llm_timing(sample, profiles, meta, store, args.llm_timing)
 
     rep = analyse(sample, profiles, store)
-    suffix = "" if args.seed == 42 else f"_seed{args.seed}"
+    suffix = ("" if args.seed == 42 else f"_seed{args.seed}") + tag
     (OUT / f"report{suffix}.json").write_text(json.dumps(rep, indent=2))
     md = to_markdown(rep, profiles)
     (OUT / f"report{suffix}.md").write_text(md)

@@ -111,6 +111,13 @@ def _short(p: dict) -> dict:
             "relevance_score": p.get("relevance_score"), "credibility_tier": p.get("credibility_tier")}
 
 
+def _variant(jev_level: str) -> str:
+    from mira import jev
+    if jev_level == "off":
+        return "all-llm"
+    return f"jev-{jev_level}" if jev.BACKEND == "typesafe" else f"{jev.BACKEND}-{jev_level}"
+
+
 def _write_summary(summary: dict) -> str:
     out = DATA_DIR / "runs"
     out.mkdir(parents=True, exist_ok=True)
@@ -136,6 +143,7 @@ def digest_flow(
     send_email: bool = True,
     recipients: list[str] | None = None,
     jev_level: str = "off",
+    jev_backend: str = "typesafe",
     jev_prescreen: bool = False,
     subject_tag: str | None = None,
     graph: bool = False,
@@ -152,6 +160,8 @@ def digest_flow(
     jev_level: off (all LLM, like n8n) | prescreen (Jev skips clearly
     irrelevant papers) | gate (Jev decides relevance; LLM stages only for what
     it passes) | replace (Jev instead of the per-paper LLM stages).
+    jev_backend: typesafe (Jev, hosted) | nimble | kev (local decision models
+    serving the same API; see mira/jev.py BACKENDS).
     jev_prescreen=True is the same as jev_level="prescreen".
     subject_tag: text prepended to the email subject (e.g. for test runs).
     send_email=False builds everything but sends nothing.
@@ -161,6 +171,9 @@ def digest_flow(
         jev_level = "prescreen"
     if jev_level not in jev.JEV_LEVELS:
         raise ValueError(f"jev_level must be one of {jev.JEV_LEVELS}")
+    jev.set_backend(jev_backend)
+    if jev_level != "off" and not jev.cutoffs_for(profile or "memory-innovation"):
+        raise ValueError(f"no calibrated {jev_backend} cutoffs for profile {profile}")
     usage.reset()
     started = datetime.now(timezone.utc)
     t_run = time.perf_counter()
@@ -179,7 +192,7 @@ def digest_flow(
         # Keep the evidence (stage times and spend so far) for failed runs too.
         _write_summary({"started_at": started.isoformat(timespec="seconds"),
                         "profile": config["profile_id"], "mode": config["mode"],
-                        "variant": f"jev-{jev_level}" if jev_level != "off" else "all-llm",
+                        "variant": _variant(jev_level),
                         "status": "failed", "error": repr(e),
                         "wall_seconds": round(time.perf_counter() - t_run, 1), **usage.snapshot()})
         raise
@@ -201,7 +214,7 @@ def _run(config, media_future, jev_level, recipients, send_email, subject_tag, g
 
     summary = {
         "started_at": started.isoformat(timespec="seconds"), "profile": config["profile_id"],
-        "mode": config["mode"], "variant": f"jev-{jev_level}" if jev_level != "off" else "all-llm",
+        "mode": config["mode"], "variant": _variant(jev_level),
         "window": [config["start_date_iso"], config["end_date_iso"]],
         "papers_fetched": fetched, "papers_screened_by_jev": len(screened),
         "media_seconds": round(media_seconds, 1),

@@ -16,7 +16,23 @@ import re
 import time
 from functools import lru_cache
 
-JEV_MODEL = os.environ.get("JEV_MODEL", "jev-latest")
+# Decision-model backend. All speak TypeSafe's /v1/systemone API, so the same
+# SDK and questions work against each; only the server, option limit, price
+# and calibrated cutoffs differ.
+#   typesafe  Jev, TypeSafe's hosted model (needs TYPESAFE_API_KEY)
+#   nimble    Bespoke-Nimble-9B served locally by Ollama >= 0.35
+#   kev       Kev (jaredpalmer/kev) served locally by `python -m kev.serve`
+BACKENDS = {
+    "typesafe": {"base_url": None, "model": "jev-latest", "max_options": 255, "price_per_mtok": 0.042},
+    "nimble": {"base_url": "http://127.0.0.1:11435", "model": "nimble", "max_options": 26, "price_per_mtok": 0.0},
+    "kev": {"base_url": "http://127.0.0.1:8009", "model": "kev-latest", "max_options": 255, "price_per_mtok": 0.0},
+}
+BACKEND = os.environ.get("JEV_BACKEND", "typesafe")
+if BACKEND not in BACKENDS:
+    raise ValueError(f"JEV_BACKEND must be one of {sorted(BACKENDS)}")
+_B = BACKENDS[BACKEND]
+JEV_MODEL = os.environ.get("JEV_MODEL", _B["model"])
+JEV_BASE_URL = os.environ.get("JEV_BASE_URL", _B["base_url"] or "") or None
 
 # Relevance levels, low to high. The expectation over these (0..4) maps onto the
 # LLM's 1-10 relevance_score bands: 1-2, 3-4, 5-6, 7-8, 9-10.
@@ -67,9 +83,22 @@ ACTIONABLE_OPTIONS = {
 FIRST_PAGE_HEADER_CHARS = 2500
 
 
+def set_backend(name: str) -> None:
+    """Switch the decision-model backend for this process (a flow run)."""
+    global BACKEND, _B, JEV_MODEL, JEV_BASE_URL
+    if name not in BACKENDS:
+        raise ValueError(f"jev_backend must be one of {sorted(BACKENDS)}")
+    BACKEND, _B = name, BACKENDS[name]
+    JEV_MODEL = _B["model"]
+    JEV_BASE_URL = _B["base_url"]
+    client.cache_clear()
+
+
 @lru_cache(maxsize=1)
 def client():
     from typesafe_sdk import TypeSafeClient
+    if JEV_BASE_URL:  # local server: no TypeSafe account involved
+        return TypeSafeClient(api_key="local", base_url=JEV_BASE_URL, model=JEV_MODEL)
     return TypeSafeClient(model=JEV_MODEL)
 
 
@@ -79,7 +108,7 @@ def _record(stage: str, response, seconds: float) -> None:
 
 
 def enabled() -> bool:
-    return bool(os.environ.get("TYPESAFE_API_KEY"))
+    return bool(JEV_BASE_URL) or bool(os.environ.get("TYPESAFE_API_KEY"))
 
 
 # --------------------------------------------------------------------------
@@ -230,18 +259,21 @@ def judge_paper(paper: dict, rubric: dict) -> dict:
     """Relevance, primary topic, impact and actionable from title + abstract."""
     state = {"paper": {"title": paper["title"], "abstract": paper["summary"]}}
     t0 = time.perf_counter()
-    r = client().system_one(state, paper_questions(rubric))
+    questions = paper_questions(rubric)
+    if len(rubric["taxonomy"]) > _B["max_options"]:
+        del questions["primary_topic"]  # e.g. Ollama caps choices at 26 options
+    r = client().system_one(state, questions)
     latency = time.perf_counter() - t0
     _record("paper relevance", r, latency)
     rel = r.scores["relevance"]
-    topic = r.choices["primary_topic"]
+    topic = r.choices.get("primary_topic")
     return {
         "relevance_score": relevance_to_10(rel.score),
         "relevance_level": rel.score,
         "relevance_confidence": rel.confidence,
-        "primary_topic": topic.choice,
-        "primary_topic_confidence": topic.confidence,
-        "primary_topic_probabilities": dict(topic.probabilities),
+        "primary_topic": topic.choice if topic else "",
+        "primary_topic_confidence": topic.confidence if topic else None,
+        "primary_topic_probabilities": dict(topic.probabilities) if topic else {},
         "potential_impact": r.choices["potential_impact"].choice,
         "actionable": r.choices["actionable"].choice,
         "latency_s": latency,
@@ -343,6 +375,17 @@ CUTOFFS = {
     "storage-innovation":    {"prescreen": 0.05, "gate": 0.11, "decide": 0.60, "priority": 1.32, "cred_gate": 0.22},
     "optical-interconnects": {"prescreen": None, "gate": 0.07, "decide": 0.31, "priority": 1.68, "cred_gate": 0.08},
 }
+# Cutoffs for local backends, calibrated the same way on the same samples
+# (scripts/bench_jev.py with JEV_BACKEND set). A backend without an entry for
+# a profile is not used for that profile.
+LOCAL_CUTOFFS: dict = {"nimble": {}, "kev": {}}
+
+
+def cutoffs_for(profile_id: str) -> dict:
+    table = CUTOFFS if BACKEND == "typesafe" else LOCAL_CUTOFFS.get(BACKEND, {})
+    return table.get(profile_id) or {}
+
+
 PRESCREEN_CUTOFFS = {k: v["prescreen"] for k, v in CUTOFFS.items() if v["prescreen"] is not None}
 JEV_LEVELS = ("off", "prescreen", "gate", "replace")
 
@@ -367,7 +410,7 @@ def prescreen(papers: list[dict], profile: dict, workers: int = 16,
     calibrated relevance gate, so Jev decides relevance and the LLM stages run
     only on what Jev passes. Kept papers go through the LLM stages unchanged.
     Any Jev failure keeps the paper (fails open to the existing path)."""
-    cut = CUTOFFS.get(profile["profile_id"]) or {}
+    cut = cutoffs_for(profile["profile_id"])
     cutoff = cut.get("prescreen") if level == "prescreen" else cut.get("gate")
     if cutoff is None or not papers:
         return papers, []
@@ -392,7 +435,7 @@ def replace_classification(papers: list[dict], profile: dict, workers: int = 16)
     LLM's 1-10 scale, snapped so the profile's own thresholds reproduce Jev's
     calibrated gates. Not available from Jev: key findings, affiliation lists,
     reasoning text (left empty)."""
-    cut = CUTOFFS[profile["profile_id"]]
+    cut = cutoffs_for(profile["profile_id"])
     th = profile["thresholds"]
     rmin, cmin = th["relevance_score_min"], th["credibility_tier_min"]
     judgments = _judge_all(papers, profile_rubric(profile), workers)
@@ -418,7 +461,7 @@ def judge_credibility_for(papers: list[dict], profile: dict, workers: int = 16) 
     threshold at Jev's calibrated credibility gate (replace mode)."""
     from concurrent.futures import ThreadPoolExecutor
 
-    cut = CUTOFFS[profile["profile_id"]]
+    cut = cutoffs_for(profile["profile_id"])
     cmin = profile["thresholds"]["credibility_tier_min"]
     focus = profile["topic"]["focus"]
 

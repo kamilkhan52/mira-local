@@ -114,7 +114,7 @@ def main():
         out["runs"]["n8n"] = {**side, "wall_seconds": r["wall_seconds"], "status": r["execution"]["status"],
                               "cost_measured_usd": r["cost_measured_usd"]}
     variant = {"mira-off": "all-llm", "mira-prescreen": "jev-prescreen", "mira-gate": "jev-gate",
-               "mira-replace": "jev-replace"}
+               "mira-replace": "jev-replace", "mira-nimble-gate": "nimble-gate", "mira-kev-gate": "kev-gate"}
     for key, var in variant.items():
         r = runs.get(key)
         if not r:

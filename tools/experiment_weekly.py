@@ -96,16 +96,16 @@ def run_n8n(args, retry: bool = False) -> dict:
             "wall_seconds": round(wall, 1), "cost_measured_usd": round(b0 - b1, 4)}
 
 
-def run_mira(args, level: str) -> dict:
+def run_mira(args, level: str, backend: str = "typesafe") -> dict:
     from prefect.deployments import run_deployment
     # PDFs stay warm for every run (n8n's container has its own warm cache):
     # equal footing without re-downloading ~2,000 PDFs from arXiv per run.
     # Cold PDF times are reported separately. LLM caches are bypassed.
-    tag = {"off": "[mira · all LLM]", "prescreen": "[mira · Jev prescreen]",
-           "gate": "[mira · Jev gate]", "replace": "[mira · Jev replace]"}[level]
+    name = {"typesafe": "Jev", "nimble": "Nimble", "kev": "Kev"}[backend]
+    tag = "[mira · all LLM]" if level == "off" else f"[mira · {name} {level}]"
     params = {"profile": "memory-innovation", "mode": "weekly", "current_date": args.current_date,
               "lookback_days": 8, "max_limit": 2000, "test_mode": True, "llm_cache_bypass": True,
-              "trend_enabled": True, "jev_level": level, "subject_tag": tag,
+              "trend_enabled": True, "jev_level": level, "jev_backend": backend, "subject_tag": tag,
               "recipients": [args.to]}
     b0 = balance()
     t0 = time.time()
@@ -117,7 +117,7 @@ def run_mira(args, level: str) -> dict:
         result = fr.state.result()
     except Exception as e:  # noqa: BLE001
         result = {"error": repr(e)}
-    return {"run": f"mira-{level}", "flow_run": str(fr.id), "state": fr.state.type.value,
+    return {"run": f"mira-{level}" if backend == "typesafe" else f"mira-{backend}-{level}", "flow_run": str(fr.id), "state": fr.state.type.value,
             "wall_seconds": round(wall, 1), "cost_measured_usd": round(b0 - b1, 4), "result": result}
 
 
@@ -140,7 +140,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--current-date", default="2026-09-28")
     ap.add_argument("--to", default="kamilkhan52@outlook.com")
-    ap.add_argument("--only", nargs="*", help="subset: n8n off prescreen gate replace live")
+    ap.add_argument("--only", nargs="*",
+                    help="subset: n8n off prescreen gate replace live, or <backend>-<level> e.g. nimble-gate")
     args = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     path = OUT / f"weekly_{args.current_date}.json"
@@ -160,6 +161,9 @@ def main():
         elif step == "live":
             runs["live-1"] = run_live(args, "live-1")
             runs["live-2"] = run_live(args, "live-2")
+        elif "-" in step:  # e.g. nimble-gate: a local decision model at a Jev level
+            backend, level = step.split("-", 1)
+            runs[f"mira-{step}"] = run_mira(args, level, backend)
         else:
             runs[f"mira-{step}"] = run_mira(args, step)
         path.write_text(json.dumps(runs, indent=2, default=str))

@@ -97,3 +97,37 @@ def test_digest_flow_end_to_end(harness, monkeypatch, tmp_path):
     assert rec["is_test"] is True
     assert "/tests/" in out["record_path"]
     assert "## Top Papers" in rec["body_markdown"]
+
+
+def test_digest_flow_with_jev_level_and_local_backend(harness, monkeypatch, tmp_path):
+    """A Jev level on a local backend runs end to end and labels the run."""
+    import json
+    import mira.config
+    import mira.pipeline
+    import mira.report
+    from mira import jev
+    from mira_flows import digest as d
+    from _paths import repoint
+
+    for mod in ("mira.pipeline", "mira.report"):
+        repoint(monkeypatch, mod, tmp_path)
+    monkeypatch.setenv("MIRA_LLM_CACHE_BYPASS", "1")
+    for mod in (mira.config, mira.pipeline, mira.report):
+        if hasattr(mod, "llm_call"):
+            monkeypatch.setattr(mod, "llm_call", fake_llm)
+    monkeypatch.setattr(d, "make_llm_client", lambda: object())
+    monkeypatch.setattr(d, "fetch_papers", lambda config: _papers())
+    monkeypatch.setattr(d, "extract_first_pages", lambda papers: papers)
+    import sys, types
+    fake_pdf = types.ModuleType("download_full_arxiv_pdf")
+    fake_pdf.download_and_extract = lambda arxiv_id, *a, **k: {"success": True, "full_text": "x " * 50, "page_count": 3}
+    monkeypatch.setitem(sys.modules, "download_full_arxiv_pdf", fake_pdf)
+    monkeypatch.setitem(jev.LOCAL_CUTOFFS["nimble"], "cxl-research", {"prescreen": 0.1, "gate": 0.3})
+    monkeypatch.setattr(jev, "judge_paper", lambda p, r: {"relevance_level": 2.0, "relevance_score": 6,
+                                                          "relevance_confidence": 1, "primary_topic": ""})
+    monkeypatch.setattr(mira.report, "send_email", lambda *a, **k: None)
+    out = d.digest_flow(profile="cxl-research", mode="monthly", current_date="2026-09-01", test_mode=True,
+                        include_media=False, send_email=False, pdf=False, jev_level="gate", jev_backend="nimble")
+    summary = json.loads(open(out["summary_path"]).read())
+    assert out["status"] == "ok" and summary["variant"] == "nimble-gate"
+    jev.set_backend("typesafe")

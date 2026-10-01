@@ -58,7 +58,8 @@ def record_jev(stage: str, input_tokens: int, seconds: float) -> None:
         row = _jev.setdefault(stage, defaultdict(float))
         row["calls"] += 1
         row["input_tokens"] += input_tokens or 0
-        row["cost_usd"] += (input_tokens or 0) * JEV_PRICE_PER_MTOK / 1e6
+        from mira import jev
+        row["cost_usd"] += (input_tokens or 0) * jev.BACKENDS[jev.BACKEND]["price_per_mtok"] / 1e6
         row["seconds"] += seconds
 
 
