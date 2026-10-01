@@ -1,0 +1,1602 @@
+{
+  "profiles": {
+    "memory-innovation": {
+      "n": 300,
+      "relevance_spearman": 0.9021421670996773,
+      "relevance_gate": {
+        "n": 300,
+        "agreement": 0.79,
+        "precision": 1.0,
+        "recall": 0.6440677966101694,
+        "kappa": 0.5973926380368099
+      },
+      "relevance_gate_tuned": {
+        "cutoff_level": 0.5,
+        "n": 300,
+        "agreement": 0.91,
+        "precision": 0.9213483146067416,
+        "recall": 0.9265536723163842,
+        "kappa": 0.8137417218543047
+      },
+      "cascade": [
+        {
+          "cutoff_level": 0.0,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.01,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.02,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.03,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.04,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.05,
+          "llm_calls_saved": 0.006666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.06,
+          "llm_calls_saved": 0.006666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.07,
+          "llm_calls_saved": 0.013333333333333334,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.08,
+          "llm_calls_saved": 0.02,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.09,
+          "llm_calls_saved": 0.02,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.1,
+          "llm_calls_saved": 0.02,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.11,
+          "llm_calls_saved": 0.02,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.12,
+          "llm_calls_saved": 0.03333333333333333,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.13,
+          "llm_calls_saved": 0.04666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.14,
+          "llm_calls_saved": 0.05333333333333334,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.15,
+          "llm_calls_saved": 0.06,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.16,
+          "llm_calls_saved": 0.08666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.17,
+          "llm_calls_saved": 0.09333333333333334,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.18,
+          "llm_calls_saved": 0.1,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.19,
+          "llm_calls_saved": 0.13333333333333333,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.2,
+          "llm_calls_saved": 0.14666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.21,
+          "llm_calls_saved": 0.16,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.22,
+          "llm_calls_saved": 0.19333333333333333,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.23,
+          "llm_calls_saved": 0.22666666666666666,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.24,
+          "llm_calls_saved": 0.24666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.25,
+          "llm_calls_saved": 0.29333333333333333,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.26,
+          "llm_calls_saved": 0.32666666666666666,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.27,
+          "llm_calls_saved": 0.34,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.28,
+          "llm_calls_saved": 0.3933333333333333,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.29,
+          "llm_calls_saved": 0.4,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.3,
+          "llm_calls_saved": 0.42,
+          "passing_recall": 0.9942857142857143,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.4,
+          "llm_calls_saved": 0.62,
+          "passing_recall": 0.9771428571428571,
+          "featured_recall": 0.9879518072289156
+        },
+        {
+          "cutoff_level": 0.5,
+          "llm_calls_saved": 0.7533333333333333,
+          "passing_recall": 0.9314285714285714,
+          "featured_recall": 0.9879518072289156
+        },
+        {
+          "cutoff_level": 0.6,
+          "llm_calls_saved": 0.8266666666666667,
+          "passing_recall": 0.8571428571428571,
+          "featured_recall": 0.9879518072289156
+        },
+        {
+          "cutoff_level": 0.7,
+          "llm_calls_saved": 0.8666666666666667,
+          "passing_recall": 0.8171428571428572,
+          "featured_recall": 0.9879518072289156
+        },
+        {
+          "cutoff_level": 0.8,
+          "llm_calls_saved": 0.8733333333333333,
+          "passing_recall": 0.7714285714285715,
+          "featured_recall": 0.9879518072289156
+        },
+        {
+          "cutoff_level": 0.9,
+          "llm_calls_saved": 0.8933333333333333,
+          "passing_recall": 0.7657142857142857,
+          "featured_recall": 0.9879518072289156
+        },
+        {
+          "cutoff_level": 1.0,
+          "llm_calls_saved": 0.9066666666666666,
+          "passing_recall": 0.7314285714285714,
+          "featured_recall": 0.963855421686747
+        },
+        {
+          "cutoff_level": 1.1,
+          "llm_calls_saved": 0.9066666666666666,
+          "passing_recall": 0.7085714285714285,
+          "featured_recall": 0.9397590361445783
+        },
+        {
+          "cutoff_level": 1.2,
+          "llm_calls_saved": 0.9066666666666666,
+          "passing_recall": 0.6971428571428572,
+          "featured_recall": 0.9397590361445783
+        },
+        {
+          "cutoff_level": 1.3,
+          "llm_calls_saved": 0.9133333333333333,
+          "passing_recall": 0.68,
+          "featured_recall": 0.9397590361445783
+        },
+        {
+          "cutoff_level": 1.4,
+          "llm_calls_saved": 0.9133333333333333,
+          "passing_recall": 0.6742857142857143,
+          "featured_recall": 0.9397590361445783
+        },
+        {
+          "cutoff_level": 1.5,
+          "llm_calls_saved": 0.92,
+          "passing_recall": 0.6457142857142857,
+          "featured_recall": 0.9036144578313253
+        },
+        {
+          "cutoff_level": 1.6,
+          "llm_calls_saved": 0.92,
+          "passing_recall": 0.6228571428571429,
+          "featured_recall": 0.8674698795180723
+        },
+        {
+          "cutoff_level": 1.7,
+          "llm_calls_saved": 0.9266666666666666,
+          "passing_recall": 0.5942857142857143,
+          "featured_recall": 0.8554216867469879
+        },
+        {
+          "cutoff_level": 1.8,
+          "llm_calls_saved": 0.9333333333333333,
+          "passing_recall": 0.56,
+          "featured_recall": 0.8554216867469879
+        },
+        {
+          "cutoff_level": 1.9,
+          "llm_calls_saved": 0.94,
+          "passing_recall": 0.52,
+          "featured_recall": 0.8072289156626506
+        },
+        {
+          "cutoff_level": 2.0,
+          "llm_calls_saved": 0.9466666666666667,
+          "passing_recall": 0.49714285714285716,
+          "featured_recall": 0.7831325301204819
+        },
+        {
+          "cutoff_level": 2.1,
+          "llm_calls_saved": 0.9466666666666667,
+          "passing_recall": 0.4857142857142857,
+          "featured_recall": 0.7831325301204819
+        },
+        {
+          "cutoff_level": 2.2,
+          "llm_calls_saved": 0.9466666666666667,
+          "passing_recall": 0.46285714285714286,
+          "featured_recall": 0.7710843373493976
+        },
+        {
+          "cutoff_level": 2.3,
+          "llm_calls_saved": 0.9533333333333334,
+          "passing_recall": 0.4,
+          "featured_recall": 0.6867469879518072
+        },
+        {
+          "cutoff_level": 2.4,
+          "llm_calls_saved": 0.9733333333333334,
+          "passing_recall": 0.3485714285714286,
+          "featured_recall": 0.6024096385542169
+        },
+        {
+          "cutoff_level": 2.5,
+          "llm_calls_saved": 0.9733333333333334,
+          "passing_recall": 0.34285714285714286,
+          "featured_recall": 0.5903614457831325
+        },
+        {
+          "cutoff_level": 2.6,
+          "llm_calls_saved": 0.9866666666666667,
+          "passing_recall": 0.2914285714285714,
+          "featured_recall": 0.5421686746987951
+        },
+        {
+          "cutoff_level": 2.7,
+          "llm_calls_saved": 0.9866666666666667,
+          "passing_recall": 0.2742857142857143,
+          "featured_recall": 0.5060240963855421
+        },
+        {
+          "cutoff_level": 2.8,
+          "llm_calls_saved": 0.9866666666666667,
+          "passing_recall": 0.2742857142857143,
+          "featured_recall": 0.5060240963855421
+        },
+        {
+          "cutoff_level": 2.9,
+          "llm_calls_saved": 0.9866666666666667,
+          "passing_recall": 0.2571428571428571,
+          "featured_recall": 0.46987951807228917
+        },
+        {
+          "cutoff_level": 3.0,
+          "llm_calls_saved": 0.9933333333333333,
+          "passing_recall": 0.2342857142857143,
+          "featured_recall": 0.4457831325301205
+        }
+      ],
+      "cascade_counts": {
+        "random": 150,
+        "passing": 175,
+        "featured": 83
+      },
+      "topic_mappable": 0.9661016949152542,
+      "topic_agreement": 0.0,
+      "not_related_gate": {
+        "n": 288,
+        "agreement": 0.8333333333333334,
+        "precision": NaN,
+        "recall": 0.0,
+        "kappa": 0.0
+      },
+      "impact_agreement": 0.0,
+      "impact_within_one": 0.0,
+      "actionable_agreement": 0.0,
+      "cred_page": {
+        "n": 50,
+        "spearman": 0.7211440067499264,
+        "mean_abs_diff_tier": 0.9,
+        "gate": {
+          "n": 50,
+          "agreement": 0.98,
+          "precision": 0.9795918367346939,
+          "recall": 1.0,
+          "kappa": 0.6575342465753422
+        }
+      }
+    },
+    "cxl-research": {
+      "n": 292,
+      "relevance_spearman": 0.8467151400044001,
+      "relevance_gate": {
+        "n": 292,
+        "agreement": 0.678082191780822,
+        "precision": 0.9821428571428571,
+        "recall": 0.3716216216216216,
+        "kappa": 0.3615556382582807
+      },
+      "relevance_gate_tuned": {
+        "cutoff_level": 0.9,
+        "n": 292,
+        "agreement": 0.928082191780822,
+        "precision": 0.9319727891156463,
+        "recall": 0.9256756756756757,
+        "kappa": 0.8561508867411092
+      },
+      "cascade": [
+        {
+          "cutoff_level": 0.0,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.01,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.02,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.03,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.04,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.05,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.06,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.07,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.08,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.09,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.1,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.11,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.12,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.13,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.14,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.15,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.16,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.17,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.18,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.19,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.2,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.21,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.22,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.23,
+          "llm_calls_saved": 0.006666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.24,
+          "llm_calls_saved": 0.006666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.25,
+          "llm_calls_saved": 0.013333333333333334,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.26,
+          "llm_calls_saved": 0.02666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.27,
+          "llm_calls_saved": 0.06,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.28,
+          "llm_calls_saved": 0.07333333333333333,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.29,
+          "llm_calls_saved": 0.07333333333333333,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.3,
+          "llm_calls_saved": 0.08,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.4,
+          "llm_calls_saved": 0.4,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.5,
+          "llm_calls_saved": 0.64,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.6,
+          "llm_calls_saved": 0.74,
+          "passing_recall": 0.9864864864864865,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.7,
+          "llm_calls_saved": 0.8,
+          "passing_recall": 0.9662162162162162,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.8,
+          "llm_calls_saved": 0.8466666666666667,
+          "passing_recall": 0.9594594594594594,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.9,
+          "llm_calls_saved": 0.8933333333333333,
+          "passing_recall": 0.9256756756756757,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 1.0,
+          "llm_calls_saved": 0.9266666666666666,
+          "passing_recall": 0.8918918918918919,
+          "featured_recall": 0.974025974025974
+        },
+        {
+          "cutoff_level": 1.1,
+          "llm_calls_saved": 0.9533333333333334,
+          "passing_recall": 0.8175675675675675,
+          "featured_recall": 0.935064935064935
+        },
+        {
+          "cutoff_level": 1.2,
+          "llm_calls_saved": 0.96,
+          "passing_recall": 0.7635135135135135,
+          "featured_recall": 0.8831168831168831
+        },
+        {
+          "cutoff_level": 1.3,
+          "llm_calls_saved": 0.9733333333333334,
+          "passing_recall": 0.6148648648648649,
+          "featured_recall": 0.7792207792207793
+        },
+        {
+          "cutoff_level": 1.4,
+          "llm_calls_saved": 0.9733333333333334,
+          "passing_recall": 0.5202702702702703,
+          "featured_recall": 0.7142857142857143
+        },
+        {
+          "cutoff_level": 1.5,
+          "llm_calls_saved": 0.9866666666666667,
+          "passing_recall": 0.3716216216216216,
+          "featured_recall": 0.5584415584415584
+        },
+        {
+          "cutoff_level": 1.6,
+          "llm_calls_saved": 0.9933333333333333,
+          "passing_recall": 0.28378378378378377,
+          "featured_recall": 0.42857142857142855
+        },
+        {
+          "cutoff_level": 1.7,
+          "llm_calls_saved": 0.9933333333333333,
+          "passing_recall": 0.25675675675675674,
+          "featured_recall": 0.4025974025974026
+        },
+        {
+          "cutoff_level": 1.8,
+          "llm_calls_saved": 0.9933333333333333,
+          "passing_recall": 0.20945945945945946,
+          "featured_recall": 0.35064935064935066
+        },
+        {
+          "cutoff_level": 1.9,
+          "llm_calls_saved": 0.9933333333333333,
+          "passing_recall": 0.18243243243243243,
+          "featured_recall": 0.2987012987012987
+        },
+        {
+          "cutoff_level": 2.0,
+          "llm_calls_saved": 0.9933333333333333,
+          "passing_recall": 0.16216216216216217,
+          "featured_recall": 0.2597402597402597
+        },
+        {
+          "cutoff_level": 2.1,
+          "llm_calls_saved": 0.9933333333333333,
+          "passing_recall": 0.13513513513513514,
+          "featured_recall": 0.2077922077922078
+        },
+        {
+          "cutoff_level": 2.2,
+          "llm_calls_saved": 0.9933333333333333,
+          "passing_recall": 0.12162162162162163,
+          "featured_recall": 0.18181818181818182
+        },
+        {
+          "cutoff_level": 2.3,
+          "llm_calls_saved": 0.9933333333333333,
+          "passing_recall": 0.11486486486486487,
+          "featured_recall": 0.16883116883116883
+        },
+        {
+          "cutoff_level": 2.4,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.08108108108108109,
+          "featured_recall": 0.12987012987012986
+        },
+        {
+          "cutoff_level": 2.5,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.08108108108108109,
+          "featured_recall": 0.12987012987012986
+        },
+        {
+          "cutoff_level": 2.6,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.07432432432432433,
+          "featured_recall": 0.11688311688311688
+        },
+        {
+          "cutoff_level": 2.7,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.06756756756756757,
+          "featured_recall": 0.1038961038961039
+        },
+        {
+          "cutoff_level": 2.8,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.06756756756756757,
+          "featured_recall": 0.1038961038961039
+        },
+        {
+          "cutoff_level": 2.9,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.060810810810810814,
+          "featured_recall": 0.09090909090909091
+        },
+        {
+          "cutoff_level": 3.0,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.060810810810810814,
+          "featured_recall": 0.09090909090909091
+        }
+      ],
+      "cascade_counts": {
+        "random": 150,
+        "passing": 148,
+        "featured": 77
+      },
+      "topic_mappable": 0.9662162162162162,
+      "topic_agreement": 0.0,
+      "not_related_gate": {
+        "n": 273,
+        "agreement": 1.0,
+        "precision": NaN,
+        "recall": NaN,
+        "kappa": NaN
+      },
+      "impact_agreement": 0.0,
+      "impact_within_one": 0.0,
+      "actionable_agreement": 0.0,
+      "cred_page": {
+        "n": 50,
+        "spearman": 0.8391327590628179,
+        "mean_abs_diff_tier": 1.06,
+        "gate": {
+          "n": 50,
+          "agreement": 0.94,
+          "precision": 0.9387755102040817,
+          "recall": 1.0,
+          "kappa": 0.3801652892561978
+        }
+      }
+    },
+    "storage-innovation": {
+      "n": 296,
+      "relevance_spearman": 0.8745247628154593,
+      "relevance_gate": {
+        "n": 296,
+        "agreement": 0.6824324324324325,
+        "precision": 0.9666666666666667,
+        "recall": 0.38666666666666666,
+        "kappa": 0.3699275362318842
+      },
+      "relevance_gate_tuned": {
+        "cutoff_level": 0.65,
+        "n": 296,
+        "agreement": 0.9425675675675675,
+        "precision": 0.9403973509933775,
+        "recall": 0.9466666666666667,
+        "kappa": 0.8851036624349256
+      },
+      "cascade": [
+        {
+          "cutoff_level": 0.0,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.01,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.02,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.03,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.04,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.05,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.06,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.07,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.08,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.09,
+          "llm_calls_saved": 0.006666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.1,
+          "llm_calls_saved": 0.013333333333333334,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.11,
+          "llm_calls_saved": 0.02,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.12,
+          "llm_calls_saved": 0.02,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.13,
+          "llm_calls_saved": 0.03333333333333333,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.14,
+          "llm_calls_saved": 0.05333333333333334,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.15,
+          "llm_calls_saved": 0.06666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.16,
+          "llm_calls_saved": 0.1,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.17,
+          "llm_calls_saved": 0.13333333333333333,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.18,
+          "llm_calls_saved": 0.18666666666666668,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.19,
+          "llm_calls_saved": 0.23333333333333334,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.2,
+          "llm_calls_saved": 0.3,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.21,
+          "llm_calls_saved": 0.36,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.22,
+          "llm_calls_saved": 0.4533333333333333,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.23,
+          "llm_calls_saved": 0.49333333333333335,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.24,
+          "llm_calls_saved": 0.56,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.25,
+          "llm_calls_saved": 0.58,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.26,
+          "llm_calls_saved": 0.6333333333333333,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.27,
+          "llm_calls_saved": 0.6466666666666666,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.28,
+          "llm_calls_saved": 0.68,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.29,
+          "llm_calls_saved": 0.6866666666666666,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.3,
+          "llm_calls_saved": 0.7066666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.4,
+          "llm_calls_saved": 0.8333333333333334,
+          "passing_recall": 0.9866666666666667,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.5,
+          "llm_calls_saved": 0.86,
+          "passing_recall": 0.9666666666666667,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.6,
+          "llm_calls_saved": 0.9,
+          "passing_recall": 0.9466666666666667,
+          "featured_recall": 0.9900990099009901
+        },
+        {
+          "cutoff_level": 0.7,
+          "llm_calls_saved": 0.9333333333333333,
+          "passing_recall": 0.9133333333333333,
+          "featured_recall": 0.9702970297029703
+        },
+        {
+          "cutoff_level": 0.8,
+          "llm_calls_saved": 0.94,
+          "passing_recall": 0.84,
+          "featured_recall": 0.9405940594059405
+        },
+        {
+          "cutoff_level": 0.9,
+          "llm_calls_saved": 0.96,
+          "passing_recall": 0.7666666666666667,
+          "featured_recall": 0.8910891089108911
+        },
+        {
+          "cutoff_level": 1.0,
+          "llm_calls_saved": 0.9666666666666667,
+          "passing_recall": 0.7333333333333333,
+          "featured_recall": 0.8613861386138614
+        },
+        {
+          "cutoff_level": 1.1,
+          "llm_calls_saved": 0.9733333333333334,
+          "passing_recall": 0.6466666666666666,
+          "featured_recall": 0.7722772277227723
+        },
+        {
+          "cutoff_level": 1.2,
+          "llm_calls_saved": 0.9733333333333334,
+          "passing_recall": 0.6066666666666667,
+          "featured_recall": 0.7227722772277227
+        },
+        {
+          "cutoff_level": 1.3,
+          "llm_calls_saved": 0.98,
+          "passing_recall": 0.5266666666666666,
+          "featured_recall": 0.6336633663366337
+        },
+        {
+          "cutoff_level": 1.4,
+          "llm_calls_saved": 0.98,
+          "passing_recall": 0.4866666666666667,
+          "featured_recall": 0.594059405940594
+        },
+        {
+          "cutoff_level": 1.5,
+          "llm_calls_saved": 0.9866666666666667,
+          "passing_recall": 0.38666666666666666,
+          "featured_recall": 0.4752475247524752
+        },
+        {
+          "cutoff_level": 1.6,
+          "llm_calls_saved": 0.9866666666666667,
+          "passing_recall": 0.3466666666666667,
+          "featured_recall": 0.43564356435643564
+        },
+        {
+          "cutoff_level": 1.7,
+          "llm_calls_saved": 0.9933333333333333,
+          "passing_recall": 0.29333333333333333,
+          "featured_recall": 0.36633663366336633
+        },
+        {
+          "cutoff_level": 1.8,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.25333333333333335,
+          "featured_recall": 0.33663366336633666
+        },
+        {
+          "cutoff_level": 1.9,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.23333333333333334,
+          "featured_recall": 0.3069306930693069
+        },
+        {
+          "cutoff_level": 2.0,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.19333333333333333,
+          "featured_recall": 0.24752475247524752
+        },
+        {
+          "cutoff_level": 2.1,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.18,
+          "featured_recall": 0.22772277227722773
+        },
+        {
+          "cutoff_level": 2.2,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.16,
+          "featured_recall": 0.19801980198019803
+        },
+        {
+          "cutoff_level": 2.3,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.16,
+          "featured_recall": 0.19801980198019803
+        },
+        {
+          "cutoff_level": 2.4,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.14666666666666667,
+          "featured_recall": 0.18811881188118812
+        },
+        {
+          "cutoff_level": 2.5,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.14,
+          "featured_recall": 0.1782178217821782
+        },
+        {
+          "cutoff_level": 2.6,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.13333333333333333,
+          "featured_recall": 0.16831683168316833
+        },
+        {
+          "cutoff_level": 2.7,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.12666666666666668,
+          "featured_recall": 0.16831683168316833
+        },
+        {
+          "cutoff_level": 2.8,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.11333333333333333,
+          "featured_recall": 0.1485148514851485
+        },
+        {
+          "cutoff_level": 2.9,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.1,
+          "featured_recall": 0.13861386138613863
+        },
+        {
+          "cutoff_level": 3.0,
+          "llm_calls_saved": 1.0,
+          "passing_recall": 0.09333333333333334,
+          "featured_recall": 0.12871287128712872
+        }
+      ],
+      "cascade_counts": {
+        "random": 150,
+        "passing": 150,
+        "featured": 101
+      },
+      "topic_mappable": 0.96,
+      "topic_agreement": 0.0,
+      "not_related_gate": {
+        "n": 228,
+        "agreement": 1.0,
+        "precision": NaN,
+        "recall": NaN,
+        "kappa": NaN
+      },
+      "impact_agreement": 0.0,
+      "impact_within_one": 0.0,
+      "actionable_agreement": 0.0,
+      "cred_page": {
+        "n": 52,
+        "spearman": 0.7650668323239638,
+        "mean_abs_diff_tier": 1.0576923076923077,
+        "gate": {
+          "n": 52,
+          "agreement": 0.9615384615384616,
+          "precision": 1.0,
+          "recall": 0.96,
+          "kappa": 0.6486486486486489
+        }
+      }
+    },
+    "optical-interconnects": {
+      "n": 299,
+      "relevance_spearman": 0.7529756600402476,
+      "relevance_gate": {
+        "n": 299,
+        "agreement": 0.6989966555183946,
+        "precision": 0.9557522123893806,
+        "recall": 0.5595854922279793,
+        "kappa": 0.43792296766647165
+      },
+      "relevance_gate_tuned": {
+        "cutoff_level": 0.3,
+        "n": 299,
+        "agreement": 0.8361204013377926,
+        "precision": 0.8711340206185567,
+        "recall": 0.8756476683937824,
+        "kappa": 0.6411619192240808
+      },
+      "cascade": [
+        {
+          "cutoff_level": 0.0,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.01,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.02,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.03,
+          "llm_calls_saved": 0.0,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.04,
+          "llm_calls_saved": 0.006666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.05,
+          "llm_calls_saved": 0.02666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.06,
+          "llm_calls_saved": 0.04666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.07,
+          "llm_calls_saved": 0.06666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.08,
+          "llm_calls_saved": 0.08666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.09,
+          "llm_calls_saved": 0.15333333333333332,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.1,
+          "llm_calls_saved": 0.19333333333333333,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.11,
+          "llm_calls_saved": 0.20666666666666667,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.12,
+          "llm_calls_saved": 0.24,
+          "passing_recall": 1.0,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.13,
+          "llm_calls_saved": 0.2866666666666667,
+          "passing_recall": 0.9947916666666666,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.14,
+          "llm_calls_saved": 0.32666666666666666,
+          "passing_recall": 0.9895833333333334,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.15,
+          "llm_calls_saved": 0.36666666666666664,
+          "passing_recall": 0.984375,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.16,
+          "llm_calls_saved": 0.37333333333333335,
+          "passing_recall": 0.9791666666666666,
+          "featured_recall": 1.0
+        },
+        {
+          "cutoff_level": 0.17,
+          "llm_calls_saved": 0.38,
+          "passing_recall": 0.96875,
+          "featured_recall": 0.9888888888888889
+        },
+        {
+          "cutoff_level": 0.18,
+          "llm_calls_saved": 0.38666666666666666,
+          "passing_recall": 0.96875,
+          "featured_recall": 0.9888888888888889
+        },
+        {
+          "cutoff_level": 0.19,
+          "llm_calls_saved": 0.4,
+          "passing_recall": 0.9583333333333334,
+          "featured_recall": 0.9888888888888889
+        },
+        {
+          "cutoff_level": 0.2,
+          "llm_calls_saved": 0.41333333333333333,
+          "passing_recall": 0.9427083333333334,
+          "featured_recall": 0.9777777777777777
+        },
+        {
+          "cutoff_level": 0.21,
+          "llm_calls_saved": 0.44,
+          "passing_recall": 0.9322916666666666,
+          "featured_recall": 0.9777777777777777
+        },
+        {
+          "cutoff_level": 0.22,
+          "llm_calls_saved": 0.49333333333333335,
+          "passing_recall": 0.921875,
+          "featured_recall": 0.9777777777777777
+        },
+        {
+          "cutoff_level": 0.23,
+          "llm_calls_saved": 0.5,
+          "passing_recall": 0.90625,
+          "featured_recall": 0.9666666666666667
+        },
+        {
+          "cutoff_level": 0.24,
+          "llm_calls_saved": 0.5133333333333333,
+          "passing_recall": 0.8958333333333334,
+          "featured_recall": 0.9555555555555556
+        },
+        {
+          "cutoff_level": 0.25,
+          "llm_calls_saved": 0.5266666666666666,
+          "passing_recall": 0.8958333333333334,
+          "featured_recall": 0.9555555555555556
+        },
+        {
+          "cutoff_level": 0.26,
+          "llm_calls_saved": 0.54,
+          "passing_recall": 0.8958333333333334,
+          "featured_recall": 0.9555555555555556
+        },
+        {
+          "cutoff_level": 0.27,
+          "llm_calls_saved": 0.5466666666666666,
+          "passing_recall": 0.890625,
+          "featured_recall": 0.9555555555555556
+        },
+        {
+          "cutoff_level": 0.28,
+          "llm_calls_saved": 0.56,
+          "passing_recall": 0.8854166666666666,
+          "featured_recall": 0.9555555555555556
+        },
+        {
+          "cutoff_level": 0.29,
+          "llm_calls_saved": 0.56,
+          "passing_recall": 0.875,
+          "featured_recall": 0.9555555555555556
+        },
+        {
+          "cutoff_level": 0.3,
+          "llm_calls_saved": 0.5866666666666667,
+          "passing_recall": 0.875,
+          "featured_recall": 0.9555555555555556
+        },
+        {
+          "cutoff_level": 0.4,
+          "llm_calls_saved": 0.6533333333333333,
+          "passing_recall": 0.8177083333333334,
+          "featured_recall": 0.9333333333333333
+        },
+        {
+          "cutoff_level": 0.5,
+          "llm_calls_saved": 0.6866666666666666,
+          "passing_recall": 0.7552083333333334,
+          "featured_recall": 0.8888888888888888
+        },
+        {
+          "cutoff_level": 0.6,
+          "llm_calls_saved": 0.7266666666666667,
+          "passing_recall": 0.703125,
+          "featured_recall": 0.8111111111111111
+        },
+        {
+          "cutoff_level": 0.7,
+          "llm_calls_saved": 0.7533333333333333,
+          "passing_recall": 0.6822916666666666,
+          "featured_recall": 0.7888888888888889
+        },
+        {
+          "cutoff_level": 0.8,
+          "llm_calls_saved": 0.7933333333333333,
+          "passing_recall": 0.6197916666666666,
+          "featured_recall": 0.7111111111111111
+        },
+        {
+          "cutoff_level": 0.9,
+          "llm_calls_saved": 0.8,
+          "passing_recall": 0.578125,
+          "featured_recall": 0.6666666666666666
+        },
+        {
+          "cutoff_level": 1.0,
+          "llm_calls_saved": 0.8266666666666667,
+          "passing_recall": 0.5625,
+          "featured_recall": 0.6555555555555556
+        },
+        {
+          "cutoff_level": 1.1,
+          "llm_calls_saved": 0.8466666666666667,
+          "passing_recall": 0.5416666666666666,
+          "featured_recall": 0.6555555555555556
+        },
+        {
+          "cutoff_level": 1.2,
+          "llm_calls_saved": 0.8466666666666667,
+          "passing_recall": 0.5208333333333334,
+          "featured_recall": 0.6333333333333333
+        },
+        {
+          "cutoff_level": 1.3,
+          "llm_calls_saved": 0.86,
+          "passing_recall": 0.5052083333333334,
+          "featured_recall": 0.6111111111111112
+        },
+        {
+          "cutoff_level": 1.4,
+          "llm_calls_saved": 0.9,
+          "passing_recall": 0.4635416666666667,
+          "featured_recall": 0.6
+        },
+        {
+          "cutoff_level": 1.5,
+          "llm_calls_saved": 0.9,
+          "passing_recall": 0.4427083333333333,
+          "featured_recall": 0.5555555555555556
+        },
+        {
+          "cutoff_level": 1.6,
+          "llm_calls_saved": 0.9133333333333333,
+          "passing_recall": 0.4270833333333333,
+          "featured_recall": 0.5444444444444444
+        },
+        {
+          "cutoff_level": 1.7,
+          "llm_calls_saved": 0.9266666666666666,
+          "passing_recall": 0.3854166666666667,
+          "featured_recall": 0.5222222222222223
+        },
+        {
+          "cutoff_level": 1.8,
+          "llm_calls_saved": 0.9333333333333333,
+          "passing_recall": 0.3541666666666667,
+          "featured_recall": 0.5
+        },
+        {
+          "cutoff_level": 1.9,
+          "llm_calls_saved": 0.94,
+          "passing_recall": 0.3020833333333333,
+          "featured_recall": 0.4666666666666667
+        },
+        {
+          "cutoff_level": 2.0,
+          "llm_calls_saved": 0.9466666666666667,
+          "passing_recall": 0.2864583333333333,
+          "featured_recall": 0.4444444444444444
+        },
+        {
+          "cutoff_level": 2.1,
+          "llm_calls_saved": 0.9533333333333334,
+          "passing_recall": 0.265625,
+          "featured_recall": 0.4111111111111111
+        },
+        {
+          "cutoff_level": 2.2,
+          "llm_calls_saved": 0.9533333333333334,
+          "passing_recall": 0.24479166666666666,
+          "featured_recall": 0.4
+        },
+        {
+          "cutoff_level": 2.3,
+          "llm_calls_saved": 0.9666666666666667,
+          "passing_recall": 0.22395833333333334,
+          "featured_recall": 0.3888888888888889
+        },
+        {
+          "cutoff_level": 2.4,
+          "llm_calls_saved": 0.9733333333333334,
+          "passing_recall": 0.171875,
+          "featured_recall": 0.3333333333333333
+        },
+        {
+          "cutoff_level": 2.5,
+          "llm_calls_saved": 0.9733333333333334,
+          "passing_recall": 0.15625,
+          "featured_recall": 0.3111111111111111
+        },
+        {
+          "cutoff_level": 2.6,
+          "llm_calls_saved": 0.9733333333333334,
+          "passing_recall": 0.13541666666666666,
+          "featured_recall": 0.26666666666666666
+        },
+        {
+          "cutoff_level": 2.7,
+          "llm_calls_saved": 0.9733333333333334,
+          "passing_recall": 0.11458333333333333,
+          "featured_recall": 0.2222222222222222
+        },
+        {
+          "cutoff_level": 2.8,
+          "llm_calls_saved": 0.98,
+          "passing_recall": 0.08854166666666667,
+          "featured_recall": 0.17777777777777778
+        },
+        {
+          "cutoff_level": 2.9,
+          "llm_calls_saved": 0.9866666666666667,
+          "passing_recall": 0.07291666666666667,
+          "featured_recall": 0.15555555555555556
+        },
+        {
+          "cutoff_level": 3.0,
+          "llm_calls_saved": 0.9933333333333333,
+          "passing_recall": 0.046875,
+          "featured_recall": 0.1
+        }
+      ],
+      "cascade_counts": {
+        "random": 150,
+        "passing": 192,
+        "featured": 90
+      },
+      "topic_mappable": 0.9430051813471503,
+      "topic_agreement": 0.0,
+      "not_related_gate": {
+        "n": 229,
+        "agreement": 1.0,
+        "precision": NaN,
+        "recall": NaN,
+        "kappa": NaN
+      },
+      "impact_agreement": 0.0,
+      "impact_within_one": 0.0,
+      "actionable_agreement": 0.0,
+      "cred_page": {
+        "n": 52,
+        "spearman": 0.5987871128542132,
+        "mean_abs_diff_tier": 0.9807692307692307,
+        "gate": {
+          "n": 52,
+          "agreement": 0.9807692307692307,
+          "precision": 0.9807692307692307,
+          "recall": 1.0,
+          "kappa": 0.0
+        }
+      }
+    }
+  },
+  "latency": {
+    "jev_paper_p50_s": 7.382937291986309,
+    "jev_paper_p95_s": 9.689076582988491,
+    "jev_cred_p50_s": 7.920254291995661,
+    "jev_cred_p95_s": 9.871991082996828
+  }
+}

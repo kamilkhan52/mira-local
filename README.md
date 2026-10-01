@@ -15,7 +15,7 @@ n8n deployment: no n8n, no Docker, no cloud accounts.
   (TypeSafe), with the top items summarized for each profile's preferences
   and emailed to the subscribers in `configs/realtime.json`.
 
-**Results:** [`docs/report.html`](docs/report.html) compares the weekly digest from n8n and from this workflow at each Jev level (time, cost, quality), gives a recommendation, and covers the live news agent. Open it in a browser; its data is in `docs/data/`.
+**Results:** [`docs/report.html`](docs/report.html) compares the weekly digest from n8n and from this workflow at each Jev level (time, cost, quality), gives a recommendation, evaluates two open local models (Kev-9B, Nimble-9B) as stand-ins for Jev, and covers the live news agent. Open it in a browser; its data is in `docs/data/`.
 
 ## Why this stack
 

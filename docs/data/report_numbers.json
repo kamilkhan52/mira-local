@@ -1,0 +1,214 @@
+{
+ "mira-off": {
+  "per_paper": 30.21,
+  "downstream": 5.46,
+  "jev": [],
+  "total": 35.68,
+  "wall_min": 28.5,
+  "stage_seconds": {
+   "arXiv fetch": 0.0,
+   "first-page PDFs": 208.8,
+   "classify + select + analyze": 1418.1,
+   "report + trend + PDF": 80.3,
+   "email": 3.7
+  },
+  "llm_calls": 4021,
+  "jev_calls": 0,
+  "screened": 0,
+  "sel_n8n": 17,
+  "sel_all": null,
+  "subject": "[mira \u00b7 all LLM] MIRA Digest - Top Papers Published on Arxiv and Notable News Articles - 2026-09-28 - [2000 scanned, 20 analyzed]",
+  "per_paper_billed": 30.21,
+  "jev_cost": 0,
+  "total_billed": 35.68,
+  "pool_all": null
+ },
+ "mira-prescreen": {
+  "per_paper": 16.68,
+  "downstream": 5.48,
+  "jev": [
+   {
+    "stage": "paper relevance",
+    "calls": 2000.0,
+    "input_tokens": 3957387.0,
+    "cost_usd": 0.16621,
+    "seconds": 300.456196
+   }
+  ],
+  "total": 22.33,
+  "wall_min": 18.3,
+  "stage_seconds": {
+   "arXiv fetch": 0.0,
+   "Jev screening": 18.9,
+   "first-page PDFs": 11.0,
+   "classify + select + analyze": 978.1,
+   "report + trend + PDF": 86.2,
+   "email": 3.1
+  },
+  "llm_calls": 2231,
+  "jev_calls": 2000,
+  "screened": 898,
+  "sel_n8n": 16,
+  "sel_all": 19,
+  "subject": "[mira \u00b7 Jev prescreen] MIRA  Digest - Top  Papers Published on Arxiv and Notable News Articles - 2026-09-28 - [2000 scanned, 20 analyzed]",
+  "per_paper_billed": 10.43,
+  "jev_cost": 0.166,
+  "total_billed": 16.08,
+  "pool_all": 0.82
+ },
+ "mira-gate": {
+  "per_paper": 9.48,
+  "downstream": 5.58,
+  "jev": [
+   {
+    "stage": "paper relevance",
+    "calls": 2000.0,
+    "input_tokens": 3957387.0,
+    "cost_usd": 0.16621,
+    "seconds": 259.163642
+   }
+  ],
+  "total": 15.23,
+  "wall_min": 14.8,
+  "stage_seconds": {
+   "arXiv fetch": 0.0,
+   "Jev screening": 16.3,
+   "first-page PDFs": 9.1,
+   "classify + select + analyze": 777.1,
+   "report + trend + PDF": 83.6,
+   "email": 3.4
+  },
+  "llm_calls": 1279,
+  "jev_calls": 2000,
+  "screened": 1373,
+  "sel_n8n": 17,
+  "sel_all": 17,
+  "subject": "[mira \u00b7 Jev gate] MIRA  Digest - Top  Papers Published on Arxiv and Notable News Articles - 2026-09-28 - [2000 scanned, 20 analyzed]",
+  "per_paper_billed": 6.09,
+  "jev_cost": 0.166,
+  "total_billed": 11.84,
+  "pool_all": 0.87
+ },
+ "mira-replace": {
+  "per_paper": 0,
+  "downstream": 5.05,
+  "jev": [
+   {
+    "stage": "paper relevance",
+    "calls": 2000.0,
+    "input_tokens": 3957387.0,
+    "cost_usd": 0.16621,
+    "seconds": 265.052923
+   },
+   {
+    "stage": "credibility",
+    "calls": 440.0,
+    "input_tokens": 497732.0,
+    "cost_usd": 0.020905,
+    "seconds": 54.282471
+   }
+  ],
+  "total": 5.23,
+  "wall_min": 8.9,
+  "stage_seconds": {
+   "arXiv fetch": 0.0,
+   "Jev relevance": 17.3,
+   "first-page PDFs": 8.1,
+   "Jev credibility": 3.5,
+   "classify + select + analyze": 404.7,
+   "report + trend + PDF": 91.5,
+   "email": 5.3
+  },
+  "llm_calls": 25,
+  "jev_calls": 2440,
+  "screened": 0,
+  "sel_n8n": 18,
+  "sel_all": 17,
+  "subject": "[mira \u00b7 Jev replace] MIRA  Digest - Top  Papers Published on Arxiv and Notable News Articles - 2026-09-28 - [2000 scanned, 20 analyzed]",
+  "per_paper_billed": 0,
+  "jev_cost": 0.187,
+  "total_billed": 5.23,
+  "pool_all": 0.55
+ },
+ "n8n": {
+  "per_paper": 29.77,
+  "downstream": 1.08,
+  "wall_min": 26.6,
+  "stages": {
+   "first-page PDFs": {
+    "seconds": 6.388,
+    "cost_usd": 0.0,
+    "calls": 0
+   },
+   "credibility (affiliation)": {
+    "seconds": 637.388,
+    "cost_usd": 16.109215999999986,
+    "calls": 1997
+   },
+   "relevance (classification)": {
+    "seconds": 574.639,
+    "cost_usd": 13.662090000000015,
+    "calls": 1902
+   },
+   "selection": {
+    "seconds": 183.833,
+    "cost_usd": 1.033635,
+    "calls": 1
+   },
+   "news selection + summary": {
+    "seconds": 18.61,
+    "cost_usd": 0.050274,
+    "calls": 2
+   },
+   "full-text PDFs": {
+    "seconds": 7.355,
+    "cost_usd": 0.0,
+    "calls": 0
+   }
+  }
+ },
+ "mira-kev-gate": {
+  "per_paper": 11.63,
+  "per_paper_billed": 11.76,
+  "downstream": 5.48,
+  "jev_cost": 0,
+  "total": 17.11,
+  "total_billed": 17.24,
+  "stage_seconds": {
+   "arXiv fetch": 8.4,
+   "Jev screening": 3594.5,
+   "first-page PDFs": 6.7,
+   "classify + select + analyze": 885.2,
+   "report + trend + PDF": 271.5,
+   "email": 16.7
+  },
+  "screened": 1232,
+  "llm_calls": 1563,
+  "wall_min": 80.1,
+  "sel_n8n": 17,
+  "sel_all": 18,
+  "pool_all": 0.82
+ },
+ "mira-nimble-gate": {
+  "per_paper": 14.86,
+  "per_paper_billed": 15.24,
+  "downstream": 5.37,
+  "jev_cost": 0,
+  "total": 20.24,
+  "total_billed": 20.61,
+  "stage_seconds": {
+   "arXiv fetch": 1.6,
+   "Jev screening": 5171.5,
+   "first-page PDFs": 9.8,
+   "classify + select + analyze": 954.0,
+   "report + trend + PDF": 124.2,
+   "email": 7.2
+  },
+  "screened": 1017,
+  "llm_calls": 1991,
+  "wall_min": 104.8,
+  "sel_n8n": 17,
+  "sel_all": 17,
+  "pool_all": 0.85
+ }
+}

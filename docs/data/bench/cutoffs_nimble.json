@@ -1,0 +1,82 @@
+{
+  "cutoffs": {
+    "memory-innovation": {
+      "prescreen": 0.02,
+      "gate": 0.03,
+      "decide": 0.09,
+      "priority": 1.33,
+      "cred_gate": 0.22
+    },
+    "cxl-research": {
+      "prescreen": 0.05,
+      "gate": 0.11,
+      "decide": 0.47,
+      "priority": 0.63,
+      "cred_gate": 0.82
+    },
+    "storage-innovation": {
+      "prescreen": 0.05,
+      "gate": 0.12,
+      "decide": 0.29,
+      "priority": 1.35,
+      "cred_gate": 0.24
+    },
+    "optical-interconnects": {
+      "prescreen": null,
+      "gate": 0.02,
+      "decide": 0.08,
+      "priority": 2.54,
+      "cred_gate": 0.0
+    }
+  },
+  "stats": {
+    "memory-innovation": {
+      "n": 599,
+      "random": 300,
+      "cred_pages": 51,
+      "prescreen_saved": 0.31,
+      "gate_saved": 0.543,
+      "gate_passing_kept": 0.968,
+      "gate_featured_kept": 0.994,
+      "decide_f1": 0.734,
+      "decide_precision": 0.656,
+      "decide_recall": 0.833
+    },
+    "cxl-research": {
+      "n": 522,
+      "random": 300,
+      "cred_pages": 51,
+      "prescreen_saved": 0.26,
+      "gate_saved": 0.723,
+      "gate_passing_kept": 0.961,
+      "gate_featured_kept": 1.0,
+      "decide_f1": 0.667,
+      "decide_precision": 0.615,
+      "decide_recall": 0.727
+    },
+    "storage-innovation": {
+      "n": 592,
+      "random": 300,
+      "cred_pages": 52,
+      "prescreen_saved": 0.373,
+      "gate_saved": 0.78,
+      "gate_passing_kept": 0.954,
+      "gate_featured_kept": 0.974,
+      "decide_f1": 0.516,
+      "decide_precision": 0.421,
+      "decide_recall": 0.667
+    },
+    "optical-interconnects": {
+      "n": 597,
+      "random": 300,
+      "cred_pages": 53,
+      "prescreen_saved": null,
+      "gate_saved": 0.323,
+      "gate_passing_kept": 0.959,
+      "gate_featured_kept": 0.994,
+      "decide_f1": 0.741,
+      "decide_precision": 0.685,
+      "decide_recall": 0.809
+    }
+  }
+}
