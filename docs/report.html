@@ -137,17 +137,16 @@ table.picks th { white-space: normal; }
 </head>
 <body>
 <main>
-<h1>MIRA on the local workflow, with Jev</h1>
-<p class="sub">The memory weekly digest for 21–28 Sep 2026 (2,000 arXiv papers), run on 30 Sep by the original n8n workflow and by the new local workflow: once with Jev off (All LLM) and once at each of three Jev levels. Jev is a fast scoring model from TypeSafe. It decides which papers need the expensive per-paper LLM calls.</p>
+<h1>MIRA on the local workflow: Jev and in-house scoring</h1>
+<p class="sub">The memory weekly digest for 21–28 Sep 2026 (2,000 arXiv papers), run on 30 Sep by the original n8n workflow and by the new local workflow: once with Jev off (All LLM) and once at each of three Jev levels. Jev is a fast scoring model from TypeSafe. It decides which papers need the expensive per-paper LLM calls. On 1 Oct, two open models that can replace Jev in-house ran the same week at the gate level.</p>
 
 <section class="card tldr">
 <h2>Summary</h2>
 <ol>
 <li><strong>The local workflow reproduces the n8n digest and runs unattended.</strong> A schedule or a single command runs everything, from arXiv to the delivered email. Replaying a real n8n daily run with identical inputs produced a byte-identical email.</li>
 <li><strong>n8n could not produce this week's digest</strong>: every weekly attempt crashed after paper selection. After the fixes listed under <a href="#reliability">Reliability</a>, all four local runs completed and sent their digests.</li>
-<li><strong>Jev cuts the weekly cost by 37–85% and the time by 27–65%.</strong> 16 of the 20 deep-dive papers were picked by every run, n8n included.</li>
-<li><strong>Recommendation: the Jev gate level for weekly digests.</strong> It costs $15.23 instead of $35.68 and takes 15 minutes instead of 25. Its shortlist and picks are as close to an all-LLM run as two all-LLM runs are to each other.</li>
-<li><strong>Open models can stand in for Jev, more slowly.</strong> Kev-9B, an open model run on the workflow's Mac, was as close to the All LLM picks as Jev for $1.88 more per week, but its screening took an hour instead of 16 seconds. See <a href="#local">Local alternatives</a>.</li>
+<li><strong>Jev cuts the weekly cost by 37–85% and the time by 27–65%.</strong> 16 of the 20 deep-dive papers were picked by n8n and at every Jev level.</li>
+<li><strong>Recommendation: the gate level, scored in-house by Kev-9B.</strong> Kev-9B is an open model, so papers and the profile's focus are no longer sent to TypeSafe; LLM calls still go to the configured provider, which can be a company gateway. A week costs $17.11 instead of $35.68 (−52%), with shortlist and picks within normal run-to-run variation. Where an outside service is acceptable, Jev does the same for $15.23 and finishes in 15 minutes instead of 25. See <a href="#local">Keeping scoring in-house</a>.</li>
 <li><strong>New: a live news agent.</strong> It checks the news sources every hour and alerts only on relevant articles. A run takes about a minute and costs a fraction of a cent when nothing is new.</li>
 </ol>
 </section>
@@ -207,24 +206,24 @@ table.picks th { white-space: normal; }
 <h2 id="recs">Recommendation</h2>
 <div class="tw"><table class="wrap cards stack">
 <tr><th>Profile</th><th>Setting</th><th>Evidence</th></tr>
-<tr><td data-label="Profile">memory-innovation (weekly)</td><td data-label="Setting"><strong>Jev gate</strong></td><td data-label="Evidence">Measured this week: −57% cost, −41% time, shortlist and picks within normal variation</td></tr>
-<tr><td data-label="Profile">cxl-research (monthly), storage-innovation, optical-interconnects</td><td data-label="Setting">Jev gate, after one side-by-side run each</td><td data-label="Evidence">Cutoffs calibrated against about 600 past LLM judgments per profile; not yet run end to end</td></tr>
-<tr><td data-label="Profile">mcbu-memory, embedded-intelligence</td><td data-label="Setting">All LLM for now</td><td data-label="Evidence">No Jev calibration yet (a one-off step using cached past LLM judgments)</td></tr>
+<tr><td data-label="Profile">memory-innovation (weekly)</td><td data-label="Setting"><strong>Gate</strong>, scored by Kev-9B in-house (Jev where an outside service is acceptable)</td><td data-label="Evidence">Measured this week: −57% cost with Jev, −52% with Kev-9B; shortlist and picks within normal variation for both</td></tr>
+<tr><td data-label="Profile">cxl-research (monthly), storage-innovation, optical-interconnects</td><td data-label="Setting">Gate, after one side-by-side run each</td><td data-label="Evidence">Cutoffs for Jev and Kev-9B calibrated against about 600 past LLM judgments per profile; not yet run end to end</td></tr>
+<tr><td data-label="Profile">mcbu-memory, embedded-intelligence</td><td data-label="Setting">All LLM for now</td><td data-label="Evidence">No calibration yet (a one-off step using cached past LLM judgments)</td></tr>
 </table></div>
 <ul>
 <li><strong>Move the weekly and monthly schedules off n8n.</strong> Its selection step crashes on paper IDs without a version suffix (see <a href="#reliability">Reliability</a>). The monthly CXL flow uses the same step; that path wasn't tested.</li>
-<li>The level is one setting per run (<code>jev_level</code>), so going back to All LLM is immediate.</li>
+<li>The level (<code>jev_level</code>) and the scoring model (<code>jev_backend</code>) are settings per run, so going back to All LLM is immediate.</li>
+<li><strong>Before relying on Kev-9B in production,</strong> measure its speed on the target GPU and run one weekly side-by-side there.</li>
 </ul>
 
-<h2 id="local">Local alternatives to Jev</h2>
-<p>Jev is a hosted service. Two open models answer the same kind of question through the same interface and run on the Mac that runs the workflow (M4 Pro, 48 GB): <strong>Kev-9B</strong> and <strong>Bespoke-Nimble-9B</strong>, both Apache-2.0. With them nothing goes to TypeSafe and there is no per-call fee, though Jev's fee is only about 17 cents a week. Each model got its own cutoffs from the same past LLM judgments as Jev, then ran the gate level on the same week.</p>
-<div class="tw"><table class="wrap cards local"><tr><th>Model</th><th class=num>Cost</th><th class=num>Time</th><th class=num>Screened out</th><th class=num>Shortlist shared with All LLM</th><th class=num>Picks shared with n8n</th><th class=num>Picks shared with All LLM</th><th class=num>LLM agreement (memory)</th></tr>
-<tr class="hl"><td data-label="Model"><strong>Jev</strong><br><span class=small>TypeSafe, hosted</span></td><td data-label="Cost" class=num>$15.23</td><td data-label="Time" class=num>15 min</td><td data-label="Screened out" class=num>69%</td><td data-label="Shortlist shared with All LLM" class=num>87 / 100</td><td data-label="Picks shared with n8n" class=num>17 / 20</td><td data-label="Picks shared with All LLM" class=num>17 / 20</td><td data-label="LLM agreement (memory)" class=num>0.91</td></tr>
-<tr><td data-label="Model"><strong>Kev-9B</strong><br><span class=small>open, local (MLX)</span></td><td data-label="Cost" class=num>$17.11</td><td data-label="Time" class=num>80 min <span class=small>(screening 60)</span></td><td data-label="Screened out" class=num>62%</td><td data-label="Shortlist shared with All LLM" class=num>82 / 100</td><td data-label="Picks shared with n8n" class=num>17 / 20</td><td data-label="Picks shared with All LLM" class=num>18 / 20</td><td data-label="LLM agreement (memory)" class=num>0.90</td></tr>
-<tr><td data-label="Model"><strong>Nimble-9B</strong><br><span class=small>open, local (Ollama)</span></td><td data-label="Cost" class=num>$20.24</td><td data-label="Time" class=num>105 min <span class=small>(screening 86)</span></td><td data-label="Screened out" class=num>51%</td><td data-label="Shortlist shared with All LLM" class=num>85 / 100</td><td data-label="Picks shared with n8n" class=num>17 / 20</td><td data-label="Picks shared with All LLM" class=num>17 / 20</td><td data-label="LLM agreement (memory)" class=num>0.87</td></tr>
+<h2 id="local">Keeping scoring in-house</h2>
+<p>Jev is an outside service: each paper's title and abstract and each news article is sent to TypeSafe. The workflow is meant to run on Micron infrastructure, where that text should stay in-house and GPUs are available. A local model keeps it away from TypeSafe; the LLM calls still go to the configured LLM provider. Two open models (Apache-2.0) answer the same questions through the same interface: <strong>Kev-9B</strong> and <strong>Bespoke-Nimble-9B</strong>. Each got its own cutoffs from the same past LLM judgments as Jev, then ran the gate level on the same week. These tests ran on a Mac, so their speed is shown only as a reference.</p>
+<div class="tw"><table class="wrap cards local"><tr><th>Model</th><th class=num>Cost</th><th class=num>Screened out</th><th class=num>Shortlist shared with All LLM</th><th class=num>Picks shared with n8n</th><th class=num>Picks shared with All LLM</th><th class=num>LLM agreement (memory)</th></tr>
+<tr><td data-label="Model"><strong>Jev</strong><br><span class=small>TypeSafe, outside service</span></td><td data-label="Cost" class=num>$15.23</td><td data-label="Screened out" class=num>69%</td><td data-label="Shortlist shared with All LLM" class=num>87 / 100</td><td data-label="Picks shared with n8n" class=num>17 / 20</td><td data-label="Picks shared with All LLM" class=num>17 / 20</td><td data-label="LLM agreement (memory)" class=num>0.91</td></tr>
+<tr class="hl"><td data-label="Model"><strong>Kev-9B</strong><br><span class=small>open, in-house</span></td><td data-label="Cost" class=num>$17.11</td><td data-label="Screened out" class=num>62%</td><td data-label="Shortlist shared with All LLM" class=num>82 / 100</td><td data-label="Picks shared with n8n" class=num>17 / 20</td><td data-label="Picks shared with All LLM" class=num>18 / 20</td><td data-label="LLM agreement (memory)" class=num>0.90</td></tr>
+<tr><td data-label="Model"><strong>Nimble-9B</strong><br><span class=small>open, in-house</span></td><td data-label="Cost" class=num>$20.24</td><td data-label="Screened out" class=num>51%</td><td data-label="Shortlist shared with All LLM" class=num>85 / 100</td><td data-label="Picks shared with n8n" class=num>17 / 20</td><td data-label="Picks shared with All LLM" class=num>17 / 20</td><td data-label="LLM agreement (memory)" class=num>0.87</td></tr>
 </table></div>
-<p><strong>Kev-9B is the stronger local option.</strong> Its shortlist and picks are within normal variation, and it screens out nearly as many papers as Jev, so the week costs $1.88 more. The cost is time: it scored the 2,000 papers in 60 minutes instead of 16 seconds. Nimble's picks are as good, but its scores separate relevant from off-topic papers less sharply, so the gate passes more papers to the LLM ($5.01 more than Jev), and it answers one request at a time.</p>
-<p><strong>Recommendation:</strong> keep Jev. Use Kev-9B if an external scoring service is not allowed, with the weekly run scheduled overnight. The live agent scores only a few dozen new items an hour, so either local model should be fast enough there (not yet tested).</p>
+<p><strong>Kev-9B is the in-house choice.</strong> On every profile its agreement with past LLM scores is within 0.04 of Jev's, and its shortlist and picks this week are within normal variation. It screens out nearly as many papers, so a week costs $1.88 more in LLM calls than with Jev. Nimble's picks are as good, but it separates relevant from off-topic papers less sharply, so its gate passes more papers to the LLM ($5.01 more than Jev).</p>
 <details class="more"><summary>Agreement by profile</summary>
 <p>Agreement is the rank correlation with past LLM relevance scores (Spearman, average of two disjoint samples of about 300 papers each). Calls saved is the share of papers a gate cutoff screens out while keeping 95% of the papers the LLM passed.</p>
 <div class="tw"><table class="runs"><tr><th rowspan="2">Profile</th><th colspan="3" style="text-align:center">Agreement</th><th colspan="3" style="text-align:center">LLM calls saved by the gate</th></tr>
@@ -234,13 +233,26 @@ table.picks th { white-space: normal; }
 <tr><td>storage</td><td class="num">0.89</td><td class="num">0.88</td><td class="num">0.84</td><td class="num">85%</td><td class="num">89%</td><td class="num">78%</td></tr>
 <tr><td>optical</td><td class="num">0.79</td><td class="num">0.77</td><td class="num">0.74</td><td class="num">43%</td><td class="num">43%</td><td class="num">32%</td></tr></table></div>
 </details>
-<details class="more"><summary>Setup and caveats</summary>
+<details class="more"><summary>Speed: test Mac and server GPUs</summary>
+<p>Measured on the test Mac (M4 Pro, 48 GB), which was also running other heavy work (load average 45–90):</p>
+<div class="tw"><table class="wrap cards"><tr><th>Model</th><th class=num>Weekly run</th><th class=num>Scoring 2,000 papers</th><th class=num>Per paper</th></tr>
+<tr><td data-label="Model">Jev</td><td data-label="Weekly run" class=num>15 min</td><td data-label="Scoring 2,000 papers" class=num>16 s</td><td data-label="Per paper" class=num>0.01 s*</td></tr>
+<tr><td data-label="Model">Kev-9B</td><td data-label="Weekly run" class=num>80 min</td><td data-label="Scoring 2,000 papers" class=num>60 min</td><td data-label="Per paper" class=num>1.8 s</td></tr>
+<tr><td data-label="Model">Nimble-9B</td><td data-label="Weekly run" class=num>105 min</td><td data-label="Scoring 2,000 papers" class=num>86 min</td><td data-label="Per paper" class=num>2.6 s</td></tr>
+</table></div>
+<p class="small">* Jev takes about 0.1 s per request, with many requests in parallel. Sent one at a time, Kev took 0.9–1.8 s per paper on the Mac.</p>
+<ul>
+<li><strong>On a server GPU</strong>, Kev's authors report 33 requests a second for Kev-9B on one L40S and 80 on an H100 (short texts, 64 parallel clients). At those rates 2,000 short texts take about 25 s on an H100 and a minute on an L40S. Our requests average about 550 tokens with one question, longer than those texts (on the authors' 2,200-token test a request takes about 3.5× as long), so expect up to a few minutes. Not measured here.</li>
+<li><strong>Nimble</strong> runs in Ollama 0.35, which answers one request at a time for this model, so a server GPU would likely help it less.</li>
+</ul>
+</details>
+<details class="more"><summary>Setup and next steps</summary>
 <ul>
 <li><strong>Switching:</strong> the digest's <code>jev_backend</code> setting (<code>typesafe</code>, <code>kev</code> or <code>nimble</code>) picks the model; each has its own calibrated cutoffs. The code path is otherwise the same.</li>
-<li><strong>Kev-9B:</strong> <code>uv run --extra serve python -m kev.serve --run jaredpalmer/kev-9b --port 8009</code> in a clone of <code>jaredpalmer/kev</code>. It downloads about 18 GB and briefly needs about twice that in memory while loading.</li>
-<li><strong>Nimble-9B:</strong> needs Ollama 0.35 or later (the version that added the decision endpoint), served on its own port (11435 in this setup), so it can run beside another Ollama install. Its model is 10 GB, and Ollama allows at most 26 options per question, so it skips the topic question; only relevance is used at the gate level.</li>
-<li><strong>Times are upper bounds.</strong> Both runs shared the Mac with other heavy work (load average 45–90). In the weekly runs they averaged 1.8 s (Kev) and 2.6 s (Nimble) per paper, against Jev's 0.01 s (about 0.1 s per request, with many requests in parallel). Sent one at a time, Kev took 0.9–1.8 s per paper; the calibration benchmark's higher medians (4–7 s) include waiting behind parallel requests.</li>
-<li>Credibility and the replace level were not tested with the local models.</li>
+<li><strong>Kev-9B:</strong> <code>uv run --extra serve python -m kev.serve --run jaredpalmer/kev-9b --port 8009</code> in a clone of <code>jaredpalmer/kev</code>. It downloads about 18 GB, needs about 17 GB of GPU memory, and uses CUDA on NVIDIA GPUs (MLX on a Mac).</li>
+<li><strong>Nimble-9B:</strong> needs Ollama 0.35 or later, served on its own port (11435 in this setup), so it can run beside another Ollama install. Ollama allows at most 26 options per question, so it skips the topic question; only relevance is used at the gate level.</li>
+<li><strong>Not yet done:</strong> the live news agent still uses Jev; moving it to Kev needs Kev's news threshold calibrated (<code>scripts/bench_jev_media.py</code>). The prescreen and replace levels were not tested with local models.</li>
+<li><strong>Worth testing on a large GPU:</strong> Kev-27B (51 GB, needs an 80 GB GPU). Its authors report it within a point of Jev on sources Kev was not trained on (0.851 vs 0.857).</li>
 </ul>
 </details>
 
@@ -251,7 +263,7 @@ table.picks th { white-space: normal; }
 <div class="stat"><div class="v">&lt; $0.001</div><div class="l">A quiet run (nothing new)</div></div>
 <div class="stat"><div class="v">≈ $0.007</div><div class="l">Per article alerted, for its LLM-written summary</div></div>
 </div>
-<p>Every hour the agent crawls the news sources and skips anything already seen. Jev scores each new article against the profile's focus. Only the articles that pass get a two- to three-sentence LLM summary written for that profile, and those go out in a short email. Paper alerts are off by default: new papers appear once a day and are covered by the weekly digest.</p>
+<p>Every hour the agent crawls the news sources and skips anything already seen. Jev scores each new article against the profile's focus; until Kev's news threshold is calibrated, that means article text and the focus go to TypeSafe. Only the articles that pass get a two- to three-sentence LLM summary written for that profile, and those go out in a short email. Paper alerts are off by default: new papers appear once a day and are covered by the weekly digest.</p>
 <details class="more"><summary>Measurements and settings</summary>
 <ul>
 <li>The first run found 6 articles worth sending; the alert, including summaries, cost $0.04. Quiet runs cost about $0.0003 in Jev calls.</li>
@@ -275,7 +287,7 @@ table.picks th { white-space: normal; }
 <li><strong>What it is:</strong> the n8n workflow rebuilt in Python on Prefect (Apache-2.0), running on one machine, with a local UI for run history, logs and manual runs. There is no n8n or Docker, and telemetry is off.</li>
 <li><strong>Parity:</strong> replaying a real n8n daily run gave every LLM step identical inputs and produced a byte-identical email.</li>
 <li><strong>Profiles unchanged:</strong> 6 profiles and 8 profile/mode combinations, each with its own prompts, thresholds, arXiv categories, email style, schedule and cache.</li>
-<li><strong>Data leaving the machine:</strong> calls to the LLM provider (configurable, e.g. a company gateway), to Jev, and to arXiv and the news sites.</li>
+<li><strong>Data leaving the machine:</strong> calls to the LLM provider (configurable, e.g. a company gateway), to Jev unless a local scoring model is used, and to arXiv and the news sites.</li>
 </ul>
 </details>
 
