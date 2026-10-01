@@ -201,10 +201,13 @@ def run_jev(sample, profiles, meta, pages, store: ResultStore, workers: int):
             m = meta.get(i)
             if not m:
                 continue
+            local = jev.BACKEND != "typesafe"
+            judge = jev.judge_relevance if local else jev.judge_paper
             if not store.get(f"{pid}|{i}|paper"):
-                tasks.append((f"{pid}|{i}|paper", lambda m=m, r=rubric: jev.judge_paper(m, r)))
+                tasks.append((f"{pid}|{i}|paper", lambda m=m, r=rubric, j=judge: j(m, r)))
             affs = row.get("affiliations")
-            if isinstance(affs, list) and not store.get(f"{pid}|{i}|cred_aff"):
+            # Local backends: skip credibility-from-affiliation-list (no level uses it).
+            if not local and isinstance(affs, list) and not store.get(f"{pid}|{i}|cred_aff"):
                 affs = [a for a in affs if a and a != "Unknown"]
                 tasks.append((f"{pid}|{i}|cred_aff",
                               lambda f=focus, a=affs: jev.judge_credibility(f, affiliations=a)))

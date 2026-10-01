@@ -281,6 +281,24 @@ def judge_paper(paper: dict, rubric: dict) -> dict:
     }
 
 
+def judge_relevance(paper: dict, rubric: dict) -> dict:
+    """Only the relevance question: all that prescreen/gate need. Questions are
+    answered independently, so the relevance answer is the same as in
+    judge_paper; local backends (one request at a time) take half the time."""
+    from typesafe_sdk import Score  # noqa: F401 — paper_questions builds it
+    state = {"paper": {"title": paper["title"], "abstract": paper["summary"]}}
+    t0 = time.perf_counter()
+    r = client().system_one(state, {"relevance": paper_questions(rubric)["relevance"]})
+    latency = time.perf_counter() - t0
+    _record("paper relevance", r, latency)
+    rel = r.scores["relevance"]
+    return {"relevance_score": relevance_to_10(rel.score), "relevance_level": rel.score,
+            "relevance_confidence": rel.confidence, "primary_topic": "",
+            "primary_topic_confidence": None, "primary_topic_probabilities": {},
+            "potential_impact": "", "actionable": "", "latency_s": latency,
+            "input_tokens": r.usage.input_tokens}
+
+
 def judge_credibility(focus: str, *, affiliations: list[str] | None = None,
                       first_page_text: str | None = None) -> dict:
     """Credibility tier from an affiliation list (preferred) or the first-page
@@ -393,9 +411,15 @@ JEV_LEVELS = ("off", "prescreen", "gate", "replace")
 def _judge_all(papers: list[dict], rubric: dict, workers: int) -> list:
     from concurrent.futures import ThreadPoolExecutor
 
+    # Local servers answer one request at a time: ask only what screening needs
+    # and don't queue more than a couple of requests.
+    judge = judge_paper if BACKEND == "typesafe" else judge_relevance
+    if BACKEND != "typesafe":
+        workers = min(workers, 2)
+
     def one(p):
         try:
-            return judge_paper(p, rubric)
+            return judge(p, rubric)
         except Exception as e:  # noqa: BLE001 — fail open
             print(f"  WARNING: Jev judgment failed for {p['id']} — {e}. Keeping.")
             return None
