@@ -98,7 +98,10 @@ def set_backend(name: str) -> None:
 def client():
     from typesafe_sdk import TypeSafeClient
     if JEV_BASE_URL:  # local server: no TypeSafe account involved
-        return TypeSafeClient(api_key="local", base_url=JEV_BASE_URL, model=JEV_MODEL)
+        # A long timeout: the first request after the model unloads waits for
+        # a cold load (~2 min for Nimble from disk), and a client that gives up
+        # earlier cancels the load, so every later request times out too.
+        return TypeSafeClient(api_key="local", base_url=JEV_BASE_URL, model=JEV_MODEL, timeout=300)
     return TypeSafeClient(model=JEV_MODEL)
 
 
@@ -396,7 +399,22 @@ CUTOFFS = {
 # Cutoffs for local backends, calibrated the same way on the same samples
 # (scripts/bench_jev.py with JEV_BACKEND set). A backend without an entry for
 # a profile is not used for that profile.
-LOCAL_CUTOFFS: dict = {"nimble": {}, "kev": {}}
+# Local decision models, calibrated the same way (scripts/calibrate_cutoffs.py;
+# stats in data/report-files/bench_jev/cutoffs_<backend>.json).
+LOCAL_CUTOFFS: dict = {
+    "nimble": {
+        "memory-innovation":     {"prescreen": 0.02, "gate": 0.03, "decide": 0.09, "priority": 1.33, "cred_gate": 0.22},
+        "cxl-research":          {"prescreen": 0.05, "gate": 0.11, "decide": 0.47, "priority": 0.63, "cred_gate": 0.82},
+        "storage-innovation":    {"prescreen": 0.05, "gate": 0.12, "decide": 0.29, "priority": 1.35, "cred_gate": 0.24},
+        "optical-interconnects": {"prescreen": None, "gate": 0.02, "decide": 0.08, "priority": 2.54, "cred_gate": 0.0},
+    },
+    "kev": {
+        "memory-innovation":     {"prescreen": 0.3, "gate": 0.44, "decide": 0.58, "priority": 1.94, "cred_gate": 0.49},
+        "cxl-research":          {"prescreen": 0.5, "gate": 0.75, "decide": 1.07, "priority": 1.38, "cred_gate": 0.06},
+        "storage-innovation":    {"prescreen": 0.3, "gate": 0.58, "decide": 0.74, "priority": 1.7, "cred_gate": 0.3},
+        "optical-interconnects": {"prescreen": None, "gate": 0.19, "decide": 0.3, "priority": 2.51, "cred_gate": 0.0},
+    },
+}
 
 
 def cutoffs_for(profile_id: str) -> dict:

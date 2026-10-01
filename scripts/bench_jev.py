@@ -398,12 +398,12 @@ def analyse(sample, profiles, store: ResultStore) -> dict:
         P["not_related_gate"] = gate_stats([c for _, c in nr], [a for a, _ in nr])
         # Impact / actionable
         imp = [(lead_word(b.get("potential_impact")), j["potential_impact"]) for _, b, j, *_ in rows]
-        imp = [(a, c) for a, c in imp if a in jev.IMPACT_OPTIONS]
+        imp = [(a, c) for a, c in imp if a in jev.IMPACT_OPTIONS and c in jev.IMPACT_OPTIONS]
         P["impact_agreement"] = sum(a == c for a, c in imp) / max(1, len(imp))
         order = list(jev.IMPACT_OPTIONS)
         P["impact_within_one"] = sum(abs(order.index(a) - order.index(c)) <= 1 for a, c in imp) / max(1, len(imp))
         act = [(lead_word(b.get("actionable")), j["actionable"]) for _, b, j, *_ in rows]
-        act = [(a, c) for a, c in act if a in jev.ACTIONABLE_OPTIONS]
+        act = [(a, c) for a, c in act if a in jev.ACTIONABLE_OPTIONS and c in jev.ACTIONABLE_OPTIONS]
         P["actionable_agreement"] = sum(a == c for a, c in act) / max(1, len(act))
 
         # Credibility
