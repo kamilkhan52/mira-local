@@ -144,7 +144,7 @@ table.picks th { white-space: normal; }
 <h2>Summary</h2>
 <ol>
 <li><strong>The local workflow reproduces the n8n digest and runs unattended.</strong> A schedule or a single command runs everything, from arXiv to the delivered email. Replaying a real n8n daily run with identical inputs produced a byte-identical email.</li>
-<li><strong>n8n could not produce this week's digest</strong>: every weekly attempt crashed after paper selection. After the fixes listed under <a href="#reliability">Reliability</a>, all four local runs completed and sent their digests.</li>
+<li><strong>n8n could not produce this week's digest</strong>: every attempt at this week's digest crashed after paper selection. After the fixes listed under <a href="#reliability">Reliability</a>, all four local runs completed and sent their digests.</li>
 <li><strong>Jev cuts the weekly cost by 37–85% and the time by 27–65%.</strong> 16 of the 20 deep-dive papers were picked by n8n and at every Jev level.</li>
 <li><strong>Recommendation: the gate level now, and Kev-9B for the fully local deployment.</strong> With Jev, after a data-handling review of TypeSafe, a week costs $15.23 instead of $35.68 and takes 15 minutes instead of 25. Kev-9B is an open model that keeps scoring in-house, at $17.11 a week at today's LLM prices. It is to be piloted on a Micron GPU. See <a href="#local">Keeping scoring in-house</a>.</li>
 <li><strong>New: a live news agent.</strong> It checks the news sources every hour and alerts only on relevant articles. A run takes about a minute and costs a fraction of a cent when nothing is new.</li>
@@ -157,7 +157,7 @@ table.picks th { white-space: normal; }
 <tr><th>Level</th><th>What Jev does</th><th>What still uses the LLM</th><th>Trade-off</th></tr>
 <tr><td data-label="Level"><strong>All LLM</strong></td><td data-label="What Jev does">Nothing (Jev off)</td><td data-label="What still uses the LLM">Everything, as in n8n</td><td data-label="Trade-off">Reference cost and speed</td></tr>
 <tr><td data-label="Level"><strong>Prescreen</strong></td><td data-label="What Jev does">Drops clearly off-topic papers (45% this week)</td><td data-label="What still uses the LLM">Credibility and relevance for the rest</td><td data-label="Trade-off">Calibrated to keep every paper that has appeared in a past digest</td></tr>
-<tr class="hl"><td data-label="Level"><strong>Gate</strong></td><td data-label="What Jev does">Drops papers below a relevance level set to keep 95% of sampled LLM-passed papers. Tested on held-out samples, it kept 98–100% of those featured in past digests and 90–92% of the rest (69% dropped this week; rescored, the week's 217 LLM-passed papers lost 5, none shortlist-grade)</td><td data-label="What still uses the LLM">Credibility and relevance for the rest</td><td data-label="Trade-off">Can drop a borderline paper</td></tr>
+<tr class="hl"><td data-label="Level"><strong>Gate</strong></td><td data-label="What Jev does">Drops papers below a relevance level set to keep 95% of sampled LLM-passed papers. Tested on held-out samples against the earlier LLM's judgments, it kept 98–100% of those featured in past digests and 90–92% of the rest (69% dropped this week; rescored by the current LLM, the week's 217 LLM-passed papers lost 5, two of them scored 6, none on its 100-paper shortlist)</td><td data-label="What still uses the LLM">Credibility and relevance for the rest</td><td data-label="Trade-off">Can drop a borderline paper</td></tr>
 <tr><td data-label="Level"><strong>Replace</strong></td><td data-label="What Jev does">Scores relevance and credibility for every paper itself</td><td data-label="What still uses the LLM">Only selection, deep analysis and report</td><td data-label="Trade-off">Cheapest and fastest. The shortlist loses affiliation lists and one-line key findings; deep analysis still reads each chosen paper in full</td></tr>
 </table></div>
 
@@ -243,7 +243,7 @@ table.picks th { white-space: normal; }
 <p class="small">* Jev takes about 0.1 s per request, with many requests in parallel. With two requests in flight, Kev took 1.8 s per paper on the Mac (about 3.6 s per request).</p>
 <ul>
 <li><strong>On a server GPU</strong>, Kev's authors report 33 requests a second for Kev-9B on one L40S and 80 on an H100 (short texts, 64 parallel clients). At those rates 2,000 short texts take about 25 s on an H100 and a minute on an L40S. Our requests average about 550 tokens with one question, longer than those texts (on the authors' 2,200-token test a request takes about 3.5× as long), so expect up to a few minutes. Not measured here.</li>
-<li><strong>Nimble</strong> runs in Ollama 0.35, which answers one request at a time for this model, so a server GPU would likely help it less.</li>
+<li><strong>Nimble</strong> served one request at a time in our Ollama 0.35 setup, so a server GPU would likely help it less.</li>
 </ul>
 </details>
 <details class="more"><summary>Setup and next steps</summary>
@@ -251,6 +251,7 @@ table.picks th { white-space: normal; }
 <li><strong>Switching:</strong> the digest's <code>jev_backend</code> setting (<code>typesafe</code>, <code>kev</code> or <code>nimble</code>) picks the model; each has its own calibrated cutoffs. The code path is otherwise the same.</li>
 <li><strong>Kev-9B:</strong> <code>uv run --extra serve python -m kev.serve --run jaredpalmer/kev-9b --port 8009</code> in a clone of <code>jaredpalmer/kev</code>. It downloads about 18 GB, needs about 17 GB of GPU memory, and uses CUDA on NVIDIA GPUs (MLX on a Mac).</li>
 <li><strong>Nimble-9B:</strong> needs Ollama 0.35 or later, served on its own port (11435 in this setup), so it can run beside another Ollama install. Ollama allows at most 26 options per question, so it skips the topic question; only relevance is used at the gate level.</li>
+<li><strong>First step:</strong> the cutoffs were calibrated on the earlier LLM's (Gemini 3.1 Pro's) judgments, so every profile needs one recalibration run on gpt-5.6-terra.</li>
 <li><strong>Not yet done:</strong> the live news agent still uses Jev; moving it to Kev needs Kev's news threshold calibrated (<code>scripts/bench_jev_media.py</code>). The prescreen and replace levels were not tested with local models.</li>
 <li><strong>Worth testing on a large GPU:</strong> Kev-27B (51 GB, needs an 80 GB GPU). Its authors report it within a point of Jev on sources Kev was not trained on (0.851 vs 0.857).</li>
 </ul>
