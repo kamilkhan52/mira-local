@@ -14,3 +14,5 @@ crawlers/output/
 # Editors / OS
 .vscode/
 .DS_Store
+# Safe to commit (no secrets): the telemetry lockdown must ship with the repo.
+!deploy/prefect.env
