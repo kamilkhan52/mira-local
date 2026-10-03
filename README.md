@@ -28,10 +28,11 @@ n8n deployment: no n8n, no Docker, no cloud accounts.
 
 **Data leaving the machine.** Orchestration is local, but the pipeline itself
 calls external services: arXiv and the news sites (public content), the LLM
-endpoint, and Jev (realtime triage and the optional pre-screen). To keep
+endpoint, and Jev (realtime triage and the optional Jev levels). To keep
 prompts inside company infrastructure, set `MIRA_LLM_BASE_URL` to an approved
-OpenAI-compatible gateway or a local model server (vLLM, Ollama, LM Studio).
-The realtime flow can run without Jev by leaving it unscheduled.
+OpenAI-compatible gateway or a local model server (vLLM, Ollama, LM Studio),
+and score with a local decision model instead of Jev (below). The realtime
+flow still uses Jev; leave it unscheduled to avoid that call.
 
 ## Setup
 
@@ -59,7 +60,7 @@ make serve              # registers deployments and executes runs (second termin
   Custom run. The parameters replace the n8n backfill webhook: `profile`,
   `mode`, `current_date`, `lookback_days`, `max_limit`, `test_mode`,
   `llm_cache_bypass`, `trend_enabled`, `send_email`, `recipients`,
-  `jev_prescreen` and `pdf`.
+  `jev_level`, `jev_backend` and `pdf`.
 - **From the CLI**, without the server:
   ```bash
   .venv/bin/python run.py --profile cxl-research --mode monthly --test-mode --no-email
@@ -79,6 +80,31 @@ as the n8n `/report-files`:
 To carry over history (for trend analysis) and the LLM cache, copy the old
 `report-files/prod` and `report-files/cache` directories into
 `data/report-files/`.
+
+## Decision model: Jev or a local model
+
+A digest's `jev_level` (`off`, `prescreen`, `gate`, `replace`) decides how much
+of the per-paper LLM work a decision model takes over; `gate` is the
+recommended level (see `docs/report.html`). `jev_backend` picks the model:
+
+| `jev_backend` | Model | Runs | Setup |
+|---|---|---|---|
+| `typesafe` | Jev | TypeSafe's hosted API | `TYPESAFE_API_KEY` in `.env` |
+| `kev` | Kev-9B (Apache-2.0) | in-house, port 8009 | in a clone of `jaredpalmer/kev`: `uv run --extra serve python -m kev.serve --run jaredpalmer/kev-9b --port 8009` (~18 GB download, ~17 GB GPU memory; CUDA or MLX) |
+| `nimble` | Bespoke-Nimble-9B (Apache-2.0) | in-house, port 11435 | Ollama 0.35+ serving the `nimble` model on `127.0.0.1:11435` |
+
+Each backend has its own cutoffs per profile (`mira/jev.py`: `CUTOFFS` for Jev,
+`LOCAL_CUTOFFS` for the local models), calibrated against cached past LLM
+judgments. To calibrate a profile or a new model:
+
+```bash
+JEV_BACKEND=kev .venv/bin/python scripts/bench_jev.py --per-profile 150 --workers 4
+JEV_BACKEND=kev .venv/bin/python scripts/bench_jev.py --per-profile 150 --seed 43 --first-pages 0 --workers 4
+JEV_BACKEND=kev .venv/bin/python scripts/calibrate_cutoffs.py   # prints the cutoff table
+```
+
+Local models answer only the relevance question (enough for `prescreen` and
+`gate`); `replace` and the realtime flow have been tested with Jev only.
 
 ## Always-on deployment
 
